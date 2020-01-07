@@ -7,6 +7,110 @@ __author__ = ""
 __email__ = ""
 
 
+class Nature:
+    def __init__(self):
+        self.color = None
+        self.fodder = 0
+        self.habitable = True
+
+
+class Ocean(Nature):
+    def __init__(self):
+        super().__init__()
+        self.color = "Blue"
+        self.habitable = False
+
+
+class Mountain(Nature):
+    def __init__(self):
+        super().__init__()
+        self.color = "Grey"
+        self.habitable = False
+
+
+class Desert(Nature):
+    def __init__(self):
+        super().__init__()
+        self.color = "Brown"
+
+
+class Savannah(Nature):
+    def __init__(self, start_fodder):
+        super().__init__()
+        self.color = "White"
+        self.fodder = start_fodder
+
+    def fodder_update(self, max_fodder, alpha):
+        self.fodder = self.fodder + alpha * (max_fodder - self.fodder)
+
+    def eating_rules(self, f):
+        if f <= self.fodder:
+            self.fodder -= f
+        elif (self.fodder > 0) and (self.fodder < f):
+            self.fodder = 0
+
+
+class Jungle(Nature):
+    def __init__(self, start_fodder):
+        super().__init__()
+        self.color = "Green"
+        self.fodder = start_fodder
+
+    def fodder_update(self, max_fodder):
+        self.fodder = max_fodder
+
+    def eating_rules(self, f):
+        if f <= self.fodder:
+            self.fodder -= f
+        elif (self.fodder > 0) and (self.fodder < f):
+            self.fodder = 0
+
+def test_ocean():
+    O = Ocean()
+    assert O.color == "Blue"
+    assert O.habitable == False
+
+def test_mountain():
+    M = Mountain()
+    assert M.color == "Grey"
+    assert M.habitable == False
+
+
+def test_desert():
+    D = Desert()
+    assert D.color == "Brown"
+    assert D.habitable == True
+
+
+def test_savannah():
+    S = Savannah(300)
+    assert S.fodder == 300
+
+    S.eating_rules(10)
+    assert S.fodder == 290
+    S.fodder = 5
+    S.eating_rules(10)
+    assert S.fodder == 0
+
+    S.fodder = 150
+    S.fodder_update(300, 0.3)
+    assert S.fodder == 195
+    assert S.color == "White"
+
+
+def test_jungle():
+    J = Jungle(800)
+    assert J.fodder == 800
+    J.eating_rules(10)
+    assert J.fodder == 790
+    J.fodder = 4
+    J.eating_rules(10)
+    assert J.fodder == 0
+
+    J.fodder = 300
+    J.fodder_update(800)
+    assert J.fodder == 800
+    assert J.color == "Green"
 class BioSim:
     def __init__(
         self,

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/-BioSim_G01_Helge_Julius.iml" filepath="$PROJECT_DIR$/.idea/-BioSim_G01_Helge_Julius.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/biosim.iml" filepath="$PROJECT_DIR$/.idea/biosim.iml" />
     </modules>
   </component>
 </project>
