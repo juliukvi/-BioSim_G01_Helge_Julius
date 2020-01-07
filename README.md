@@ -7,7 +7,4 @@ qkegfhiq
 
 hallo
 test hello
-<<<<<<< HEAD
-41241
-=======
->>>>>>> master
+5411
