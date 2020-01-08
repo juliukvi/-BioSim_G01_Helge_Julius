@@ -58,6 +58,18 @@ class Herb:
     def age(self):
         self.a += 1
 
+    def feeding(self):
+        row = self.pos[0]
+        col = self.pos[1]
+        fodder = maplist[row][col].fodder
+        if fodder > F:
+            self.weight += self.beta * F
+            return F
+        elif (fodder > 0) and (fodder < f):
+            self.weight += self.beta * fodder
+            return fodder  # returnerer tallet den har spist som kan legges inn
+            # i eating_rules for å fjerne fodder fra ruten i simulasjonen.
+
     def fitness(self):
         if self.weight <= 0:
             self.fitness = 0
@@ -66,14 +78,11 @@ class Herb:
                 self.phi_age * (self.a - self.a_half))) * 1 / (1 + m.exp(
                 -self.phi_age(self.w - self.w_half)))
 
-
-    def weight(self):
-
     def birth(self):
         prob = min(1, self.gamma * self.fitness * (self.num_herb - 1))
         number = random.random
         if len(island(self.pos).herb_list) < 2:
         prob = 0
-        if self.weight < self.zeta * (w_birth + sigma_birth):
+        if self.weight < self.zeta * (self.w_birth + self.sigma_birth):
              prob = 0
         if number >= prob:
