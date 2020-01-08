@@ -2,7 +2,8 @@
 
 __author__ = 'Helge Helo Klemetsdal'
 __email__ = 'hegkleme@nmbu.no'
-
+standard_parameters_jung = {"f_max":800}
+standard_parameters_sav = {"f_max":300, "alpha":0.3}
 
 class Nature:
     def __init__(self):

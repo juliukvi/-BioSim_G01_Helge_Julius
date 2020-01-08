@@ -2,7 +2,7 @@
 
 __author__ = 'Helge Helo Klemetsdal'
 __email__ = 'hegkleme@nmbu.no'
-
+from biosim.landscape import *
 def test_ocean():
     O = Ocean()
     assert O.color == "Blue"
