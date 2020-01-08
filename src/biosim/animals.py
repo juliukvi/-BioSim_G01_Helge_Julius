@@ -46,19 +46,14 @@ parameters_carn = dict(standard_parameters_carn)
 
 
 
-
-import math as m
-import random
-import numpy as np
-
-
 class Herb:
-    def __init__(self, parameters):
-        for key in parameters:
-            setattr(self, key, parameters[key])
+    def __init__(self, parameters_herb, loc):
+        for key in parameters_herb:
+            setattr(self, key, parameters_herb[key])
         self.fitness = 0
         self.w = np.random.normal(self.w_birth, self.sigma_birth)
         self.a = 0
+        self.loc = loc
 
     def age(self):
         self.a += 1

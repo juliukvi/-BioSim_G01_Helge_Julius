@@ -3,6 +3,34 @@
 __author__ = 'Helge Helo Klemetsdal'
 __email__ = 'hegkleme@nmbu.no'
 
+import textwrap
+
+def create_map(geogr)
+    map_list = []
+    map_dict = {"O": Ocean(), "S": Savannah(), "M": Mountain(), "J": Jungle(), "D": Desert()}
+    geogr = textwrap.dedent(geogr)
+    for line in geogr.splitlines():
+        placeholder_list = []
+        for j in line:
+            try:
+                placeholder_list.append(map_dict[j])
+            except KeyError:
+                raise ValueError
+        map_list.append(placeholder_list)
+
+    for i in map_list[0]:
+        if not i.color == "blue":
+            raise ValueError
+    for i in map_list[len(map_list)-1]:
+        if not i.color == "blue":
+            raise ValueError
+    for i in range(len(map_list)):
+        if not map_list[i][0].color == "blue":
+            raise ValueError
+    for i in range(len(map_list)):
+        if not map_list[i][len(map_list[0])-1].color == "blue":
+            raise ValueError
+    return map_list
 
 
 standard_parameters_jung = {"f_max":800}
