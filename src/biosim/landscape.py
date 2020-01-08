@@ -2,15 +2,20 @@
 
 __author__ = 'Helge Helo Klemetsdal'
 __email__ = 'hegkleme@nmbu.no'
+
+
+
 standard_parameters_jung = {"f_max":800}
 standard_parameters_sav = {"f_max":300, "alpha":0.3}
+parameters_jung = dict(standard_parameters_jung)
+parameters_sav = dict(standard_parameters_sav)
 
 class Nature:
     def __init__(self):
         self.color = None
         self.fodder = 0
         self.habitable = True
-
+        self.animal_list = []
 
 class Ocean(Nature):
     def __init__(self):
@@ -37,6 +42,7 @@ class Savannah(Nature):
         super().__init__()
         self.color = "White"
         self.fodder = start_fodder
+        self.animal_list = []
 
     def fodder_update(self, max_fodder, alpha):
         self.fodder = self.fodder + alpha * (max_fodder - self.fodder)

@@ -22,7 +22,6 @@ standard_parameters_herb = {
     "omega" : 0.4,
     "F" : 10.0,
 }
-
 standard_parameters_carn = {
     "w_birth" : 6.0,
     "sigma_birth" : 1.0,
@@ -41,6 +40,17 @@ standard_parameters_carn = {
     "F" : 50.0,
     "DeltaPhiMax" : 10.0
 }
+
+parameters_herb = dict(standard_parameters_herb)
+parameters_carn = dict(standard_parameters_carn)
+
+
+
+
+import math as m
+import random
+import numpy as np
+
 
 class Herb:
     def __init__(self, parameters):
