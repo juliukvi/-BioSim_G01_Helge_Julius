@@ -7,11 +7,15 @@ __author__ = ""
 __email__ = ""
 
 
+
+
 class Nature:
     def __init__(self):
         self.color = None
         self.fodder = 0
         self.habitable = True
+        self.herb_list = []
+        self.carn_list = []
 
 
 class Ocean(Nature):
