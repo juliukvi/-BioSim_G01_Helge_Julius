@@ -48,3 +48,38 @@ class Herb:
 
     def older(self):
         self.age += 1
+
+
+import math as m
+import random
+import numpy as np
+
+
+class Herb:
+    def __init__(self, parameters={j}):
+        self.fitness = 0
+        self.w = np.random.normal(self.w_birth, self.sigma_birth)
+        self.a = 0
+
+    def fitness(self):
+        if self.weight <= 0:
+            self.fitness = 0
+        else:
+            self.fitness = 1 / (1 + m.exp(
+                self.phi_age * (self.a - self.a_half))) * 1 / (1 + m.exp(
+                -self.phi_age(self.w - self.w_half)))
+
+    def birth(self):
+        prob = min(1, self.gamma * self.fitness * (self.num_herb - 1))
+        number = random.random
+        if len(island(self.pos).herb_list) < 2:
+            prob = 0
+        if self.weight < self.zeta * (w_birth + sigma_birth):
+            prob = 0
+
+        if number >= prob:
+
+    def age(self):
+        self.age += 1
+
+    def weight(self):
