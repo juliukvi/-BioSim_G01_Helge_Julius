@@ -56,6 +56,7 @@ class Herb:
         self.loc = loc
         self.row = self.pos[0]
         self.col = self.pos[1]
+        self.pos_list = maplist[self.row][self.col].herb_list
 
     def age(self):
         self.a += 1
@@ -83,8 +84,17 @@ class Herb:
     def birth(self):
         prob = min(1, self.gamma * self.fitness * (self.num_herb - 1))
         number = random.random
-        if len(island(self.pos).herb_list) < 2:
+        if len(self.pos_list) < 2:
         prob = 0
         if self.weight < self.zeta * (self.w_birth + self.sigma_birth):
              prob = 0
         if number >= prob:
+            #create a class instance of herbivore at the same position.
+
+     def death(self):
+        if self.fitness == 0:
+            pos_list.pop(pos_list.index(self))
+        prob = self.omega * (1 - self.fitness)
+        number = random.random
+        if number > prob:
+            pos_list.pop(pos_list.index(self))
