@@ -9,67 +9,6 @@ __email__ = ""
 
 
 
-class Nature:
-    def __init__(self):
-        self.color = None
-        self.fodder = 0
-        self.habitable = True
-        self.herb_list = []
-        self.carn_list = []
-
-
-class Ocean(Nature):
-    def __init__(self):
-        super().__init__()
-        self.color = "Blue"
-        self.habitable = False
-
-
-class Mountain(Nature):
-    def __init__(self):
-        super().__init__()
-        self.color = "Grey"
-        self.habitable = False
-
-
-class Desert(Nature):
-    def __init__(self):
-        super().__init__()
-        self.color = "Brown"
-
-
-class Savannah(Nature):
-    def __init__(self, start_fodder):
-        super().__init__()
-        self.color = "White"
-        self.fodder = start_fodder
-
-    def fodder_update(self, max_fodder, alpha):
-        self.fodder = self.fodder + alpha * (max_fodder - self.fodder)
-
-    def eating_rules(self, f):
-        if f <= self.fodder:
-            self.fodder -= f
-        elif (self.fodder > 0) and (self.fodder < f):
-            self.fodder = 0
-
-
-class Jungle(Nature):
-    def __init__(self, start_fodder):
-        super().__init__()
-        self.color = "Green"
-        self.fodder = start_fodder
-
-    def fodder_update(self, max_fodder):
-        self.fodder = max_fodder
-
-    def eating_rules(self, f):
-        if f <= self.fodder:
-            self.fodder -= f
-        elif (self.fodder > 0) and (self.fodder < f):
-            self.fodder = 0
-
-
 class BioSim:
     def __init__(
         self,
