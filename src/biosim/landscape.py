@@ -3,6 +3,7 @@
 __author__ = 'Helge Helo Klemetsdal'
 __email__ = 'hegkleme@nmbu.no'
 
+
 class Nature:
     def __init__(self):
         self.color = None
