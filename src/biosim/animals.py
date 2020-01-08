@@ -2,7 +2,9 @@
 
 __author__ = 'Helge Helo Klemetsdal'
 __email__ = 'hegkleme@nmbu.no'
-
+import math as m
+import random
+import numpy as np
 standard_parameters_herb = {
     "w_birth" : 8.0,
     "sigma_birth" : 1.5,
@@ -39,27 +41,17 @@ standard_parameters_carn = {
     "F" : 50.0,
     "DeltaPhiMax" : 10.0
 }
-class Herb:
-    def __init__(self):
-        self.
-        self.age = 0
-        self.
-
-
-    def older(self):
-        self.age += 1
-
-
-import math as m
-import random
-import numpy as np
-
 
 class Herb:
-    def __init__(self, parameters={j}):
+    def __init__(self, parameters):
+        for key in parameters:
+            setattr(self, key, parameters[key])
         self.fitness = 0
         self.w = np.random.normal(self.w_birth, self.sigma_birth)
         self.a = 0
+
+    def age(self):
+        self.a += 1
 
     def fitness(self):
         if self.weight <= 0:
@@ -69,17 +61,14 @@ class Herb:
                 self.phi_age * (self.a - self.a_half))) * 1 / (1 + m.exp(
                 -self.phi_age(self.w - self.w_half)))
 
+
+    def weight(self):
+
     def birth(self):
         prob = min(1, self.gamma * self.fitness * (self.num_herb - 1))
         number = random.random
         if len(island(self.pos).herb_list) < 2:
-            prob = 0
+        prob = 0
         if self.weight < self.zeta * (w_birth + sigma_birth):
-            prob = 0
-
+             prob = 0
         if number >= prob:
-
-    def age(self):
-        self.age += 1
-
-    def weight(self):
