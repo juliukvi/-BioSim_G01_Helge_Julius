@@ -43,7 +43,8 @@ class Nature:
         self.color = None
         self.fodder = 0
         self.habitable = True
-        self.animal_list = []
+        self.herb_list = []
+        self.carn_list = []
 
 class Ocean(Nature):
     def __init__(self):

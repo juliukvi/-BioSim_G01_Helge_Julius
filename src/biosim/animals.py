@@ -54,6 +54,8 @@ class Herb:
         self.w = np.random.normal(self.w_birth, self.sigma_birth)
         self.a = 0
         self.loc = loc
+        self.row = self.pos[0]
+        self.col = self.pos[1]
 
     def age(self):
         self.a += 1
