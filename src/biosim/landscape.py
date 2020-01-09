@@ -5,15 +5,16 @@ __email__ = 'hegkleme@nmbu.no'
 
 import textwrap
 from biosim.animals import Herb
+
 def create_map(geogr):
     map_list = []
-    map_dict = {"O": Ocean(), "S": Savannah(), "M": Mountain(), "J": Jungle(), "D": Desert()}
+    map_dict = {"O": Ocean, "S": Savannah, "M": Mountain, "J": Jungle, "D": Desert}
     geogr = textwrap.dedent(geogr)
     for line in geogr.splitlines():
         placeholder_list = []
         for j in line:
             try:
-                placeholder_list.append(map_dict[j])
+                placeholder_list.append(map_dict[j]())
             except KeyError:
                 raise ValueError
         map_list.append(placeholder_list)
@@ -33,11 +34,6 @@ def create_map(geogr):
     return map_list
 
 
-standard_parameters_jung = {"f_max" : 800}
-standard_parameters_sav = {"f_max" : 300, "alpha" : 0.3}
-parameters_jung = dict(standard_parameters_jung)#creating copies
-parameters_sav = dict(standard_parameters_sav)
-
 class Nature:
     def __init__(self):
         self.color = None
@@ -52,6 +48,25 @@ class Nature:
         for animal in self.herb_list:
             if self.fodder > 0:
                 self.fodder -= animal.feeding(self.fodder)
+
+    def birth_all_animals(self):
+        if self.herb_list >= 2:
+            for animal in self.herb_list:
+                if animal.birth():
+                    self.herb_list.append(Herb())
+
+    def aging_all_animals(self):
+        for animal in self.herb_list:
+            animal.age()
+
+    def weightloss_all_animals(self):
+        for animal in self.herb_list:
+            animal.weightloss()
+
+    def death_all_animals(self):
+        self.herb_list = [
+            animal for animal in self.herb_list if not animal.death()
+        ]
 
 
 class Ocean(Nature):

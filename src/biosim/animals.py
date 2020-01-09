@@ -24,11 +24,6 @@ standard_parameters_carn = {
     "DeltaPhiMax" : 10.0
 }
 
-parameters_herb = dict(standard_parameters_herb)
-parameters_carn = dict(standard_parameters_carn)
-
-
-
 class Herb:
     standard_parameters = {
         "w_birth": 8.0,
@@ -64,15 +59,14 @@ class Herb:
         cls.are_params_set = True
 
     def __init__(self, loc):
-        for key in self.standard_parameters:
-            setattr(self, key, self.standard_parameters[key])
+        if not self.are_params_set:
+            self._set_params_as_attributes()
         self.w = np.random.normal(self.w_birth, self.sigma_birth)
         self.a = 0
         self.pos = loc
         self.row = self.pos[0]
         self.col = self.pos[1]
         self.fitness = self.fitness_update()
-        #self.pos_list = maplist[self.row][self.col].herb_list
 
     def age(self):
         self.a += 1
@@ -103,6 +97,9 @@ class Herb:
             #create a class instance of herbivore at the same position.
             return True
         return False
+
+    def weightloss(self):
+        self.w =- self.eta*self.w
 
      def death(self):
         if self.fitness == 0:
