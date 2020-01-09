@@ -4,7 +4,7 @@ __author__ = 'Helge Helo Klemetsdal'
 __email__ = 'hegkleme@nmbu.no'
 
 import textwrap
-
+from biosim.animals import Herb
 def create_map(geogr):
     map_list = []
     map_dict = {"O": Ocean(), "S": Savannah(), "M": Mountain(), "J": Jungle(), "D": Desert()}
@@ -45,6 +45,14 @@ class Nature:
         self.habitable = True
         self.herb_list = []
         self.carn_list = []
+
+    def feed_all_animals(self):
+        self.fodder = self.fodder_update()
+        self.herb_list.sort(key=lambda x: x.fitness, reverse=True)
+        for animal in self.herb_list:
+            if self.fodder > 0:
+                self.fodder -= animal.feeding(self.fodder)
+
 
 class Ocean(Nature):
     def __init__(self):
@@ -109,7 +117,7 @@ class Jungle(Nature):
         super().__init__()
         self.fodder = self.f_max
 
-    def fodder_update(self, max_fodder):
+    def fodder_update(self):
         self.fodder = self.f_max
 
     def eating_rules(self, f):

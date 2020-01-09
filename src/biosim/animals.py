@@ -66,21 +66,18 @@ class Herb:
     def __init__(self, loc):
         for key in self.standard_parameters:
             setattr(self, key, self.standard_parameters[key])
-        self.fitness = 0
         self.w = np.random.normal(self.w_birth, self.sigma_birth)
         self.a = 0
         self.pos = loc
         self.row = self.pos[0]
         self.col = self.pos[1]
+        self.fitness = self.fitness_update()
         #self.pos_list = maplist[self.row][self.col].herb_list
 
     def age(self):
         self.a += 1
 
-    def feeding(self, ):
-        row = self.pos[0]
-        col = self.pos[1]
-        fodder = maplist[row][col].fodder
+    def feeding(self, fodder):
         if fodder > F:
             self.weight += self.beta * F
             return F
@@ -89,7 +86,7 @@ class Herb:
             return fodder  # returnerer tallet den har spist som kan legges inn
             # i eating_rules for å fjerne fodder fra ruten i simulasjonen.
 
-    def fitness(self):
+    def fitness_update(self):
         if self.weight <= 0:
             self.fitness = 0
         else:
@@ -97,16 +94,15 @@ class Herb:
                 self.phi_age * (self.a - self.a_half))) * 1 / (1 + m.exp(
                 -self.phi_age(self.w - self.w_half)))
 
-    def birth(self):
-        prob = min(1, self.gamma * self.fitness * (self.num_herb - 1))
+    def birth(self, num_herb):
+        prob = min(1, self.gamma * self.fitness * (num_herb - 1))
         number = random.random
-        if len(self.pos_list) < 2:
-            prob = 0
         if self.weight < self.zeta * (self.w_birth + self.sigma_birth):
-             prob = 0
-        if number >= prob:
+             return False
+        if number <= prob:
             #create a class instance of herbivore at the same position.
             return True
+        return False
 
      def death(self):
         if self.fitness == 0:
