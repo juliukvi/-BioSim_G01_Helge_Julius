@@ -35,7 +35,7 @@ def create_map(geogr)
 
 standard_parameters_jung = {"f_max":800}
 standard_parameters_sav = {"f_max":300, "alpha":0.3}
-parameters_jung = dict(standard_parameters_jung)
+parameters_jung = dict(standard_parameters_jung)#creating copies
 parameters_sav = dict(standard_parameters_sav)
 
 class Nature:
@@ -67,14 +67,14 @@ class Desert(Nature):
 
 
 class Savannah(Nature):
-    def __init__(self, start_fodder):
+    def __init__(self, sav_parameters):
         super().__init__()
+        for key in sav_parameters:
+            setattr(self, key, sav_parameters[key])
         self.color = "White"
-        self.fodder = start_fodder
-        self.animal_list = []
-
-    def fodder_update(self, max_fodder, alpha):
-        self.fodder = self.fodder + alpha * (max_fodder - self.fodder)
+        self.fodder = self.f_max
+    def fodder_update(self):
+        self.fodder = self.fodder + self.alpha * (self.f_max - self.fodder)
 
     def eating_rules(self, f):
         if f <= self.fodder:
@@ -84,13 +84,15 @@ class Savannah(Nature):
 
 
 class Jungle(Nature):
-    def __init__(self, start_fodder):
+    def __init__(self, jung_parameters):
         super().__init__()
+        for key in jung_parameters:
+            setattr(self, key, jung_parameters[key])
         self.color = "Green"
-        self.fodder = start_fodder
+        self.fodder = self.f_max
 
     def fodder_update(self, max_fodder):
-        self.fodder = max_fodder
+        self.fodder = self.f_max
 
     def eating_rules(self, f):
         if f <= self.fodder:
