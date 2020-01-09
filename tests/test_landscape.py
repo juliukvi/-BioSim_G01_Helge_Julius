@@ -3,10 +3,13 @@
 __author__ = 'Helge Helo Klemetsdal'
 __email__ = 'hegkleme@nmbu.no'
 from biosim.landscape import *
+
 def test_ocean():
     O = Ocean()
     assert O.color == "Blue"
     assert O.habitable == False
+    assert self.fodder == 0
+    assert self.
 
 def test_mountain():
     M = Mountain()
@@ -19,6 +22,13 @@ def test_desert():
     assert D.color == "Brown"
     assert D.habitable == True
 
+class TestSavannah:
+
+    def test_attributes(self):
+        S=Savannah()
+        assert self.S.fodder == self.S.f_max
+        assert self.S.alpha == self.S
+    def test_eating_rules(self):
 
 def test_savannah():
     S = Savannah(300)
