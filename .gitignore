@@ -220,3 +220,5 @@ dmypy.json
 .history
 
 # End of https://www.gitignore.io/api/python,pycharm,jupyternotebooks,visualstudiocode
+
+.idea/

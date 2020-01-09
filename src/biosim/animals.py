@@ -61,7 +61,7 @@ class Herb:
     def age(self):
         self.a += 1
 
-    def feeding(self):
+    def feeding(self, ):
         row = self.pos[0]
         col = self.pos[1]
         fodder = maplist[row][col].fodder
