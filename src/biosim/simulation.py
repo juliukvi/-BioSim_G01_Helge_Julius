@@ -3,10 +3,11 @@
 """
 """
 
-__author__ = ""
-__email__ = ""
+__author__ = "Helge Helø Klemetsdal & Adam Julius Olof Kviman"
+__email__ = "hege.helo.klemetsdal@nmbu.no & "
 
-
+from biosim.landscape import *
+from biosim.animals import *
 
 
 class BioSim:
@@ -51,7 +52,12 @@ class BioSim:
         :param species: String, name of animal species
         :param params: Dict with valid parameter specification for species
         """
-
+        if species == "Herbivore":
+             H =Herb()
+             H.set_parameters(params)
+        else:
+            C = Carn()
+            C.set_parameters(params)
     def set_landscape_parameters(self, landscape, params):
         """
         Set parameters for landscape type.
@@ -59,6 +65,12 @@ class BioSim:
         :param landscape: String, code letter for landscape
         :param params: Dict with valid parameter specification for landscape
         """
+        if landscape == "J":
+            J = Jungle()
+            J.set_parameters(params)
+        else:
+            S = Savannah()
+            S.set_parameters(params)
 
     def simulate(self, num_years, vis_years=1, img_years=None):
         """
