@@ -5,7 +5,7 @@ __email__ = 'hegkleme@nmbu.no'
 
 import textwrap
 
-def create_map(geogr)
+def create_map(geogr):
     map_list = []
     map_dict = {"O": Ocean(), "S": Savannah(), "M": Mountain(), "J": Jungle(), "D": Desert()}
     geogr = textwrap.dedent(geogr)
@@ -33,8 +33,8 @@ def create_map(geogr)
     return map_list
 
 
-standard_parameters_jung = {"f_max":800}
-standard_parameters_sav = {"f_max":300, "alpha":0.3}
+standard_parameters_jung = {"f_max" : 800}
+standard_parameters_sav = {"f_max" : 300, "alpha" : 0.3}
 parameters_jung = dict(standard_parameters_jung)#creating copies
 parameters_sav = dict(standard_parameters_sav)
 
@@ -45,34 +45,26 @@ class Nature:
         self.habitable = True
         self.herb_list = []
         self.carn_list = []
-    def set_parameters(self, parameters):
-
-
-
 
 class Ocean(Nature):
     def __init__(self):
         super().__init__()
-        self.color = "Blue"# Not needed
         self.habitable = False
 
 
 class Mountain(Nature):
     def __init__(self):
         super().__init__()
-        self.color = "Grey"# Not needed
         self.habitable = False
 
 
 class Desert(Nature):
     def __init__(self):
         super().__init__()
-        self.color = "Brown"#Not needed
 
 
 class Savannah(Nature):
     standard_parameters = {"f_max": 300, "alpha": 0.3}
-    alpha = 0.3
 
     @classmethod
     def set_parameters(cls, new_params):
@@ -80,8 +72,11 @@ class Savannah(Nature):
             if key not in cls.standard_parameters.keys():
                 raise KeyError(f'Parameter {key} is not in valid')
             cls.standard_parameters.update(new_params)
+
     def __init__(self):
         super().__init__()
+        for key in self.standard_parameters.keys():
+            setattr(self, key, self.standard_parameters[key])
         self.fodder = self.f_max
     def fodder_update(self):
         self.fodder = self.fodder + self.alpha * (self.f_max - self.fodder)
@@ -94,18 +89,21 @@ class Savannah(Nature):
 
 
 class Jungle(Nature):
-    standard_parameters = {"f_max": 300, "alpha": 0.3}
-    for key in standard_parameters.keys():
+    standard_parameters = {"f_max": 800}
+
 
     @classmethod
     def set_parameters(cls, new_params):
         for key in new_params:
             if key not in cls.standard_parameters.keys():
                 raise KeyError(f'Parameter {key} is not in valid')
-            cls.standard_parameters.update(new_params)
+        cls.standard_parameters.update(new_params)
+
     def __init__(self):
+        for key in self.standard_parameters:
+            setattr(self, key, self.standard_parameters[key])
         super().__init__()
-        self.fodder = 0
+        self.fodder = self.f_max
 
     def fodder_update(self, max_fodder):
         self.fodder = self.f_max
@@ -115,8 +113,3 @@ class Jungle(Nature):
             self.fodder -= f
         elif (self.fodder > 0) and (self.fodder < f):
             self.fodder = 0
-    def set_parameters(self, new_param):
-        for key in new_param:
-            if key not in standard_parameters.keys():
-                raise KeyError('Parameter is not valid")
-        standard_parameters.update(new_parameters)
