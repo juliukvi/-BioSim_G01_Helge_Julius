@@ -47,12 +47,22 @@ class Herb:
         "omega": 0.4,
         "F": 10.0,
     }
+    are_params_set = False
+
     @classmethod
     def set_parameters(cls, new_params):
         for key in new_params:
             if key not in cls.standard_parameters.keys():
                 raise KeyError(f'Parameter {key} is not in valid')
         cls.standard_parameters.update(new_params)
+        cls._set_params_as_attributes()
+
+    @classmethod
+    def _set_params_as_attributes(cls):
+        for key in cls.standard_parameters:
+            setattr(cls, key, cls.standard_parameters[key])
+        cls.are_params_set = True
+
     def __init__(self, loc):
         for key in self.standard_parameters:
             setattr(self, key, self.standard_parameters[key])
