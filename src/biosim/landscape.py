@@ -72,9 +72,16 @@ class Savannah(Nature):
         for key in sav_parameters:
             setattr(self, key, sav_parameters[key])
         self.color = "White"
+<<<<<<< Updated upstream
         self.fodder = self.f_max
     def fodder_update(self):
         self.fodder = self.fodder + self.alpha * (self.f_max - self.fodder)
+=======
+        self.fodder = start_fodder
+
+    def fodder_update(self, max_fodder, alpha):
+        self.fodder = self.fodder + alpha * (max_fodder - self.fodder)
+>>>>>>> Stashed changes
 
     def eating_rules(self, f):
         if f <= self.fodder:
