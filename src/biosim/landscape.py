@@ -45,34 +45,50 @@ class Nature:
         self.habitable = True
         self.herb_list = []
         self.carn_list = []
+    def set_parameters(self, parameters):
+
+
+
 
 class Ocean(Nature):
     def __init__(self):
         super().__init__()
-        self.color = "Blue"
+        self.color = "Blue"# Not needed
         self.habitable = False
 
 
 class Mountain(Nature):
     def __init__(self):
         super().__init__()
-        self.color = "Grey"
+        self.color = "Grey"# Not needed
         self.habitable = False
 
 
 class Desert(Nature):
     def __init__(self):
         super().__init__()
-        self.color = "Brown"
+        self.color = "Brown"#Not needed
 
 
 class Savannah(Nature):
-    def __init__(self, sav_parameters):
+    standard_parameters = {"f_max": 300, "alpha": 0.3}
+    alpha = 0.3
+
+    @classmethod
+    def set_parameters(cls, new_params):
+        for key in new_params:
+            if key not in cls.standard_parameters.keys():
+                raise KeyError(f'Parameter {key} is not in valid')
+            cls.standard_parameters.update(new_params)
+    def __init__(self):
         super().__init__()
+<<<<<<< HEAD
         for key in sav_parameters:
             setattr(self, key, sav_parameters[key])
         self.color = "White"
 <<<<<<< Updated upstream
+=======
+>>>>>>> master
         self.fodder = self.f_max
     def fodder_update(self):
         self.fodder = self.fodder + self.alpha * (self.f_max - self.fodder)
@@ -91,12 +107,18 @@ class Savannah(Nature):
 
 
 class Jungle(Nature):
-    def __init__(self, jung_parameters):
+    standard_parameters = {"f_max": 300, "alpha": 0.3}
+    for key in standard_parameters.keys():
+
+    @classmethod
+    def set_parameters(cls, new_params):
+        for key in new_params:
+            if key not in cls.standard_parameters.keys():
+                raise KeyError(f'Parameter {key} is not in valid')
+            cls.standard_parameters.update(new_params)
+    def __init__(self):
         super().__init__()
-        for key in jung_parameters:
-            setattr(self, key, jung_parameters[key])
-        self.color = "Green"
-        self.fodder = self.f_max
+        self.fodder = 0
 
     def fodder_update(self, max_fodder):
         self.fodder = self.f_max
@@ -106,3 +128,8 @@ class Jungle(Nature):
             self.fodder -= f
         elif (self.fodder > 0) and (self.fodder < f):
             self.fodder = 0
+    def set_parameters(self, new_param):
+        for key in new_param:
+            if key not in standard_parameters.keys():
+                raise KeyError('Parameter is not valid")
+        standard_parameters.update(new_parameters)
