@@ -5,23 +5,6 @@ __email__ = 'hegkleme@nmbu.no, juliukvi@nmbu.no'
 import math as m
 import random
 import numpy as np
-standard_parameters_herb = {
-    "w_birth" : 8.0,
-    "sigma_birth" : 1.5,
-    "beta" : 0.9,
-    "eta" : 0.05,
-    "a_half" : 40.0,
-    "phi_age" : 0.2,
-    "w_half" : 10.0,
-    "phi_weight" : 0.1,
-    "mu" : 0.25,
-    "lambda" : 1.0,
-    "gamma" : 0.2,
-    "zeta" : 3.5,
-    "xi" : 1.2,
-    "omega" : 0.4,
-    "F" : 10.0,
-}
 standard_parameters_carn = {
     "w_birth" : 6.0,
     "sigma_birth" : 1.0,
@@ -47,13 +30,36 @@ parameters_carn = dict(standard_parameters_carn)
 
 
 class Herb:
-    def __init__(self, parameters_herb, loc):
-        for key in parameters_herb:
-            setattr(self, key, parameters_herb[key])
+    standard_parameters = {
+        "w_birth": 8.0,
+        "sigma_birth": 1.5,
+        "beta": 0.9,
+        "eta": 0.05,
+        "a_half": 40.0,
+        "phi_age": 0.2,
+        "w_half": 10.0,
+        "phi_weight": 0.1,
+        "mu": 0.25,
+        "lambda": 1.0,
+        "gamma": 0.2,
+        "zeta": 3.5,
+        "xi": 1.2,
+        "omega": 0.4,
+        "F": 10.0,
+    }
+    @classmethod
+    def set_parameters(cls, new_params):
+        for key in new_params:
+            if key not in cls.standard_parameters.keys():
+                raise KeyError(f'Parameter {key} is not in valid')
+        cls.standard_parameters.update(new_params)
+    def __init__(self, loc):
+        for key in self.standard_parameters:
+            setattr(self, key, self.standard_parameters[key])
         self.fitness = 0
         self.w = np.random.normal(self.w_birth, self.sigma_birth)
         self.a = 0
-        self.loc = loc
+        self.pos = loc
         self.row = self.pos[0]
         self.col = self.pos[1]
         #self.pos_list = maplist[self.row][self.col].herb_list
