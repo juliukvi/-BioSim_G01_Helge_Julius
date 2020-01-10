@@ -44,6 +44,8 @@ class BioSim:
         where img_no are consecutive image numbers starting from 0.
         img_base should contain a path and beginning of a file name.
         """
+        self.map_list = create_map(island_map)
+        self.year_sim = 0
 
     def set_animal_parameters(self, species, params):
         """
@@ -82,7 +84,24 @@ class BioSim:
 
         Image files will be numbered consecutively.
         """
-         
+        while self.year_sim < self.year_sim + num_years:
+            for row in self.map_list:
+                for nature_square in row:
+                    nature_square.feed_all_animals()
+            for row in self.map_list:
+                for nature_square in row:
+                    nature_square.birth_all_animals()
+            for row in self.map_list:
+                for nature_square in row:
+                    nature_square.aging_all_animals()
+            for row in self.map_list:
+                for nature_square in row:
+                    nature_square.weightloss_all_animals()
+            for row in self.map_list:
+                for nature_square in row:
+                    nature_square.death_all_animals()
+            self.year_sim += 1
+
     def add_population(self, population):
         """
         Add a population to the island
@@ -93,7 +112,7 @@ class BioSim:
             square_location = square_pop["loc"]
             row = square_location[0]
             column = square_location[1]
-            nature_square = map_list[row][column]
+            nature_square = self.map_list[row][column]
             animal_pop = square_pop["pop"]
             for animal in animal_pop:
                 if animal["species"] == "Carnivore":
