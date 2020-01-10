@@ -5,24 +5,26 @@ __email__ = 'hegkleme@nmbu.no, juliukvi@nmbu.no'
 import math as m
 import random
 import numpy as np
+
 standard_parameters_carn = {
-    "w_birth" : 6.0,
-    "sigma_birth" : 1.0,
-    "beta" : 0.75,
-    "eta" : 0.125,
-    "a_half" : 60.0,
-    "phi_age" : 0.4,
-    "w_half" : 4.0,
-    "phi_weight" : 0.4,
-    "mu" : 0.4,
-    "lambda" : 1.0,
-    "gamma" : 0.8,
-    "zeta" : 3.5,
-    "xi" : 1.1,
-    "omega" : 0.9,
-    "F" : 50.0,
-    "DeltaPhiMax" : 10.0
+    "w_birth": 6.0,
+    "sigma_birth": 1.0,
+    "beta": 0.75,
+    "eta": 0.125,
+    "a_half": 60.0,
+    "phi_age": 0.4,
+    "w_half": 4.0,
+    "phi_weight": 0.4,
+    "mu": 0.4,
+    "lambda": 1.0,
+    "gamma": 0.8,
+    "zeta": 3.5,
+    "xi": 1.1,
+    "omega": 0.9,
+    "F": 50.0,
+    "DeltaPhiMax": 10.0
 }
+
 
 class Herb:
     standard_parameters = {
@@ -58,57 +60,48 @@ class Herb:
             setattr(cls, key, cls.standard_parameters[key])
         cls.are_params_set = True
 
-    def __init__(self, loc):
+    def __init__(self):
         if not self.are_params_set:
             self._set_params_as_attributes()
-        self.w = np.random.normal(self.w_birth, self.sigma_birth)
+        self.weight = np.random.normal(self.w_birth, self.sigma_birth)
         self.a = 0
-        self.pos = loc
-        self.row = self.pos[0]
-        self.col = self.pos[1]
         self.fitness = self.fitness_update()
 
     def age(self):
         self.a += 1
 
     def feeding(self, fodder):
-        if fodder > F:
-            self.weight += self.beta * F
-            return F
-        elif (fodder > 0) and (fodder < f):
+        if fodder > self.F:
+            self.weight += self.beta * self.F
+            return self.F
+        elif (fodder > 0) and (fodder < self.F):
             self.weight += self.beta * fodder
-            return fodder  # returnerer tallet den har spist som kan legges inn
-            # i eating_rules for å fjerne fodder fra ruten i simulasjonen.
+            return fodder
 
     def fitness_update(self):
         if self.weight <= 0:
             self.fitness = 0
         else:
-            self.fitness = 1 / (1 + m.exp(
-                self.phi_age * (self.a - self.a_half))) * 1 / (1 + m.exp(
-                -self.phi_age(self.w - self.w_half)))
+            self.fitness = 1 / (1 + m.exp(self.phi_age * (self.a - self.a_half)))* 1 / (1 + m.exp(-self.phi_age*(self.weight - self.w_half)))
 
     def birth(self, num_herb):
         prob = min(1, self.gamma * self.fitness * (num_herb - 1))
         number = random.random
         if self.weight < self.zeta * (self.w_birth + self.sigma_birth):
-             return False
+            return False
         if number <= prob:
-            #create a class instance of herbivore at the same position.
             return True
         return False
 
     def weightloss(self):
-        self.w =- self.eta*self.w
+        self.weight =- self.eta*self.weight
 
-     def death(self):
+    def death(self):
         if self.fitness == 0:
-            #pos_list.pop(pos_list.index(self))
             return True
         prob = self.omega * (1 - self.fitness)
         number = random.random
         if number > prob:
-            #pos_list.pop(pos_list.index(self))
             return True
         else:
             return False
