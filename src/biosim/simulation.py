@@ -46,6 +46,7 @@ class BioSim:
         """
         self.map_list = create_map(island_map)
         self.year_sim = 0
+        self.add_population(ini_pop)
 
     def set_animal_parameters(self, species, params):
         """
@@ -113,6 +114,8 @@ class BioSim:
             row = square_location[0]
             column = square_location[1]
             nature_square = self.map_list[row][column]
+            if isinstance(nature_square, Ocean) or isinstance(nature_square, Mountain):
+                raise ValueError
             animal_pop = square_pop["pop"]
             for animal in animal_pop:
                 if animal["species"] == "Carnivore":
