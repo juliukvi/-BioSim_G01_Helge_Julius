@@ -78,7 +78,8 @@ class Herb:
         elif (fodder > 0) and (fodder < self.F):
             self.weight += self.beta * fodder
             return fodder
-
+        if fodder < 0:
+            raise ValueError("Cannot have negative foddervalue")
     def fitness_update(self):
         if self.weight <= 0:
             self.fitness = 0

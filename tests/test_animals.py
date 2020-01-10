@@ -33,8 +33,45 @@ def test_set_attributes_herb():
 def test_init_function():
     H = Herb()
     assert H.a == 0
-    assert H.weight>0
-    assert H.fitness > 0
+    assert H.weight > 0
+    assert H.fitness != 0
     assert H.fitness < 1
+
+def test_age_function():
+    H= Herb()
+    H.age()
+    assert H.a == 1
+    for _ in range(10):
+        H.age()
+    assert H.a == 11
+
+def test_feeding():
+    H = Herb()
+    H.weight = 3
+    a = H.feeding(300)
+    #Checking that weight gets updated
+    assert H.weight == 3 + H.beta*H.F
+    #Checking that we have the correct return foddervalue
+    assert a == H.F
+    H.weight = 3
+    a = H.feeding(5)
+    assert H.weight == 3 +H.beta*5
+    assert a == 5
+    #Testing that negative fodder value gives error
+    with pytest.raises(ValueError):
+        H.feeding(-5)
+
+def test_fitness_update():
+    H = Herb()
+    H.weight = -3
+    H.fitness_update()
+    assert H.fitness == 0
+    H.weight = 1
+    H.fitness_update()
+    assert self.
+
+
+
+
 
 
