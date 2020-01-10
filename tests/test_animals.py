@@ -68,7 +68,7 @@ def test_fitness_update():
     assert H.fitness == 0
     H.weight = 1
     H.fitness_update()
-    #Får feil i pytest på tredje run.
+    #feil her.
     assert H.fitness == 1 / (1 + m.exp(0.2 * (0 - 40)))* 1 / (1 + m.exp(-0.2*(1 - 10)))
 
 
@@ -76,6 +76,7 @@ def test_will_birth():
     H = Herb()
     H.weight = 1
     boolean_return = H.will_birth(10)
+    # se mer på denne.
     assert boolean_return is False
     H = Herb()
     H.weight = H.zeta * (H.w_birth + H.sigma_birth)
@@ -84,11 +85,34 @@ def test_will_birth():
     assert boolean_return is True
 
 
-def
+def test_birth():
+    H = Herb()
+    assert isinstance(H.birth(), Herb)
 
 
+def test_weightloss():
+    H = Herb()
+    H.weight = 1
+    H.weightloss()
+    assert H.weight == 1 - H.eta*1
 
-
+def test_death():
+    H = Herb()
+    H.fitness = 0
+    assert H.death() is True
+    H = Herb()
+    #Appointing a value that gives a probability higher than 1.
+    H.omega = 300
+    assert H.death() is True
+    #Appointing a value that gives a probability = 0
+    H = Herb()
+    H.fitness= 1
+    assert H.death() is False
+    # Appointing a value that gives a probability = 1
+    H = Herb()
+    H.fitness = 0.5
+    H.omega = 2
+    assert H.death() is True
 
 
 

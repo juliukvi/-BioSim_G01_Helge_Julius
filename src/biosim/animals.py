@@ -99,14 +99,14 @@ class Herb:
         return Herb()
 
     def weightloss(self):
-        self.weight =- self.eta*self.weight
+        self.weight -= self.eta*self.weight
 
     def death(self):
         if self.fitness == 0:
             return True
         prob = self.omega * (1 - self.fitness)
         number = random.uniform(0, 1)
-        if number > prob:
+        if number <= prob:
             return True
         else:
             return False
