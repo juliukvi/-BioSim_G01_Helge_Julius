@@ -85,15 +85,18 @@ class Herb:
             self.fitness = 0
         else:
             self.fitness = 1 / (1 + m.exp(self.phi_age * (self.a - self.a_half)))* 1 / (1 + m.exp(-self.phi_age*(self.weight - self.w_half)))
-
-    def birth(self, num_herb):
+    def will_birth(self, num_herb):
         prob = min(1, self.gamma * self.fitness * (num_herb - 1))
-        number = random.random
+        number = random.uniform(0, 1)
         if self.weight < self.zeta * (self.w_birth + self.sigma_birth):
             return False
         if number <= prob:
             return True
-        return False
+        else:
+            return False
+
+    def birth(self):
+        return Herb()
 
     def weightloss(self):
         self.weight =- self.eta*self.weight
@@ -102,7 +105,7 @@ class Herb:
         if self.fitness == 0:
             return True
         prob = self.omega * (1 - self.fitness)
-        number = random.random
+        number = random.uniform(0, 1)
         if number > prob:
             return True
         else:
