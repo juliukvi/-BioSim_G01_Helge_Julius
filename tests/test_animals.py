@@ -48,15 +48,15 @@ def test_age_function():
 def test_feeding():
     H = Herb()
     H.weight = 3
-    a = H.feeding(300)
+    return_fodder = H.feeding(300)
     #Checking that weight gets updated
     assert H.weight == 3 + H.beta*H.F
     #Checking that we have the correct return foddervalue
-    assert a == H.F
+    assert return_fodder == H.F
     H.weight = 3
-    a = H.feeding(5)
+    return_fodder = H.feeding(5)
     assert H.weight == 3 +H.beta*5
-    assert a == 5
+    assert return_fodder == 5
     #Testing that negative fodder value gives error
     with pytest.raises(ValueError):
         H.feeding(-5)
@@ -66,13 +66,21 @@ def test_fitness_update():
     H.weight = -3
     H.fitness_update()
     assert H.fitness == 0
+    H = Herb()
     H.weight = 1
     H.fitness_update()
     assert H.fitness == 1 / (1 + m.exp(0.2 * (0 - 40)))* 1 / (1 + m.exp(-0.2*(1 - 10)))
 
-def test_birth():
+def test_will_birth():
     H = Herb()
-    H.birth(10)
+    H.weight = 1
+    boolean_return = H.will_birth(10)
+    assert boolean_return == False
+    H = Herb()
+    H.weight = H.zeta * (H.w_birth + H.sigma_birth)
+    boolean_return = H.will_birth(10000)
+    assert boolean_return == True
+
 
 
 
