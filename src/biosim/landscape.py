@@ -12,24 +12,24 @@ def create_map(geogr):
     geogr = textwrap.dedent(geogr)
     for line in geogr.splitlines():
         placeholder_list = []
-        for j in line:
+        for nature_square in line:
             try:
-                placeholder_list.append(map_dict[j]())
+                placeholder_list.append(map_dict[nature_square]())
             except KeyError:
                 raise ValueError
         map_list.append(placeholder_list)
 
-    for i in map_list[0]:
-        if not i.color == "blue":
+    for nature_square in map_list[0]:
+        if not isinstance(nature_square, Ocean):
             raise ValueError
-    for i in map_list[len(map_list)-1]:
-        if not i.color == "blue":
+    for nature_square in map_list[len(map_list)-1]:
+        if not isinstance(nature_square, Ocean):
             raise ValueError
-    for i in range(len(map_list)):
-        if not map_list[i][0].color == "blue":
+    for nature_square in range(len(map_list)):
+        if not isinstance(map_list[nature_square][0], Ocean):
             raise ValueError
-    for i in range(len(map_list)):
-        if not map_list[i][len(map_list[0])-1].color == "blue":
+    for nature_square in range(len(map_list)):
+        if not isinstance(map_list[nature_square][len(map_list[0])-1], Ocean):
             raise ValueError
     return map_list
 
