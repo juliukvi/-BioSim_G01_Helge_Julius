@@ -88,7 +88,7 @@ class Desert(Nature):
 
 class Savannah(Nature):
     standard_parameters = {"f_max": 300, "alpha": 0.3}
-
+    are_params_set = False
     @classmethod
     def set_parameters(cls, new_params):
         for key in new_params:
