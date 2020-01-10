@@ -52,8 +52,8 @@ class Nature:
     def birth_all_animals(self):
         if self.herb_list >= 2:
             for animal in self.herb_list:
-                if animal.birth(len(self.herb_list)):
-                    self.herb_list.append(Herb())
+                if animal.will_birth(len(self.herb_list)):
+                    self.herb_list.append(animal.birth())
 
     def aging_all_animals(self):
         for animal in self.herb_list:
