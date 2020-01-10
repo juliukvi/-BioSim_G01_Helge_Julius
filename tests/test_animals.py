@@ -68,7 +68,11 @@ def test_fitness_update():
     assert H.fitness == 0
     H.weight = 1
     H.fitness_update()
-    assert self.
+    assert H.fitness == 1 / (1 + m.exp(0.2 * (0 - 40)))* 1 / (1 + m.exp(-0.2*(1 - 10)))
+
+def test_birth():
+    H = Herb()
+    H.birth(10)
 
 
 
