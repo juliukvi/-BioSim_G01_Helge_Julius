@@ -82,14 +82,37 @@ class BioSim:
 
         Image files will be numbered consecutively.
         """
-
+         
     def add_population(self, population):
         """
         Add a population to the island
 
         :param population: List of dictionaries specifying population
         """
-        for
+        for square_pop in population:
+            square_location = square_pop["loc"]
+            row = square_location[0]
+            column = square_location[1]
+            nature_square = map_list[row][column]
+            animal_pop = square_pop["pop"]
+            for animal in animal_pop:
+                if animal["species"] == "Carnivore":
+                    animal_object = Carn()
+                    animal_object.a = animal["age"]
+                    animal_object.w = animal["weight"]
+                    animal_object.fitness_update()
+                    nature_square.carn_list.append(animal_object)
+
+                elif animal["species"] == "Herbivore":
+                    animal_object = Herb()
+                    animal_object.a = animal["age"]
+                    animal_object.w = animal["weight"]
+                    animal_object.fitness_update()
+                    nature_square.herb_list.append(animal_object)
+                else:
+                    raise ValueError
+
+
 
     @property
     def year(self):

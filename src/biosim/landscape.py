@@ -94,30 +94,30 @@ class Savannah(Nature):
         for key in new_params:
             if key not in cls.standard_parameters.keys():
                 raise KeyError(f'Parameter {key} is not in valid')
-            cls.standard_parameters.update(new_params)
+        cls.standard_parameters.update(new_params)
+        cls._set_params_as_attributes()
+
+    @classmethod
+    def _set_params_as_attributes(cls):
+        for key in cls.standard_parameters:
+            setattr(cls, key, cls.standard_parameters[key])
+        cls.are_params_set = True
 
     def __init__(self):
         super().__init__()
-        for key in self.standard_parameters.keys():
-            setattr(self, key, self.standard_parameters[key])
+        if not self.are_params_set:
+            self._set_params_as_attributes()
         self.fodder = self.f_max
+
     def fodder_update(self):
         self.fodder = self.fodder + self.alpha * (self.f_max - self.fodder)
-        self.fodder = start_fodder
 
-    def fodder_update(self, max_fodder, alpha):
-        self.fodder = self.fodder + alpha * (max_fodder - self.fodder)
 
-    def eating_rules(self, f):
-        if f <= self.fodder:
-            self.fodder -= f
-        elif (self.fodder > 0) and (self.fodder < f):
-            self.fodder = 0
 
 
 class Jungle(Nature):
     standard_parameters = {"f_max": 800}
-
+    are_params_set = False
 
     @classmethod
     def set_parameters(cls, new_params):
@@ -125,18 +125,20 @@ class Jungle(Nature):
             if key not in cls.standard_parameters.keys():
                 raise KeyError(f'Parameter {key} is not in valid')
         cls.standard_parameters.update(new_params)
+        cls._set_params_as_attributes()
+
+    @classmethod
+    def _set_params_as_attributes(cls):
+        for key in cls.standard_parameters:
+            setattr(cls, key, cls.standard_parameters[key])
+        cls.are_params_set = True
 
     def __init__(self):
-        for key in self.standard_parameters:
-            setattr(self, key, self.standard_parameters[key])
+        if not self.are_params_set:
+            self._set_params_as_attributes()
         super().__init__()
         self.fodder = self.f_max
 
     def fodder_update(self):
         self.fodder = self.f_max
 
-    def eating_rules(self, f):
-        if f <= self.fodder:
-            self.fodder -= f
-        elif (self.fodder > 0) and (self.fodder < f):
-            self.fodder = 0
