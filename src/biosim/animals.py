@@ -65,7 +65,8 @@ class Herb:
             self._set_params_as_attributes()
         self.weight = np.random.normal(self.w_birth, self.sigma_birth)
         self.a = 0
-        self.fitness = self.fitness_update()
+        self.fitness = 0
+        self.fitness_update()
 
     def age(self):
         self.a += 1
