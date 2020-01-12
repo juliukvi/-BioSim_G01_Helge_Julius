@@ -8,6 +8,13 @@ __email__ = "hege.helo.klemetsdal@nmbu.no & "
 
 from biosim.landscape import *
 from biosim.animals import *
+from biosim.animals import *
+import pandas as pd
+import numpy as np
+import subprocess
+import matplotlib.pyplot as plt
+import pandas as pd
+import textwrap
 
 
 class BioSim:
@@ -44,8 +51,11 @@ class BioSim:
         where img_no are consecutive image numbers starting from 0.
         img_base should contain a path and beginning of a file name.
         """
-        self.map_list = create_map(island_map)
-        self.year_sim = 0
+        random.seed(seed)
+        island_map = textwrap.dedent(island_map)
+        self.island = Island(island_map, ini_pop=ini_pop)
+        self._year = 0
+        self.image_counter = 0
 
     def set_animal_parameters(self, species, params):
         """
@@ -105,51 +115,29 @@ class BioSim:
             self.year_sim += 1
 
     def add_population(self, population):
-        """
-        Add a population to the island
-
-        :param population: List of dictionaries specifying population
-        """
-        for square_pop in population:
-            square_location = square_pop["loc"]
-            row = square_location[0]
-            column = square_location[1]
-            nature_square = self.map_list[row][column]
-            animal_pop = square_pop["pop"]
-            for animal in animal_pop:
-                if animal["species"] == "Carnivore":
-                    animal_object = Carn()
-                    animal_object.a = animal["age"]
-                    animal_object.w = animal["weight"]
-                    animal_object.fitness_update()
-                    nature_square.carn_list.append(animal_object)
-
-                elif animal["species"] == "Herbivore":
-                    animal_object = Herb()
-                    animal_object.a = animal["age"]
-                    animal_object.w = animal["weight"]
-                    animal_object.fitness_update()
-                    nature_square.herb_list.append(animal_object)
-                else:
-                    raise ValueError
-
+        self.island.add_population(population)
 
 
     @property
     def year(self):
         """Last year simulated."""
+        return self._year
+
 
     @property
     def num_animals(self):
         """Total number of animals on island."""
+        return self.island.count_animals()[2]
 
     @property
     def num_animals_per_species(self):
         """Number of animals per species in island, as dictionary."""
+        herbivore_count, carnivore_count = self.island.count_animals()[:2]
 
     @property
     def animal_distribution(self):
         """Pandas DataFrame with animal count per species for each cell on island."""
+
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
