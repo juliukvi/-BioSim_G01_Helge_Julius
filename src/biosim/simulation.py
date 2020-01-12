@@ -137,7 +137,8 @@ class BioSim:
     @property
     def animal_distribution(self):
         """Pandas DataFrame with animal count per species for each cell on island."""
-
-
+        animal_count_list = self.island.animals_on_square()
+        pd_data = pd.DataFrame(data=animal_count_list, columns=['Row', 'Col', 'Herbivore', 'Carnivore'])
+        return pd_data
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""

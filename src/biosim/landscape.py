@@ -60,6 +60,9 @@ class Nature:
         self.herb_list = [
             animal for animal in self.herb_list if not animal.death()
         ]
+        self.carn_list = [
+            animal for animal in self.carn_list if not animal.death()
+        ]
 
     def herbivore_number(self):
         return len(self.herb_list)
