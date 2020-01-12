@@ -79,12 +79,14 @@ class Herb:
             self.weight += self.beta * fodder
             return fodder
         if fodder < 0:
-            raise ValueError("Cannot have negative foddervalue")
+            raise ValueError("Cannot have negative fodder value")
+        
     def fitness_update(self):
         if self.weight <= 0:
             self.fitness = 0
         else:
             self.fitness = 1 / (1 + m.exp(self.phi_age * (self.a - self.a_half)))* 1 / (1 + m.exp(-self.phi_age*(self.weight - self.w_half)))
+
     def will_birth(self, num_herb):
         prob = min(1, self.gamma * self.fitness * (num_herb - 1))
         number = random.uniform(0, 1)
@@ -95,7 +97,8 @@ class Herb:
         else:
             return False
 
-    def birth(self):
+    @staticmethod
+    def birth():
         return Herb()
 
     def weightloss(self):
