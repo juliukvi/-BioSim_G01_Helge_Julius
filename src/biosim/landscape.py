@@ -10,18 +10,20 @@ from biosim.animals import Herb
 
 class Nature:
     def __init__(self):
-        self.color = None
         self.fodder = 0
         self.habitable = True
         self.herb_list = []
         self.carn_list = []
 
     def feed_all_animals(self):
-        self.fodder = self.fodder_update()
         self.herb_list.sort(key=lambda x: x.fitness, reverse=True)
         for animal in self.herb_list:
             if self.fodder > 0:
                 self.fodder -= animal.feeding(self.fodder)
+        self.carn_list.sort(key=lambda x: x.fitness, reverse=True)
+        for animal in self.carn_list
+            animal.feeding(self.herb_list)
+
 
     def birth_all_animals(self):
         if self.herb_list >= 2:
@@ -32,16 +34,32 @@ class Nature:
     def aging_all_animals(self):
         for animal in self.herb_list:
             animal.age()
+            animal.fitness_update()
+        for animal in self.carn_list:
+            animal.age()
+            animal.fitness_update()
+
+    def fodder_update(self):
+        pass
 
     def weightloss_all_animals(self):
         for animal in self.herb_list:
             animal.weightloss()
+            animal.fitness_update()
+        for animal in self.carn_list:
+            animal.weightloss()
+            animal.fitness_update()
 
     def death_all_animals(self):
         self.herb_list = [
             animal for animal in self.herb_list if not animal.death()
         ]
 
+    def herbivore_number(self):
+        return len(self.herb_list)
+
+    def carnivore_number(self):
+        return len(self.carn_list)
 
 class Ocean(Nature):
     def __init__(self):
@@ -63,6 +81,7 @@ class Desert(Nature):
 class Savannah(Nature):
     standard_parameters = {"f_max": 300, "alpha": 0.3}
     are_params_set = False
+
     @classmethod
     def set_parameters(cls, new_params):
         for key in new_params:
@@ -78,9 +97,9 @@ class Savannah(Nature):
         cls.are_params_set = True
 
     def __init__(self):
-        super().__init__()
         if not self.are_params_set:
             self._set_params_as_attributes()
+        super().__init__()
         self.fodder = self.f_max
 
     def fodder_update(self):
@@ -115,4 +134,5 @@ class Jungle(Nature):
 
     def fodder_update(self):
         self.fodder = self.f_max
+
 
