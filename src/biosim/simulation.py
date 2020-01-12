@@ -133,7 +133,8 @@ class BioSim:
     def num_animals_per_species(self):
         """Number of animals per species in island, as dictionary."""
         herbivore_count, carnivore_count = self.island.count_animals()[:2]
-
+        num_animals_dict = {"Herbivore":herbivore_count, "Carnivore":carnivore_count}
+        return num_animals_dict
     @property
     def animal_distribution(self):
         """Pandas DataFrame with animal count per species for each cell on island."""
