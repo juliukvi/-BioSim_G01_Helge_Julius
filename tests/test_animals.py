@@ -23,9 +23,11 @@ def test_set_parameters_herb():
     H.set_parameters({"zeta": 4, "F":15.0})
     assert H.standard_parameters["zeta"] ==4
     assert H.standard_parameters["F"] == 15.0
+
+
 def test_set_attributes_herb():
     H = Herb()
-    assert H.are_params_set == True
+    assert H.are_params_set is True
     H.set_parameters({"w_half": 5})
     assert H.w_half == 5
     #Testing if other parameters stays unchanged.
@@ -82,23 +84,25 @@ def test_feeding():
     with pytest.raises(ValueError):
         H.feeding(-5)
 
+
 def test_fitness_update(mocker):
     H = Herb()
-    #Getting wrong return value from mocker patch?
-    mocker.patch('numpy.random.normal', return_value=1)
-    assert H.weight == -3
+    # Getting wrong return value from mocker patch?
+    # mocker.patch('numpy.random.normal', return_value=1)
+    H.weight = -3
     H.fitness_update()
     assert H.fitness == 0
     H = Herb()
-    mocker.patch('numpy.random.normal', return_value=1)
+    H.weight = 1
+    #mocker.patch('numpy.random.normal', return_value=1)
     H.fitness_update()
-    #feil her.
-    assert H.fitness == 1 / (1 + m.exp(0.2 * (0 - 40)))* 1 / (1 + m.exp(-0.2*(1 - 10)))
+    # feil her?
+    assert H.fitness == 1 / (1 + m.exp(0.2 * (0 - 40))) * 1 / (1 + m.exp(-0.2*(1 - 10)))
 
 
 def test_will_birth():
     H = Herb()
-    #Bruke mocker her også?
+    # Bruke mocker her også?
     H.weight = 1
     return_value = H.will_birth(10)
     assert return_value is False
@@ -116,6 +120,7 @@ def test_birth():
 
 def test_weightloss():
     H = Herb()
+    # Mocker here aswell?
     H.weight = 1
     H.weightloss()
     assert H.weight == 1 - H.eta*1
@@ -130,7 +135,5 @@ def test_death(mocker):
     H = Herb()
     mocker.patch('random.uniform', return_value=0)
     assert H.death() is True
-    # Should i have a statistical test here? Dont know the distribution.
-
-
-
+    # Should i have a statistical test here? Dont know the distribution of the
+    # probability function.
