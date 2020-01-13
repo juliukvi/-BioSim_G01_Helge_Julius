@@ -46,7 +46,7 @@ def test_weight_probability_distribution():
     #should i seed here?
     #Should i use X^2 test?
     #Using D.agostinos K^2 test which is accessed from the normaltest in scipy
-    n_trials = 100
+    n_trials = 1000
     weight_data = []
     for _ in range(n_trials):
         H = Herb()
