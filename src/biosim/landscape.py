@@ -15,6 +15,8 @@ class Nature:
         self.habitable = True
         self.herb_list = []
         self.carn_list = []
+        self.num_herb = self.herbivore_number()
+        self.num_carn = self.carnivore_number()
 
     def feed_all_animals(self):
         self.herb_list.sort(key=lambda x: x.fitness, reverse=True)
@@ -27,17 +29,15 @@ class Nature:
 
 
     def birth_all_animals(self):
-        if len(self.herb_list) >= 2:
-            num_animal = len(self.herb_list)
+        if self.num_herb >= 2:
             for animal in self.herb_list:
-                newborn = animal.will_birth(num_animal)
-                if animal.will_birth(num_animal):
+                newborn = animal.will_birth(self.num_herb)
+                if animal.will_birth(self.num_herb):
                     self.herb_list.append(animal.birth())
-        if len(self.carn_list) >= 2:
-            num_animal = len(self.carn_list)
+        if self.num_carn >= 2:
             for animal in self.carn_list:
-                if animal.will_birth(num_animal):
-                    self.carn_list.append(animal.birth())
+                if animal.will_birth(self.num_carn) is not None:
+                    self.carn_list.append(animal.will_birth())
 
     def migrate_all_animals(self, neighbors):
         for animal in self.herb_list:
@@ -140,6 +140,7 @@ class Nature:
                     self.carn_list.remove(animal)
 
 
+
     def aging_all_animals(self):
         for animal in self.herb_list:
             animal.age()
@@ -202,7 +203,7 @@ class Savannah(Nature):
             if isinstance(new_params[key], int) or isinstance(new_params[key], float):
                 continue
             else:
-                raise ValueError('Value needs to be int or float, got' + str(type(new_params[key])))
+                raise ValueError(f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
         cls.standard_parameters.update(new_params)
         cls._set_params_as_attributes()
 
@@ -236,7 +237,7 @@ class Jungle(Nature):
             if isinstance(new_params[key], int) or isinstance(new_params[key], float):
                 continue
             else:
-                raise ValueError('Value needs to be int or float, got' + str(type(new_params[key])))
+                raise ValueError(f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
         cls.standard_parameters.update(new_params)
         cls._set_params_as_attributes()
 
