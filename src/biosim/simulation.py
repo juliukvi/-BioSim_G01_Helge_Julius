@@ -56,11 +56,13 @@ class BioSim:
         :param params: Dict with valid parameter specification for species
         """
         if species == "Herbivore":
-             H =Herb()
-             H.set_parameters(params)
-        else:
+            H = Herb()
+            H.set_parameters(params)
+        elif species == "Carnivore":
             C = Carn()
             C.set_parameters(params)
+        else:
+            raise ValueError(f'Got non existing species {species} ')
     def set_landscape_parameters(self, landscape, params):
         """
         Set parameters for landscape type.
