@@ -5,7 +5,7 @@ __email__ = 'hegkleme@nmbu.no'
 
 import textwrap
 from biosim.animals import Herb
-
+import math as m
 
 
 class Nature:
@@ -36,6 +36,45 @@ class Nature:
             for animal in self.carn_list:
                 if animal.will_birth(num_animal):
                     self.carn_list.append(animal.birth())
+
+    def migrate_all_animals(self, neighbors):
+        # NEED TO BE ABLE TO ACCES animal.lambda its protected
+        for animal in self.herb_list:
+            if animal.migrate():
+                north_nature_square = neighbors[0]
+                east_nature_square = neighbors[1]
+                south_nature_square = neighbors[2]
+                west_nature_square = neighbors[3]
+                north_relative_abundance = (north_nature_square.fodder)/((len(north_nature_square.herb_list)+1)*animal.F)
+                east_relative_abundance =  (east_nature_square.fodder)/((len(east_nature_square.herb_list)+1)*animal.F)
+                south_relative_abundance = (south_nature_square.fodder)/((len(south_nature_square.herb_list)+1)*animal.F)
+                west_relative_abundance = (west_nature_square.fodder)/((len(west_nature_square.herb_list)+1)*animal.F)
+                if north_nature_square.habitable:
+                    north_propensity = m.exp(animal.lambda*north_relative_abundance)
+                else:
+                    north_propensity = 0
+                if east_nature_square.habitable:
+                    east_propensity = m.exp(animal.lambda*east_relative_abundance)
+                else:
+                    east_propensity = 0
+                if south_nature_square.habitable:
+                    south_propensity = m.exp(animal.lambda*south_relative_abundance)
+                else:
+                    south_propensity = 0
+                if west_nature_square.habitable:
+                    west_propensity = m.exp(animal.lambda*west_relative_abundance)
+                else:
+                    west_propensity = 0
+                total_propensity = (north_propensity+east_propensity+south_propensity+west_propensity)
+                north_move_prob = north_propensity/total_propensity
+                east_move_prob = east_propensity/total_propensity
+                
+
+
+
+
+
+
 
     def aging_all_animals(self):
         for animal in self.herb_list:

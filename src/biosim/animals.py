@@ -12,7 +12,7 @@ class Animal:
         self.fitness = 0
         if age < 0:
             raise ValueError("animal age cant be below 0")
-        if weight <= 0:
+        if weight and weight <= 0:
             raise ValueError("animal weight cant be less than or equal to 0")
         self.a = age
         self.weight = weight
@@ -33,6 +33,9 @@ class Animal:
             q_weight = 1 / (1 + m.exp(-self.phi_age*(self.weight - self.w_half)))
             self.fitness =  q_age*q_weight
 
+    def migrate(self):
+        number = random.uniform(0, 1)
+        return number < (self.mu * self.fitness)
 
     def will_birth(self, num_animal):
         prob = min(1, self.gamma * self.fitness * (num_animals-1))
@@ -48,6 +51,7 @@ class Animal:
             return newborn
         else:
             return
+
 
     def age(self):
         self.a += 1
@@ -66,7 +70,7 @@ class Animal:
             return False
 
 class Carn(Animal):
-    standard_parameters_carn = {
+    standard_parameters = {
         "w_birth": 6.0,
         "sigma_birth": 1.0,
         "beta": 0.75,

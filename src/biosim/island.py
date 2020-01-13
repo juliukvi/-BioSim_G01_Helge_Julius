@@ -71,7 +71,7 @@ class Island:
                     nature_square.fodder_update()
                     nature_square.feed_all_animals()
                     nature_square.birth_all_animals()
-
+        self.migration()
         for row in self.map_list
             for nature_square in row:
                 if nature_square.habitable:
@@ -79,14 +79,27 @@ class Island:
                     nature_square.weightloss_all_animals()
                     nature_square.death_all_animals()
 
+    def migration(self):
+        for row in range(1, self.map_rows - 1):
+            for column in range(1, self.map_columns - 1):
+                nature_square = self.map_list[row][column]
+                if nature_square.habitable:
+                    north = self.map_list[row - 1][column]
+                    east = self.map_list[row][column + 1]
+                    south = self.map_list[row + 1][column]
+                    west = self.map_list[row][column - 1]
+                    neighbors = (north, east, south, west)
+                    nature_square.migrate_all_animals(neighbors)
+
+
     def animals_on_square(self):
         """Makes a list with the number of herbivores and carnivores on every
         nature_square, indexing is adjusted so that square(0,0) becomes
         square(1,1), this is done because pandas.dataframe starts index from
         (1, 1)"""
         animal_count_list = []
-        for i in range(self.n_rows):
-            for j in range(self.n_columns):
+        for i in range(self.map_rows):
+            for j in range(self.map_columns):
                 nature_square = self.map_list[i][j]
                 animal_count_list.append([i+1, j+1, nature_square.herbivore_number(),
                                           nature_square.carnivore_number()])
@@ -99,7 +112,7 @@ class Island:
         :return: tuple, three-element tuple with counts of Herbivores and Carnivores on the island
         and the sum of these.
         """
-        animal_count_list = self.animals_per_tile()
+        animal_count_list = self.animals_on_square()
         herbivore_count = sum(row[2] for row in animal_count_list)
         carnivore_count = sum(row[3] for row in animal_count_list)
         animal_sum = herbivore_count + carnivore_count
