@@ -37,7 +37,7 @@ class Animal:
         return number < (self.mu * self.fitness)
 
     def will_birth(self, num_animal):
-        prob = min(1, self.gamma * self.fitness * (num_animals-1))
+        prob = min(1, self.gamma * self.fitness * (num_animal-1))
         number = random.uniform(0, 1)
         if self.weight < self.zeta * (self.w_birth + self.sigma_birth):
             return False

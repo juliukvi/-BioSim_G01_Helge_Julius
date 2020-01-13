@@ -1,12 +1,12 @@
 
 from biosim.landscape import *
-from biosim.simulation import *
+from biosim.animals import *
 class Island:
 
     def __init__(self, island_map, ini_pop=None):
             self.map_list = []
             self.map_columns = len(island_map.splitlines()[0])
-            self.map_rows = len(island_map.splitlines)
+            self.map_rows = len(island_map.splitlines())
             map_dict = {"O": Ocean, "S": Savannah, "M": Mountain, "J": Jungle, "D": Desert}
             for line in island_map.splitlines():
                 if len(line) != self.map_columns:
@@ -33,8 +33,8 @@ class Island:
                     raise ValueError
 
 
-            if self.ini_pop:  # If an initial population is provided right away
-                self.add_population(population=self.ini_pop)  # Call the add_population method
+            if ini_pop:  # If an initial population is provided right away
+                self.add_population(population=ini_pop)  # Call the add_population method
 
     def add_population(self, population):
         for square in population:
@@ -119,3 +119,32 @@ class Island:
         carnivore_count = sum(row[3] for row in animal_count_list)
         animal_sum = herbivore_count + carnivore_count
         return herbivore_count, carnivore_count, animal_sum
+
+
+if __name__ == "__main__":
+    geogr = """\
+                   OOOOOOOOOOOOOOOOOOOOO
+                   OOOOOOOOSMMMMJJJJJJJO
+                   OSSSSSJJJJMMJJJJJJJOO
+                   OSSSSSSSSSMMJJJJJJOOO
+                   OSSSSSJJJJJJJJJJJJOOO
+                   OSSSSSJJJDDJJJSJJJOOO
+                   OSSJJJJJDDDJJJSSSSOOO
+                   OOSSSSJJJDDJJJSOOOOOO
+                   OSSSJJJJJDDJJJJJJJOOO
+                   OSSSSJJJJDDJJJJOOOOOO
+                   OOSSSSJJJJJJJJOOOOOOO
+                   OOOSSSSJJJJJJJOOOOOOO
+                   OOOOOOOOOOOOOOOOOOOOO"""
+    geogr = textwrap.dedent(geogr)
+
+    ini_herbs = [
+        {
+            "loc": (10, 10),
+            "pop": [
+                {"species": "Herbivore", "age": 5, "weight": 20}
+                for _ in range(150)
+            ],
+        }
+    ]
+    I = Island(geogr, ini_herbs)
