@@ -9,6 +9,7 @@ __email__ = "hege.helo.klemetsdal@nmbu.no & "
 from biosim.landscape import *
 from biosim.animals import *
 from biosim.animals import *
+from biosim.island import *
 import pandas as pd
 import numpy as np
 import subprocess
@@ -143,3 +144,6 @@ class BioSim:
         return pd_data
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
+
+
+

@@ -40,7 +40,6 @@ class Nature:
                     self.carn_list.append(animal.birth())
 
     def migrate_all_animals(self, neighbors):
-        # NEED TO BE ABLE TO ACCES animal.lambda and its protected
         for animal in self.herb_list:
             if animal.migrate():
                 north_nature_square = neighbors[0]

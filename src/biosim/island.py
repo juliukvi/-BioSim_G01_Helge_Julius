@@ -1,12 +1,14 @@
 
 from biosim.landscape import *
 from biosim.simulation import *
+
+
 class Island:
 
     def __init__(self, island_map, ini_pop=None):
             self.map_list = []
             self.map_columns = len(island_map.splitlines()[0])
-            self.map_rows = len(island_map.splitlines)
+            self.map_rows = len(island_map.splitlines())
             map_dict = {"O": Ocean, "S": Savannah, "M": Mountain, "J": Jungle, "D": Desert}
             for line in island_map.splitlines():
                 if len(line) != self.map_columns:
@@ -33,8 +35,8 @@ class Island:
                     raise ValueError
 
 
-            if self.ini_pop:  # If an initial population is provided right away
-                self.add_population(population=self.ini_pop)  # Call the add_population method
+            if ini_pop:  # If an initial population is provided right away
+                self.add_population(population=ini_pop)  # Call the add_population method
 
     def add_population(self, population):
         for square in population:
