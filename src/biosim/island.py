@@ -1,5 +1,4 @@
 class Island:
-    """An Island with various landscape types and animals of type Herbivore/Carnivore."""
 
     def __init__(self, island_map, ini_pop=None):
             self.map_list = []
