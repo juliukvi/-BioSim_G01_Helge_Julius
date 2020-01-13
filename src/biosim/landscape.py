@@ -51,19 +51,19 @@ class Nature:
                 south_relative_abundance = (south_nature_square.fodder)/((len(south_nature_square.herb_list)+1)*animal.F)
                 west_relative_abundance = (west_nature_square.fodder)/((len(west_nature_square.herb_list)+1)*animal.F)
                 if north_nature_square.habitable:
-                    north_propensity = m.exp(animal.lambda*north_relative_abundance)
+                    north_propensity = m.exp(animal._lambda*north_relative_abundance)
                 else:
                     north_propensity = 0
                 if east_nature_square.habitable:
-                    east_propensity = m.exp(animal.lambda*east_relative_abundance)
+                    east_propensity = m.exp(animal._lambda*east_relative_abundance)
                 else:
                     east_propensity = 0
                 if south_nature_square.habitable:
-                    south_propensity = m.exp(animal.lambda*south_relative_abundance)
+                    south_propensity = m.exp(animal._lambda*south_relative_abundance)
                 else:
                     south_propensity = 0
                 if west_nature_square.habitable:
-                    west_propensity = m.exp(animal.lambda*west_relative_abundance)
+                    west_propensity = m.exp(animal._lambda*west_relative_abundance)
                 else:
                     west_propensity = 0
                 total_propensity = (north_propensity+east_propensity+south_propensity+west_propensity)

@@ -22,8 +22,7 @@ class Animal:
             while placeholder < 0:
                 placeholder = np.random.normal(self.w_birth, self.sigma_birth)
                 self.weight = placeholder
-
-         self.fitness_update()
+        self.fitness_update()
 
     def fitness_update(self):
         if self.weight <= 0:
@@ -100,7 +99,11 @@ class Carn(Animal):
     @classmethod
     def _set_params_as_attributes(cls):
         for key in cls.standard_parameters:
-            setattr(cls, key, cls.standard_parameters[key])
+            if key == "lambda":
+                new_key ="_lambda"
+                setattr(cls, new_key, cls.standard_parameters[key])
+            else:
+                setattr(cls, key, cls.standard_parameters[key])
         cls.are_params_set = True
 
     def __init__(self, age=0, weight=None ):
@@ -171,7 +174,11 @@ class Herb(Animal):
     @classmethod
     def _set_params_as_attributes(cls):
         for key in cls.standard_parameters:
-            setattr(cls, key, cls.standard_parameters[key])
+            if key == "lambda":
+                new_key ="_lambda"
+                setattr(cls, new_key, cls.standard_parameters[key])
+            else:
+                setattr(cls, key, cls.standard_parameters[key])
         cls.are_params_set = True
 
     def __init__(self, age=0, weight=None ):
