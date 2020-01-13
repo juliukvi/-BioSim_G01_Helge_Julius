@@ -200,6 +200,10 @@ class Savannah(Nature):
         for key in new_params:
             if key not in cls.standard_parameters.keys():
                 raise KeyError(f'Parameter {key} is not in valid')
+            if isinstance(new_params[key], int) or isinstance(new_params[key], float):
+                continue
+            else:
+                raise ValueError('Value needs to be int or float, got' + str(type(new_params[key])))
         cls.standard_parameters.update(new_params)
         cls._set_params_as_attributes()
 
@@ -230,6 +234,10 @@ class Jungle(Nature):
         for key in new_params:
             if key not in cls.standard_parameters.keys():
                 raise KeyError(f'Parameter {key} is not in valid')
+            if isinstance(new_params[key], int) or isinstance(new_params[key], float):
+                continue
+            else:
+                raise ValueError('Value needs to be int or float, got' + str(type(new_params[key])))
         cls.standard_parameters.update(new_params)
         cls._set_params_as_attributes()
 

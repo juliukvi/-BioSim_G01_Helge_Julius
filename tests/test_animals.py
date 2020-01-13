@@ -47,10 +47,10 @@ def test_weight_probability_distribution():
     #Should i use X^2 test?
     #Using D.agostinos K^2 test which is accessed from the normaltest in scipy
     n_trials = 1000
-    weight_data = []
+    list_of_herbivores = []
     for _ in range(n_trials):
-        H = Herb()
-        weight_data.append(H.weight)
+        list_of_herbivores.append(Herb())
+    weight_data = [h.weight for h in list_of_herbivores]
     stat, p = normaltest(weight_data)
     # Significance level 0.01.
     alpha = 0.01
@@ -61,6 +61,8 @@ def test_weight_probability_distribution():
     #distribution. If it passes it means that its probable that it follows
     # a normal distribution but we cant say for sure.
     assert p > alpha
+    #Checking if 95% of data lays within two standard deviations of the mean.
+    assert np.mean(weight_data) < np.mean([h.w_birth + 2*h.sigma_birth for h in list_of_herbivores])
 
 
 def test_age_function():
@@ -90,18 +92,16 @@ def test_feeding():
 
 
 def test_fitness_update(mocker):
-    H = Herb()
     # Getting wrong return value from mocker patch?
-    # mocker.patch('numpy.random.normal', return_value=1)
-    H.weight = -3
-    H.fitness_update()
-    assert H.fitness == 0
-    H = Herb()
-    H.weight = 1
-    #mocker.patch('numpy.random.normal', return_value=1)
-    H.fitness_update()
-    # feil her?
-    assert H.fitness == 1 / (1 + m.exp(0.2 * (0 - 40))) * 1 / (1 + m.exp(-0.2*(1 - 10)))
+    mocker.patch('numpy.random.normal', return_value=-3)
+    h = Herb()
+    h.fitness_update()
+    assert h.fitness == 0
+    #H.weight = 1
+    mocker.patch('numpy.random.normal', return_value=1)
+    h = Herb()
+    h.fitness_update()
+    assert h.fitness == pytest.approx(1 / (1 + m.exp(0.2 * (0 - 40))) * 1 / (1 + m.exp(-0.2*(1 - 10))))
 
 
 def test_will_birth():
