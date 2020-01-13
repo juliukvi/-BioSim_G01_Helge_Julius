@@ -30,6 +30,7 @@ class Nature:
         if self.herb_list >= 2:
             num_animal = len(self.herb_list)
             for animal in self.herb_list:
+                newborn = animal.will_birth(num_animal)
                 if animal.will_birth(num_animal):
                     self.herb_list.append(animal.birth())
         if self.carn_list >= 2:

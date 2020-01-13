@@ -30,7 +30,7 @@ class Animal:
         else:
             q_age = 1 / (1 + m.exp(self.phi_age * (self.a - self.a_half)))
             q_weight = 1 / (1 + m.exp(-self.phi_age*(self.weight - self.w_half)))
-            self.fitness =  q_age*q_weight
+            self.fitness = q_age * q_weight
 
     def migrate(self):
         number = random.uniform(0, 1)
@@ -40,11 +40,11 @@ class Animal:
         prob = min(1, self.gamma * self.fitness * (num_animals-1))
         number = random.uniform(0, 1)
         if self.weight < self.zeta * (self.w_birth + self.sigma_birth):
-            return
+            return False
         if number <= prob:
             newborn = self.birth()
             if (self.xi * newborn.weight) > self.weight:
-                return
+                return False
             self.weight -= (self.xi * newborn.weight)
             self.fitness_update()
             return newborn
