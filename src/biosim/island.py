@@ -1,3 +1,6 @@
+
+from biosim.landscape import *
+from biosim.simulation import *
 class Island:
 
     def __init__(self, island_map, ini_pop=None):
@@ -14,24 +17,24 @@ class Island:
                         placeholder_list.append(map_dict[nature_square_char]()) # Creates nature objects
                     except KeyError:
                         raise ValueError
-                map_list.append(placeholder_list)
+                self.map_list.append(placeholder_list)
             # Checks so that Ocean squares are on edges
-            for nature_square in map_list[0]:
+            for nature_square in self.map_list[0]:
                 if not isinstance(nature_square, Ocean):
                     raise ValueError
-            for nature_square in map_list[len(map_list) - 1]:
+            for nature_square in self.map_list[len(self.map_list) - 1]:
                 if not isinstance(nature_square, Ocean):
                     raise ValueError
-            for nature_square in range(len(map_list)):
-                if not isinstance(map_list[nature_square][0], Ocean):
+            for nature_square in range(len(self.map_list)):
+                if not isinstance(self.map_list[nature_square][0], Ocean):
                     raise ValueError
-            for nature_square in range(len(map_list)):
-                if not isinstance(map_list[nature_square][len(map_list[0]) - 1], Ocean):
+            for nature_square in range(len(self.map_list)):
+                if not isinstance(self.map_list[nature_square][len(self.map_list[0]) - 1], Ocean):
                     raise ValueError
 
 
-        if ini_pop:  # If an initial population is provided right away
-            self.add_population(population=ini_pop)  # Call the add_population method
+            if self.ini_pop:  # If an initial population is provided right away
+                self.add_population(population=self.ini_pop)  # Call the add_population method
 
     def add_population(self, population):
         for square in population:
@@ -71,7 +74,7 @@ class Island:
                     nature_square.feed_all_animals()
                     nature_square.birth_all_animals()
         self.migration()
-        for row in self.map_list
+        for row in self.map_list:
             for nature_square in row:
                 if nature_square.habitable:
                     nature_square.aging_all_animals()
