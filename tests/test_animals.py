@@ -31,19 +31,19 @@ def test_initiate_herb():
 
 
 def test_set_parameters_herb():
-    H = Herb()
+    h = Herb()
     with pytest.raises(KeyError):
-        H.set_parameters({"key_not_valid": 1})
-        H.set_parameters({"zeta":4, "key_not_valid":1})
+        h.set_parameters({"key_not_valid": 1})
+        h.set_parameters({"zeta":4, "key_not_valid":1})
     #checking that zeta variable has not been updated in standard_parameters.
-    assert H.standard_parameters["zeta"] == 3.5
-    H.set_parameters({"zeta": 4, "F": 15.0})
-    assert H.standard_parameters["zeta"] ==4
-    assert H.standard_parameters["F"] == 15.0
+    assert h.parameters["zeta"] == 3.5
+    h.set_parameters({"zeta": 4, "F": 15.0})
+    assert h.parameters["zeta"] ==4
+    assert h.parameters["F"] == 15.0
     with pytest.raises(ValueError):
-        H.set_parameters({"zeta": 3.5, "F": 'some string'})
+        h.set_parameters({"zeta": 3.5, "F": 'some string'})
     #Checking that zeta remains unchanged
-    assert H.standard_parameters["zeta"] == 4
+    assert h.parameters["zeta"] == 4
 
 
 def test_set_attributes_herb():
@@ -135,30 +135,27 @@ def test_will_birth(mocker):
 
 
 def test_birth():
-    H = Herb()
-    assert isinstance(H.birth(), Herb)
+    h = Herb()
+    assert isinstance(h.birth(), Herb)
 
 
 def test_weightloss(mocker):
     mocker.patch('numpy.random.normal', return_value=1)
     h = Herb()
-    # Mocker here aswell?
     h.weightloss()
     assert h.weight == 1 - h.eta*1
-    for _ in range(10):
-        H.weightloss()
 
 
 
 def test_death(mocker):
-    H = Herb()
-    H.fitness = 0
-    assert H.death() is True
-    H = Herb()
+    h = Herb()
+    h.fitness = 0
+    assert h.death() is True
+    h = Herb()
     mocker.patch('random.uniform', return_value=1)
-    assert H.death() is False
-    H = Herb()
+    assert h.death() is False
+    h = Herb()
     mocker.patch('random.uniform', return_value=0)
-    assert H.death() is True
+    assert h.death() is True
     # Should i have a statistical test here? Dont know the distribution of the
     # probability function.
