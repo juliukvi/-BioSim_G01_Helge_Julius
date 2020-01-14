@@ -6,8 +6,8 @@ import math as m
 import random
 import numpy as np
 
-#commit
-class Animal:
+
+class BaseAnimal:
     """Animal which lives on an island. Parent class for different animal types
 
     Parameters
@@ -31,7 +31,118 @@ class Animal:
          Weight drawn from the Gaussian distribution if not assigned a value
 
     """
+    parameters_dict = {'Herb':
+        {
+            "w_birth": 8.0,
+            "sigma_birth": 1.5,
+            "beta": 0.9,
+            "eta": 0.05,
+            "a_half": 40.0,
+            "phi_age": 0.2,
+            "w_half": 10.0,
+            "phi_weight": 0.1,
+            "mu": 0.25,
+            "lambda": 1.0,
+            "gamma": 0.2,
+            "zeta": 3.5,
+            "xi": 1.2,
+            "omega": 0.4,
+            "F": 10.0,
+        },
+        'Carn': {
+            "w_birth": 6.0,
+            "sigma_birth": 1.0,
+            "beta": 0.75,
+            "eta": 0.125,
+            "a_half": 60.0,
+            "phi_age": 0.4,
+            "w_half": 4.0,
+            "phi_weight": 0.4,
+            "mu": 0.4,
+            "lambda": 1.0,
+            "gamma": 0.8,
+            "zeta": 3.5,
+            "xi": 1.1,
+            "omega": 0.9,
+            "F": 50.0,
+            "DeltaPhiMax": 10.0
+        }}
+    parameters = None
+    are_params_set = False
+    @classmethod
+    def check_which_subclass(cls):
+        if issubclass(cls, Herb):
+            cls.parameters = cls.parameters_dict["Herb"]
+        elif issubclass(cls, Carn):
+            cls.parameters = cls.parameters_dict["Carn"]
+        else:
+            raise ValueError('Instances of the BaseAnimal class should not be '
+                             'created,'
+                             ' only instances of the subclasses Carn and Herb')
+
+    @classmethod
+    def set_parameters(cls, new_params):
+        """Updates the Animals parameters dictionary with new values.
+
+        Parameters
+        ----------
+        new_params: dict
+            Dictionary containing key(s) that exist in parameters
+            The dict is on the form:
+                {
+                "w_birth": 0.0,
+                "sigma_birth": 0.0,
+                "beta": 0.0,
+                "eta": 0.0,
+                "a_half": 0.0,
+                "phi_age": 0.0,
+                "w_half": 0.0,
+                "phi_weight": 0.0,
+                "mu": 0.0,
+                "lambda": 0.0,
+                "gamma": 0.0,
+                "zeta": 0.0,
+                "xi": 0.0,
+                "omega": 0.0,
+                "F": 0.0,
+                "DeltaPhiMax": 0.0
+            }
+        Raises
+        ------
+        KeyError
+            If the key in new_params does not exist in parameters
+        ValueError
+            If the new value assigned to the key is not of type float or int
+        """
+
+        for key in new_params:
+            if key not in cls.parameters.keys():
+                raise KeyError(f'Parameter {key} is not in valid')
+            if isinstance(new_params[key], int) or isinstance(new_params[key],
+                                                              float):
+                continue
+            else:
+                raise ValueError(
+                    f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
+        cls.parameters.update(new_params)
+        cls._set_params_as_attributes()
+
+    @classmethod
+    def _set_params_as_attributes(cls):
+        """Sets the animal parameters to attributes on class level.
+        """
+        for key in cls.parameters:
+            if key == "lambda":
+                new_key = "_lambda"
+                setattr(cls, new_key, cls.parameters[key])
+            else:
+                setattr(cls, key, cls.parameters[key])
+        cls.are_params_set = True
+
     def __init__(self, age=0, weight=None):
+        self.check_which_subclass()
+        if not self.are_params_set:
+            self._set_params_as_attributes()
         self.fitness = 0
         if age < 0:
             raise ValueError("Animal age cant be below 0")
@@ -122,7 +233,7 @@ class Animal:
         else:
             return False
 
-class Carn(Animal):
+class Carn(BaseAnimal):
     """Carnivore species which lives on the island. Subclass of Animal class.
     Parameters
     ----------
@@ -147,85 +258,8 @@ class Carn(Animal):
     parameters: dict
         Values that determines the behaviour of the animal
     """
-    parameters = {
-        "w_birth": 6.0,
-        "sigma_birth": 1.0,
-        "beta": 0.75,
-        "eta": 0.125,
-        "a_half": 60.0,
-        "phi_age": 0.4,
-        "w_half": 4.0,
-        "phi_weight": 0.4,
-        "mu": 0.4,
-        "lambda": 1.0,
-        "gamma": 0.8,
-        "zeta": 3.5,
-        "xi": 1.1,
-        "omega": 0.9,
-        "F": 50.0,
-        "DeltaPhiMax": 10.0
-    }
-    are_params_set = False
-    @classmethod
-    def set_parameters(cls, new_params):
-        """Updates the Carnivore parameters dictionary with new values.
-
-        Parameters
-        ----------
-        new_params: dict
-            Dictionary containing key(s) that exist in parameters
-            The dict is on the form:
-                {
-                "w_birth": 6.0,
-                "sigma_birth": 1.0,
-                "beta": 0.75,
-                "eta": 0.125,
-                "a_half": 60.0,
-                "phi_age": 0.4,
-                "w_half": 4.0,
-                "phi_weight": 0.4,
-                "mu": 0.4,
-                "lambda": 1.0,
-                "gamma": 0.8,
-                "zeta": 3.5,
-                "xi": 1.1,
-                "omega": 0.9,
-                "F": 50.0,
-                "DeltaPhiMax": 10.0
-            }
-        Raises
-        ------
-        KeyError
-            If the key in new_params does not exist in parameters
-        ValueError
-            If the new value assigned to the key is not of type float or int
-        """
-        for key in new_params:
-            if key not in cls.parameters.keys():
-                raise KeyError(f'Parameter {key} is not in valid')
-            if isinstance(new_params[key], int) or isinstance(new_params[key], float):
-                continue
-            else:
-                raise ValueError(f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
-        cls.parameters.update(new_params)
-        cls._set_params_as_attributes()
-
-    @classmethod
-    def _set_params_as_attributes(cls):
-        """Sets the carnivore parameters as attributes on class level.
-        """
-        for key in cls.parameters:
-            #Setting a new attribute name for lambda
-            if key == "lambda":
-                new_key ="_lambda"
-                setattr(cls, new_key, cls.parameters[key])
-            else:
-                setattr(cls, key, cls.parameters[key])
-        cls.are_params_set = True
 
     def __init__(self, age=0, weight=None):
-        if not self.are_params_set:
-            self._set_params_as_attributes()
         super().__init__(age=age, weight=weight)
 
     def __repr__(self):
@@ -290,7 +324,7 @@ class Carn(Animal):
         """
         return Carn()
 
-class Herb(Animal):
+class Herb(BaseAnimal):
     """Carnivore species which lives on the island. Subclass of Animal class.
     More description............
     Parameters
@@ -316,75 +350,8 @@ class Herb(Animal):
     parameters: dict
         Values that determines the behaviour of the animal
     """
-    parameters = {
-        "w_birth": 8.0,
-        "sigma_birth": 1.5,
-        "beta": 0.9,
-        "eta": 0.05,
-        "a_half": 40.0,
-        "phi_age": 0.2,
-        "w_half": 10.0,
-        "phi_weight": 0.1,
-        "mu": 0.25,
-        "lambda": 1.0,
-        "gamma": 0.2,
-        "zeta": 3.5,
-        "xi": 1.2,
-        "omega": 0.4,
-        "F": 10.0,
-    }
-    are_params_set = False
-
-    @classmethod
-    def set_parameters(cls, new_params):
-        """Updates the Herbivore parameters dictionary with new values.
-
-        Parameters
-        ----------
-        new_params: dict
-            Dictionary containing key(s) that exist in parameters
-            The dict is on the form:
-                {
-                "w_birth": 0.0,
-                "sigma_birth": 0.0,
-                "beta": 0.0,
-                "eta": 0.0,
-                "a_half": 0.0,
-                "phi_age": 0.0,
-                "w_half": 0.0,
-                "phi_weight": 0.0,
-                "mu": 0.0,
-                "lambda": 0.0,
-                "gamma": 0.0,
-                "zeta": 0.0,
-                "xi": 0.0,
-                "omega": 0.0,
-                "F": 0.0,
-                "DeltaPhiMax": 0.0
-            }
-        Raises
-        ------
-        KeyError
-            If the key in new_params does not exist in parameters
-        ValueError
-            If the new value assigned to the key is not of type float or int
-        """
-
-    @classmethod
-    def _set_params_as_attributes(cls):
-        """Sets the herbivore parameters to attributes on class level.
-        """
-        for key in cls.parameters:
-            if key == "lambda":
-                new_key ="_lambda"
-                setattr(cls, new_key, cls.parameters[key])
-            else:
-                setattr(cls, key, cls.parameters[key])
-        cls.are_params_set = True
 
     def __init__(self, age=0, weight=None ):
-        if not self.are_params_set:
-            self._set_params_as_attributes()
         super().__init__(age=age, weight=weight)
 
     def __repr__(self):
