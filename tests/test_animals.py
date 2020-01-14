@@ -7,6 +7,24 @@ import pytest
 import numpy as np
 from scipy.stats import normaltest
 
+def test_initiate_Animal():
+    assert Animal()
+    assert Animal(0, 3)
+    assert Animal(0)
+    assert Animal(weight = 2)
+    with pytest.raises(ValueError):
+        Animal(-1, 3)
+    with pytest.raises(ValueError):
+        Animal(0, -2)
+    with pytest.raises(ValueError):
+        Animal(-1)
+
+
+
+def test_init_function_Animal():
+    a = Animal()
+    assert a.fitness == 0
+
 
 def test_initiate_herb():
     assert Herb()
@@ -93,7 +111,7 @@ def test_feeding():
 
 def test_fitness_update(mocker):
     # Getting wrong return value from mocker patch?
-    mocker.patch('numpy.random.normal', return_value=-3)
+    mocker.patch('numpy.random.normal', return_value=0)
     h = Herb()
     h.fitness_update()
     assert h.fitness == 0
@@ -104,10 +122,9 @@ def test_fitness_update(mocker):
     assert h.fitness == pytest.approx(1 / (1 + m.exp(0.2 * (0 - 40))) * 1 / (1 + m.exp(-0.2*(1 - 10))))
 
 
-def test_will_birth():
+def test_will_birth(mocker):
+    mocker.patch('numpy.random.normal', return_value=1)
     H = Herb()
-    # Bruke mocker her også?
-    H.weight = 1
     return_value = H.will_birth(10)
     assert return_value is False
     H = Herb()
@@ -122,12 +139,15 @@ def test_birth():
     assert isinstance(H.birth(), Herb)
 
 
-def test_weightloss():
-    H = Herb()
+def test_weightloss(mocker):
+    mocker.patch('numpy.random.normal', return_value=1)
+    h = Herb()
     # Mocker here aswell?
-    H.weight = 1
-    H.weightloss()
-    assert H.weight == 1 - H.eta*1
+    h.weightloss()
+    assert h.weight == 1 - h.eta*1
+    for _ in range(10):
+        H.weightloss()
+
 
 
 def test_death(mocker):

@@ -131,11 +131,11 @@ class Carn(Animal):
     weight: float
         Initial weight of the animal
     are_params_set: bool
-        True if the
+        True if the parameters are set as attributes, false if not
     Raises
     ------
     ValueError
-        If age is below 0 or if weight is below, 0 or None.
+        If age is below 0 or if weight is below 0, 0 or None.
     Attributes
     ----------
     fitness: int
@@ -144,11 +144,10 @@ class Carn(Animal):
         Initial age of the animal which can't be assigned a value below 0
     weight: float
          Weight drawn from the Gaussian distribution if not assigned a value
-    standard_parameters: dict
+    parameters: dict
         Values that determines the behaviour of the animal
     """
-    #Gi nytt navn parameters? Denne oppdateres av set_parameters.
-    standard_parameters = {
+    parameters = {
         "w_birth": 6.0,
         "sigma_birth": 1.0,
         "beta": 0.75,
@@ -169,12 +168,12 @@ class Carn(Animal):
     are_params_set = False
     @classmethod
     def set_parameters(cls, new_params):
-        """Updates the standard_parameters dictionary with new values.
+        """Updates the Carnivore parameters dictionary with new values.
 
         Parameters
         ----------
         new_params: dict
-            Dictionary containing key(s) that exist in standard_parameters
+            Dictionary containing key(s) that exist in parameters
             The dict is on the form:
                 {
                 "w_birth": 6.0,
@@ -197,9 +196,9 @@ class Carn(Animal):
         Raises
         ------
         KeyError
-            If the key in new_params does not exist in standard_parameters
+            If the key in new_params does not exist in parameters
         ValueError
-            If the new value assigned to key is not of type float or int
+            If the new value assigned to the key is not of type float or int
         """
         for key in new_params:
             if key not in cls.standard_parameters.keys():
@@ -208,20 +207,20 @@ class Carn(Animal):
                 continue
             else:
                 raise ValueError(f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
-        cls.standard_parameters.update(new_params)
+        cls.parameters.update(new_params)
         cls._set_params_as_attributes()
 
     @classmethod
     def _set_params_as_attributes(cls):
-        """Sets the standard_parameters as attributes on a class level
+        """Sets the carnivore parameters as attributes on class level.
         """
-        for key in cls.standard_parameters:
+        for key in cls.parameters:
             #Setting a new attribute name for lambda
             if key == "lambda":
                 new_key ="_lambda"
-                setattr(cls, new_key, cls.standard_parameters[key])
+                setattr(cls, new_key, cls.parameters[key])
             else:
-                setattr(cls, key, cls.standard_parameters[key])
+                setattr(cls, key, cls.parameters[key])
         cls.are_params_set = True
 
     def __init__(self, age=0, weight=None):
@@ -237,24 +236,24 @@ class Carn(Animal):
         """Handles the eating and weight of the carnivores
         This function also handles the killing of herbivores by carnivores
         when they eat.
+
+
+
         Parameters
         ----------
         sorted_herb_list: list
             List of herbivores sorted in order of fitness
         The carnivores kill the herbivores with a probability:
-        :math:
-            \documentclass{article}
-            \usepackage{amsmath}
-            \begin{document}
-            \begin{equation}
+
+        .. math::
                  p =
                   \begin{cases}
                    0 & \text{if \phi_{carn} \leq \phi_{herb}\\
                    2 & \text{if bank $i$ issues CBs at time $t$}\\
                    0 & \text{otherwise}
                   \end{cases}
-            \end{equation}
-            \end{document}
+
+        where :math:`p` is blablabla, :math:`\phi` is blablabla
         """
         amount_to_eat = self.F
         for herb in reversed(sorted_herb_list):
@@ -281,17 +280,41 @@ class Carn(Animal):
 
     @staticmethod
     def birth():
-        """Static method that returns a new carnivore class instance.
+        """Static method that returns a new instance of the same class.
         Returns
         -------
-        __main__Carn
+        Carn
             A new class instance of the carnivore class
         """
         return Carn()
 
 class Herb(Animal):
-
-    standard_parameters = {
+    """Carnivore species which lives on the island. Subclass of Animal class.
+    More description............
+    Parameters
+    ----------
+    age: int
+        Initial age of the animal.
+    weight: float
+        Initial weight of the animal.
+    are_params_set: bool
+        True if the parameters are set as attributes, false if not.
+    Raises
+    ------
+    ValueError
+        If age is below 0 or if weight is below 0, 0 or None.
+    Attributes
+    ----------
+    fitness: int
+        Value describing the animals fitness
+    age: int
+        Initial age of the animal which can't be assigned a value below 0
+    weight: float
+         Weight drawn from the Gaussian distribution if not assigned a value
+    parameters: dict
+        Values that determines the behaviour of the animal
+    """
+    parameters = {
         "w_birth": 8.0,
         "sigma_birth": 1.5,
         "beta": 0.9,
@@ -312,24 +335,49 @@ class Herb(Animal):
 
     @classmethod
     def set_parameters(cls, new_params):
-        for key in new_params:
-            if key not in cls.standard_parameters.keys():
-                raise KeyError(f'Parameter {key} is not in valid')
-            if isinstance(new_params[key], int) or isinstance(new_params[key], float):
-                continue
-            else:
-                raise ValueError('Value needs to be int or float, got' + str(type(new_params[key])))
-        cls.standard_parameters.update(new_params)
-        cls._set_params_as_attributes()
+        """Updates the Herbivore parameters dictionary with new values.
+
+        Parameters
+        ----------
+        new_params: dict
+            Dictionary containing key(s) that exist in parameters
+            The dict is on the form:
+                {
+                "w_birth": 0.0,
+                "sigma_birth": 0.0,
+                "beta": 0.0,
+                "eta": 0.0,
+                "a_half": 0.0,
+                "phi_age": 0.0,
+                "w_half": 0.0,
+                "phi_weight": 0.0,
+                "mu": 0.0,
+                "lambda": 0.0,
+                "gamma": 0.0,
+                "zeta": 0.0,
+                "xi": 0.0,
+                "omega": 0.0,
+                "F": 0.0,
+                "DeltaPhiMax": 0.0
+            }
+        Raises
+        ------
+        KeyError
+            If the key in new_params does not exist in parameters
+        ValueError
+            If the new value assigned to the key is not of type float or int
+        """
 
     @classmethod
     def _set_params_as_attributes(cls):
-        for key in cls.standard_parameters:
+        """Sets the herbivore parameters to attributes on class level.
+        """
+        for key in cls.parameters:
             if key == "lambda":
                 new_key ="_lambda"
-                setattr(cls, new_key, cls.standard_parameters[key])
+                setattr(cls, new_key, cls.parameters[key])
             else:
-                setattr(cls, key, cls.standard_parameters[key])
+                setattr(cls, key, cls.parameters[key])
         cls.are_params_set = True
 
     def __init__(self, age=0, weight=None ):
@@ -341,6 +389,10 @@ class Herb(Animal):
         return "Herbivore(age={}, weight={})".format(self.a, self.weight)
 
     def feeding(self, fodder):
+        """Handles the feeding and weight of the herbivores
+        More description...........
+
+        """
         if fodder > self.F:
             self.weight += self.beta * self.F
             return self.F
@@ -349,6 +401,13 @@ class Herb(Animal):
             return fodder
         if fodder < 0:
             raise ValueError("Cannot have negative fodder value")
+
     @staticmethod
     def birth():
+        """A static method that returns a new instance of the same class.
+
+        Returns
+        -------
+            A new class instance of herbivore class
+        """
         return Herb()
