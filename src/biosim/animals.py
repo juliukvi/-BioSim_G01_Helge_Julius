@@ -6,7 +6,7 @@ import math as m
 import random
 import numpy as np
 
-
+#commit
 class Animal:
     """Animal which lives on an island. Parent class for different animal types
 
