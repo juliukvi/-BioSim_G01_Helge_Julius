@@ -15,6 +15,8 @@ class Nature:
         self.habitable = True
         self.herb_list = []
         self.carn_list = []
+        self.herb_move_list = []
+        self.carn_move_list = []
 
 
     def feed_all_animals(self):
@@ -30,14 +32,22 @@ class Nature:
     def birth_all_animals(self):
         num_herb = len(self.herb_list)
         if num_herb >= 2:
+            newborn_list = []
             for animal in self.herb_list:
                 newborn = animal.will_birth(self.num_herb)
                 if newborn:
-                    self.herb_list.append(newborn)
-        if self.num_c >= 2:
+                    newborn_list.append(newborn)
+            for newborn in newborn_list:
+                self.herb_list.append(newborn)
+        num_carn = len(self.carn_list)
+        if num_carn >= 2:
+            newborn_list = []
             for animal in self.carn_list:
-                if animal.will_birth(self.num_carn) is not None:
-                    self.carn_list.append(animal.will_birth())
+                newborn = animal.will_birth(self.num_carn)
+                if newborn:
+                    newborn_list.append(newborn)
+            for newborn in newborn_list:
+                self.carn_list.append(newborn)
 
     def migrate_all_animals(self, neighbors):
         for animal in self.herb_list:
@@ -73,16 +83,16 @@ class Nature:
                 west_move_prob = south_move_prob + west_propensity/total_propensity
                 number = random.uniform(0, 1)
                 if number < north_move_prob:
-                    north_nature_square.herb_list.append(animal)
+                    north_nature_square.herb_move_list.append(animal)
                     self.herb_list.remove(animal)
                 if number < east_move_prob:
-                    east_nature_square.herb_list.append(animal)
+                    east_nature_square.herb_move_list.append(animal)
                     self.herb_list.remove(animal)
                 if number < south_move_prob:
-                    south_nature_square.herb_list.append(animal)
+                    south_nature_square.herb_move_list.append(animal)
                     self.herb_list.remove(animal)
                 if number < west_move_prob:
-                    west_nature_square.herb_list.append(animal)
+                    west_nature_square.herb_move_list.append(animal)
                     self.herb_list.remove(animal)
 
         for animal in self.carn_list:
@@ -127,16 +137,16 @@ class Nature:
                 west_move_prob = south_move_prob + west_propensity / total_propensity
                 number = random.uniform(0, 1)
                 if number < north_move_prob:
-                    north_nature_square.carn_list.append(animal)
+                    north_nature_square.carn_move_list.append(animal)
                     self.carn_list.remove(animal)
                 if number < east_move_prob:
-                    east_nature_square.carn_list.append(animal)
+                    east_nature_square.carn_move_list.append(animal)
                     self.carn_list.remove(animal)
                 if number < south_move_prob:
-                    south_nature_square.carn_list.append(animal)
+                    south_nature_square.carn_move_list.append(animal)
                     self.carn_list.remove(animal)
                 if number < west_move_prob:
-                    west_nature_square.carn_list.append(animal)
+                    west_nature_square.carn_move_list.append(animal)
                     self.carn_list.remove(animal)
 
 

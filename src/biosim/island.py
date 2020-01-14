@@ -93,6 +93,17 @@ class Island:
                     neighbors = (north, east, south, west)
                     nature_square.migrate_all_animals(neighbors)
 
+        for row in range(1, self.map_rows - 1):
+            for column in range(1, self.map_columns - 1):
+                nature_square = self.map_list[row][column]
+                if nature_square.habitable:
+                    for moved_animal in nature_square.herb_move_list:
+                        nature_square.herb_list.append(moved_animal)
+                    for moved_animal in nature_square.carn_move_list:
+                        nature_square.carn_list.append(moved_animal)
+                    nature_square.herb_move_list = []
+                    nature_square.carn_move_list = []
+
 
     def animals_on_square(self):
         """Makes a list with the number of herbivores and carnivores on every

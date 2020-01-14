@@ -97,23 +97,18 @@ class BioSim:
 
         Image files will be numbered consecutively.
         """
-        while self.year_sim < self.year_sim + num_years:
-            for row in self.map_list:
-                for nature_square in row:
-                    nature_square.feed_all_animals()
-            for row in self.map_list:
-                for nature_square in row:
-                    nature_square.birth_all_animals()
-            for row in self.map_list:
-                for nature_square in row:
-                    nature_square.aging_all_animals()
-            for row in self.map_list:
-                for nature_square in row:
-                    nature_square.weightloss_all_animals()
-            for row in self.map_list:
-                for nature_square in row:
-                    nature_square.death_all_animals()
-            self.year_sim += 1
+        while self.year < self.year + num_years:
+
+            if img_years == None:
+                img_years = vis_years
+
+            if self.year % vis_years:
+                #update graphics
+
+            if self.year % img_years:
+                #save graphics
+            self.island.one_year()
+            self._year += 1
 
     def add_population(self, population):
         self.island.add_population(population)
