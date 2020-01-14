@@ -56,11 +56,11 @@ class BioSim:
         island_map = textwrap.dedent(island_map)
         self.island = Island(island_map, ini_pop=ini_pop)
         self._year = 0
-        self.image_counter = 0
-        self.ymax_animals = ymax_animals
-        self.cmax_animals = cmax_animals
-        self.img_base = img_base
-        self.fmt = img_fmt
+        self._img_ctr = 0
+        self._ymax_animals = ymax_animals
+        self._cmax_animals = cmax_animals
+        self._img_base = img_base
+        self._img_fmt = img_fmt
 
     def set_animal_parameters(self, species, params):
         """
@@ -101,6 +101,7 @@ class BioSim:
 
         Image files will be numbered consecutively.
         """
+        plt.figure()
         start_year = self._year
         while self.year < start_year + num_years:
             if img_years == None:
@@ -110,8 +111,7 @@ class BioSim:
                 #update graphics
                 pass
             if self.year % img_years:
-                pass
-                #save graphics
+                self._save_graphics()
             self.island.one_year()
             self._year += 1
 
@@ -142,8 +142,53 @@ class BioSim:
         animal_count_list = self.island.animals_on_square()
         pd_data = pd.DataFrame(data=animal_count_list, columns=['Row', 'Col', 'Herbivore', 'Carnivore'])
         return pd_data
-    def make_movie(self):
-        """Create MPEG4 movie from visualization images saved."""
+    def make_movie(self, movie_fmt="mp4"):
+        """
+        Creates MPEG4 movie from visualization images saved.
+        .. :note:
+            Requires ffmpeg
+        The movie is stored as img_base + movie_fmt
+        """
+
+        if self._img_base is None:
+            raise RuntimeError("No filename defined.")
+
+        if movie_fmt == 'mp4':
+            try:
+                # Parameters chosen according to http://trac.ffmpeg.org/wiki/Encode/H.264,
+                # section "Compatibility"
+                subprocess.check_call([_FFMPEG_BINARY,
+                                       '-i', '{}_%05d.png'.format(self._img_base),
+                                       '-y',
+                                       '-profile:v', 'baseline',
+                                       '-level', '3.0',
+                                       '-pix_fmt', 'yuv420p',
+                                       '{}.{}'.format(self._img_base,
+                                                      movie_fmt)])
+            except subprocess.CalledProcessError as err:
+                raise RuntimeError('ERROR: ffmpeg failed with: {}'.format(err))
+        elif movie_fmt == 'gif':
+            try:
+                subprocess.check_call([_CONVERT_BINARY,
+                                       '-delay', '1',
+                                       '-loop', '0',
+                                       '{}_*.png'.format(self._img_base),
+                                       '{}.{}'.format(self._img_base,
+                                                      movie_fmt)])
+            except subprocess.CalledProcessError as err:
+                raise RuntimeError('ERROR: convert failed with: {}'.format(err))
+        else:
+            raise ValueError('Unknown movie format: ' + movie_fmt)
 
 
 
+    def _save_graphics(self):
+        """Saves graphics to file if file name given."""
+
+        if self._img_base is None:
+            return
+
+        plt.savefig('{base}_{num:05d}.{type}'.format(base=self._img_base,
+                                                     num=self._img_ctr,
+                                                     type=self._img_fmt))
+        self._img_ctr += 1
