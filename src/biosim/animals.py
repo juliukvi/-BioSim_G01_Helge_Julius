@@ -201,7 +201,7 @@ class Carn(Animal):
             If the new value assigned to the key is not of type float or int
         """
         for key in new_params:
-            if key not in cls.standard_parameters.keys():
+            if key not in cls.parameters.keys():
                 raise KeyError(f'Parameter {key} is not in valid')
             if isinstance(new_params[key], int) or isinstance(new_params[key], float):
                 continue

@@ -97,13 +97,18 @@ class Island:
             for column in range(1, self.map_columns - 1):
                 nature_square = self.map_list[row][column]
                 if nature_square.habitable:
-                    for moved_animal in nature_square.herb_move_list:
-                        nature_square.herb_list.append(moved_animal)
-                    for moved_animal in nature_square.carn_move_list:
-                        nature_square.carn_list.append(moved_animal)
-                    nature_square.herb_move_list = []
-                    nature_square.carn_move_list = []
-
+                    for moved_animal_to in nature_square.herb_move_to_list:
+                        nature_square.herb_list.append(moved_animal_to)
+                    for move_animal_from in nature_square.herb_move_from_list:
+                        nature_square.herb_list.remove(move_animal_from)
+                    for moved_animal_to in nature_square.carn_move_to_list:
+                        nature_square.carn_list.append(moved_animal_to)
+                    for moved_animal_from in nature_square.carn_move_from_list:
+                        nature_square.carn_list.remove(moved_animal_from)
+                    nature_square.herb_move_to_list = []
+                    nature_square.carn_move_to_list = []
+                    nature_square.herb_move_from_list = []
+                    nature_square.carn_move_from_list = []
 
     def animals_on_square(self):
         """Makes a list with the number of herbivores and carnivores on every
