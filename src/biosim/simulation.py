@@ -57,6 +57,10 @@ class BioSim:
         self.island = Island(island_map, ini_pop=ini_pop)
         self._year = 0
         self.image_counter = 0
+        self.ymax_animals = ymax_animals
+        self.cmax_animals = cmax_animals
+        self.img_base = img_base
+        self.fmt = img_fmt
 
     def set_animal_parameters(self, species, params):
         """
@@ -97,15 +101,16 @@ class BioSim:
 
         Image files will be numbered consecutively.
         """
-        while self.year < self.year + num_years:
-
+        start_year = self._year
+        while self.year < start_year + num_years:
             if img_years == None:
                 img_years = vis_years
 
             if self.year % vis_years:
                 #update graphics
-
+                pass
             if self.year % img_years:
+                pass
                 #save graphics
             self.island.one_year()
             self._year += 1

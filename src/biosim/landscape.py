@@ -15,8 +15,10 @@ class Nature:
         self.habitable = True
         self.herb_list = []
         self.carn_list = []
-        self.herb_move_list = []
-        self.carn_move_list = []
+        self.herb_move_to_list = []
+        self.herb_move_from_list = []
+        self.carn_move_to_list = []
+        self.carn_move_from_list = []
 
 
     def feed_all_animals(self):
@@ -24,9 +26,15 @@ class Nature:
         for animal in self.herb_list:
             if self.fodder > 0:
                 self.fodder -= animal.feeding(self.fodder)
+            else:
+                break
         self.carn_list.sort(key=lambda x: x.fitness, reverse=True)
         for animal in self.carn_list:
-            animal.feeding(self.herb_list)
+            if len(self.herb_list) == 0:
+                break
+            eaten_herbs = animal.feeding(self.herb_list)
+            for eaten_herb in eaten_herbs:
+                self.herb_list.remove(eaten_herb)
 
 
     def birth_all_animals(self):
@@ -83,17 +91,17 @@ class Nature:
                 west_move_prob = south_move_prob + west_propensity/total_propensity
                 number = random.uniform(0, 1)
                 if number < north_move_prob:
-                    north_nature_square.herb_move_list.append(animal)
-                    self.herb_list.remove(animal)
-                if number < east_move_prob:
-                    east_nature_square.herb_move_list.append(animal)
-                    self.herb_list.remove(animal)
-                if number < south_move_prob:
-                    south_nature_square.herb_move_list.append(animal)
-                    self.herb_list.remove(animal)
-                if number < west_move_prob:
-                    west_nature_square.herb_move_list.append(animal)
-                    self.herb_list.remove(animal)
+                    north_nature_square.herb_move_to_list.append(animal)
+                    self.herb_move_from_list.append(animal)
+                elif number < east_move_prob:
+                    east_nature_square.herb_move_to_list.append(animal)
+                    self.herb_move_from_list.append(animal)
+                elif number < south_move_prob:
+                    south_nature_square.herb_move_to_list.append(animal)
+                    self.herb_move_from_list.append(animal)
+                elif number < west_move_prob:
+                    west_nature_square.herb_move_to_list.append(animal)
+                    self.herb_move_from_list.append(animal)
 
         for animal in self.carn_list:
             if animal.migrate():
@@ -137,17 +145,17 @@ class Nature:
                 west_move_prob = south_move_prob + west_propensity / total_propensity
                 number = random.uniform(0, 1)
                 if number < north_move_prob:
-                    north_nature_square.carn_move_list.append(animal)
-                    self.carn_list.remove(animal)
-                if number < east_move_prob:
-                    east_nature_square.carn_move_list.append(animal)
-                    self.carn_list.remove(animal)
-                if number < south_move_prob:
-                    south_nature_square.carn_move_list.append(animal)
-                    self.carn_list.remove(animal)
-                if number < west_move_prob:
-                    west_nature_square.carn_move_list.append(animal)
-                    self.carn_list.remove(animal)
+                    north_nature_square.carn_move_to_list.append(animal)
+                    self.carn_move_from_list.append(animal)
+                elif number < east_move_prob:
+                    east_nature_square.carn_move_to_list.append(animal)
+                    self.carn_move_from_list.append(animal)
+                elif number < south_move_prob:
+                    south_nature_square.carn_move_to_list.append(animal)
+                    self.carn_move_from_list.append(animal)
+                elif number < west_move_prob:
+                    west_nature_square.carn_move_to_list.append(animal)
+                    self.carn_move_from_list.append(animal)
 
 
 
