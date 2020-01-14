@@ -11,8 +11,14 @@ def test_initiate_BaseAnimal():
     with pytest.raises(ValueError):
         BaseAnimal()
 
-def test_init_function_Animal():
-    a = Animal()
+def test_check_which_subclass():
+    pass
+def test_set_parameters():
+    pass
+def test_set_attributes():
+    pass
+def test_init_function_BaseAnimal():
+    a = BaseAnimal()
     assert a.fitness == 0
 
 
