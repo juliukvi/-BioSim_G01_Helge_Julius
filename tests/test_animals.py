@@ -2,24 +2,14 @@
 
 __author__ = 'Helge Helo Klemetsdal'
 __email__ = 'hegkleme@nmbu.no'
-from biosim.animals import *
+from biosim.animals import BaseAnimal, Herb, Carn
 import pytest
 import numpy as np
 from scipy.stats import normaltest
 
-def test_initiate_Animal():
-    assert Animal()
-    assert Animal(0, 3)
-    assert Animal(0)
-    assert Animal(weight = 2)
+def test_initiate_BaseAnimal():
     with pytest.raises(ValueError):
-        Animal(-1, 3)
-    with pytest.raises(ValueError):
-        Animal(0, -2)
-    with pytest.raises(ValueError):
-        Animal(-1)
-
-
+        BaseAnimal()
 
 def test_init_function_Animal():
     a = Animal()
