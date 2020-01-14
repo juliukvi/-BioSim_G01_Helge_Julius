@@ -30,7 +30,11 @@ class Nature:
                 break
         self.carn_list.sort(key=lambda x: x.fitness, reverse=True)
         for animal in self.carn_list:
-            animal.feeding(self.herb_list)
+            if len(self.herb_list) == 0:
+                break
+            eaten_herbs = animal.feeding(self.herb_list)
+            for eaten_herb in eaten_herbs:
+                self.herb_list.remove(eaten_herb)
 
 
     def birth_all_animals(self):

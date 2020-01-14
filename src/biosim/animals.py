@@ -256,6 +256,7 @@ class Carn(Animal):
         where :math:`p` is blablabla, :math:`\phi` is blablabla
         """
         amount_to_eat = self.F
+        eaten_herbs = []
         for herb in reversed(sorted_herb_list):
             if amount_to_eat <= 0:
                 break #Stop eating if carnivore is full
@@ -271,12 +272,13 @@ class Carn(Animal):
                 if herb.weight > amount_to_eat:
                     self.weight += self.beta * amount_to_eat
                     self.fitness_update()
-                    sorted_herb_list.remove(herb)
+                    eaten_herbs.append(herb)
                     break
             self.weight += self.beta * herb.weight
             amount_to_eat -= herb.weight
             self.fitness_update()
-            sorted_herb_list.remove(herb)
+            eaten_herbs.append(herb)
+        return eaten_herbs
 
     @staticmethod
     def birth():
