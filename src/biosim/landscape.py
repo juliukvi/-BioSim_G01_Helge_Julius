@@ -15,8 +15,7 @@ class Nature:
         self.habitable = True
         self.herb_list = []
         self.carn_list = []
-        self.num_herb = self.herbivore_number()
-        self.num_carn = self.carnivore_number()
+
 
     def feed_all_animals(self):
         self.herb_list.sort(key=lambda x: x.fitness, reverse=True)
@@ -29,12 +28,13 @@ class Nature:
 
 
     def birth_all_animals(self):
-        if self.num_herb >= 2:
+        num_herb = len(self.herb_list)
+        if num_herb >= 2:
             for animal in self.herb_list:
                 newborn = animal.will_birth(self.num_herb)
-                if animal.will_birth(self.num_herb):
-                    self.herb_list.append(animal.birth())
-        if self.num_carn >= 2:
+                if newborn:
+                    self.herb_list.append(newborn)
+        if self.num_c >= 2:
             for animal in self.carn_list:
                 if animal.will_birth(self.num_carn) is not None:
                     self.carn_list.append(animal.will_birth())
