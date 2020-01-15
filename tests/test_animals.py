@@ -6,20 +6,33 @@ from biosim.animals import BaseAnimal, Herb, Carn
 import pytest
 import numpy as np
 from scipy.stats import normaltest
-
+import math as m
 def test_initiate_BaseAnimal():
     with pytest.raises(ValueError):
         BaseAnimal()
 
+
 def test_check_which_subclass():
-    pass
+    h = Herb()
+    h.check_which_subclass()
+    assert h.parameters != None
 def test_set_parameters():
-    pass
+    h = Herb()
+    c = Carn()
+    with pytest.raises(KeyError):
+        h.set_parameters({"key_not_valid": 1})
+        h.set_parameters({"zeta": 4, "key_not_valid": 1})
+    # checking that zeta variable has not been updated in standard_parameters.
+    assert h.parameters["zeta"] == 3.5
+    h.set_parameters({"zeta": 4, "F": 15.0})
+    assert h.parameters["zeta"] == 4
+    assert h.parameters["F"] == 15.0
+    with pytest.raises(ValueError):
+        h.set_parameters({"zeta": 3.5, "F": 'some string'})
+    # Checking that zeta remains unchanged
+    assert h.parameters["zeta"] == 4
 def test_set_attributes():
     pass
-def test_init_function_BaseAnimal():
-    a = BaseAnimal()
-    assert a.fitness == 0
 
 
 def test_initiate_herb():
@@ -120,13 +133,13 @@ def test_fitness_update(mocker):
 
 def test_will_birth(mocker):
     mocker.patch('numpy.random.normal', return_value=1)
-    H = Herb()
-    return_value = H.will_birth(10)
+    h = Herb()
+    return_value = h.will_birth(10)
     assert return_value is False
-    H = Herb()
-    H.weight = H.zeta * (H.w_birth + H.sigma_birth)
+    h = Herb()
+    h.weight = h.zeta * (h.w_birth + h.sigma_birth)
     # Testing for probability = 1
-    return_value = H.will_birth(10000)
+    return_value = h.will_birth(10000)
     assert return_value is True
 
 

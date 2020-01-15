@@ -82,7 +82,7 @@ class BaseAnimal:
 
     @classmethod
     def set_parameters(cls, new_params):
-        """Updates the Animals parameters dictionary with new values.
+        """Updates the parameters for the respective subclass with new values.
 
         Parameters
         ----------
@@ -211,7 +211,7 @@ class BaseAnimal:
     def weightloss(self):
         """Updates the weight of the animal according to formula:
 
-           :math: w = w \cdot(1-\eta)
+        ..math: w = w \cdot(1-\eta)
 
         """
         self.weight -= self.eta * self.weight

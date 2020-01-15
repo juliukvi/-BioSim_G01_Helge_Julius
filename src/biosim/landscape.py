@@ -42,7 +42,7 @@ class Nature:
         if num_herb >= 2:
             newborn_list = []
             for animal in self.herb_list:
-                newborn = animal.will_birth(self.num_herb)
+                newborn = animal.will_birth(num_herb)
                 if newborn:
                     newborn_list.append(newborn)
             for newborn in newborn_list:
@@ -51,7 +51,7 @@ class Nature:
         if num_carn >= 2:
             newborn_list = []
             for animal in self.carn_list:
-                newborn = animal.will_birth(self.num_carn)
+                newborn = animal.will_birth(num_carn)
                 if newborn:
                     newborn_list.append(newborn)
             for newborn in newborn_list:
