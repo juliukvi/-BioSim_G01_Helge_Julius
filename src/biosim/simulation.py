@@ -18,6 +18,11 @@ import pandas as pd
 import textwrap
 
 
+# update these variables to point to your ffmpeg and convert binaries
+_FFMPEG_BINARY = 'ffmpeg'
+_CONVERT_BINARY = 'magick'
+
+
 class BioSim:
     def __init__(
         self,
@@ -61,6 +66,8 @@ class BioSim:
         self._cmax_animals = cmax_animals
         self._img_base = img_base
         self._img_fmt = img_fmt
+        # Set to true after graphics has been initialized
+        self._graphics_init = False
 
     def set_animal_parameters(self, species, params):
         """
@@ -107,11 +114,14 @@ class BioSim:
             if img_years == None:
                 img_years = vis_years
 
-            if self.year % vis_years:
+            if self.year % vis_years == 0:
+                plt.plot(range(2+self.year), range(2+self.year))
                 #update graphics
                 pass
-            if self.year % img_years:
+            if self.year % img_years == 0:
                 self._save_graphics()
+
+
             self.island.one_year()
             self._year += 1
 
@@ -180,8 +190,21 @@ class BioSim:
         else:
             raise ValueError('Unknown movie format: ' + movie_fmt)
 
+    def _setup_graphics(self):
+        if not self._graphics_init:
+            self._fig = plt.figure()
+        if not self._graphics_init:
+            self._animal_lines = self._fig.add_subplot(1, 1, 1)
+            if self._ymax_animals:
+                self._animal_lines.set_ylim(0, self._ymax_animals)
+            else:
+                self.
 
 
+
+
+
+        self._graphics_init = True
     def _save_graphics(self):
         """Saves graphics to file if file name given."""
 
