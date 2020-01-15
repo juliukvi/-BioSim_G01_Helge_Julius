@@ -70,7 +70,19 @@ class BaseAnimal:
     parameters = None
     are_params_set = False
     @classmethod
-    def check_which_subclass(cls):
+    def birth(cls):
+        if issubclass(cls, Herb):
+            return Herb()
+        elif issubclass(cls, Carn):
+            return Carn()
+        else:
+            raise ValueError('Only species of Carn and Herb can give birth')
+
+    @classmethod
+    def set_default_parameters_for_species(cls):
+        cls.parameters = cls.DEFAULT_PARAMETERS
+        cls._set_params_as_attributes()
+        
         if issubclass(cls, Herb):
             cls.parameters = cls.parameters_dict["Herb"]
         elif issubclass(cls, Carn):
@@ -140,12 +152,18 @@ class BaseAnimal:
         cls.are_params_set = True
 
     def __init__(self, age=0, weight=None):
-        self.check_which_subclass()
+        self.set_default_parameters_for_species()
         if not self.are_params_set:
             self._set_params_as_attributes()
         self.fitness = 0
+        if not isinstance(age, int):
+            raise ValueError("Animal age must be an integer")
         if age < 0:
             raise ValueError("Animal age cant be below 0")
+        if weight is None or isinstance(weight, int) or isinstance(weight, float):
+            pass
+        else:
+            raise ValueError("Animal weight must be int or float")
         if weight and weight <= 0:
             raise ValueError("Animal weight cant be less than or equal to 0")
         self.a = age
@@ -233,6 +251,7 @@ class BaseAnimal:
         else:
             return False
 
+
 class Carn(BaseAnimal):
     """Carnivore species which lives on the island. Subclass of Animal class.
     Parameters
@@ -314,16 +333,6 @@ class Carn(BaseAnimal):
             eaten_herbs.append(herb)
         return eaten_herbs
 
-    @staticmethod
-    def birth():
-        """Static method that returns a new instance of the same class.
-        Returns
-        -------
-        Carn
-            A new class instance of the carnivore class
-        """
-        return Carn()
-
 class Herb(BaseAnimal):
     """Carnivore species which lives on the island. Subclass of Animal class.
     More description............
@@ -370,13 +379,3 @@ class Herb(BaseAnimal):
             return fodder
         if fodder < 0:
             raise ValueError("Cannot have negative fodder value")
-
-    @staticmethod
-    def birth():
-        """A static method that returns a new instance of the same class.
-
-        Returns
-        -------
-            A new class instance of herbivore class
-        """
-        return Herb()

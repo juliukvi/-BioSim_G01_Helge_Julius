@@ -7,21 +7,82 @@ import pytest
 import numpy as np
 from scipy.stats import normaltest
 import math as m
-def test_initiate_BaseAnimal():
+
+
+def test_initiate_BaseAnimal_gives_error():
     with pytest.raises(ValueError):
         BaseAnimal()
 
+def test_initiate_herb():
+    assert Herb()
 
-def test_check_which_subclass():
+
+def test_initiate_carn():
+    assert Carn()
+
+
+def test_birth_method():
     h = Herb()
-    h.check_which_subclass()
-    assert h.parameters != None
+    c = Carn()
+    birth_herb = h.birth()
+    birth_carn = c.birth()
+    assert isinstance(birth_herb, Herb)
+    assert isinstance(birth_carn, Carn)
+
+
+def test_set_default_parameters_for_species():
+    h = Herb()
+    c = Carn()
+    h.set_default_parameters_for_species()
+    c.set_default_parameters_for_species()
+    assert h.parameters == {
+            "w_birth": 8.0,
+            "sigma_birth": 1.5,
+            "beta": 0.9,
+            "eta": 0.05,
+            "a_half": 40.0,
+            "phi_age": 0.2,
+            "w_half": 10.0,
+            "phi_weight": 0.1,
+            "mu": 0.25,
+            "lambda": 1.0,
+            "gamma": 0.2,
+            "zeta": 3.5,
+            "xi": 1.2,
+            "omega": 0.4,
+            "F": 10.0,
+        }
+    assert c.parameters == {
+            "w_birth": 6.0,
+            "sigma_birth": 1.0,
+            "beta": 0.75,
+            "eta": 0.125,
+            "a_half": 60.0,
+            "phi_age": 0.4,
+            "w_half": 4.0,
+            "phi_weight": 0.4,
+            "mu": 0.4,
+            "lambda": 1.0,
+            "gamma": 0.8,
+            "zeta": 3.5,
+            "xi": 1.1,
+            "omega": 0.9,
+            "F": 50.0,
+            "DeltaPhiMax": 10.0
+        }
+
+
 def test_set_parameters():
     h = Herb()
     c = Carn()
     with pytest.raises(KeyError):
         h.set_parameters({"key_not_valid": 1})
+    with pytest.raises(KeyError):
         h.set_parameters({"zeta": 4, "key_not_valid": 1})
+    with pytest.raises(KeyError):
+        c.set_parameters({'key_not_valid': 1})
+    with pytest.raises(KeyError):
+        c.set_parameters({'zeta': 3,'key_not_valid':2})
     # checking that zeta variable has not been updated in standard_parameters.
     assert h.parameters["zeta"] == 3.5
     h.set_parameters({"zeta": 4, "F": 15.0})
@@ -31,52 +92,60 @@ def test_set_parameters():
         h.set_parameters({"zeta": 3.5, "F": 'some string'})
     # Checking that zeta remains unchanged
     assert h.parameters["zeta"] == 4
-def test_set_attributes():
-    pass
 
 
-def test_initiate_herb():
-    assert Herb()
-
-
-def test_set_parameters_herb():
+def test_set_params_as_attributes():
     h = Herb()
-    with pytest.raises(KeyError):
-        h.set_parameters({"key_not_valid": 1})
-        h.set_parameters({"zeta":4, "key_not_valid":1})
-    #checking that zeta variable has not been updated in standard_parameters.
-    assert h.parameters["zeta"] == 3.5
-    h.set_parameters({"zeta": 4, "F": 15.0})
-    assert h.parameters["zeta"] ==4
-    assert h.parameters["F"] == 15.0
+    c = Carn()
+    assert h.are_params_set is True
+    assert c.are_params_set is True
+    assert h.w_birth == 8.0
+    assert c.w_birth == 6.0
+    h.set_parameters({'w_birth': 5.0})
+    assert h.w_birth == 5.0
+    #Checking that carnivore attributte stays unchanged
+    assert c.w_birth == 6.0
+    c.set_parameters({'w_birth': 2.0})
+    h2 = Herb()
+    c2 = Carn()
+    assert h2.w_birth == 5.0
+    assert c2.w_birth == 2.0
+    list_of_herbs = [Herb() for _ in range(100)]
+    list_of_carns = [Carn() for _ in range(100)]
+    assert all(Herb.zeta for Herb in list_of_herbs)
+    assert all(Carn.F for Carn in list_of_carns)
+
+
+def test_BaseAnimal_init_function_inherits_correctly_to_subclass():
+    h = Herb()
+    c = Carn()
+    assert h.a == 0
+    assert c.a == 0
+    assert c.weight > 0
+    assert h.weight > 0
+    assert 0 <= h.fitness <= 1, 'Fitness needs to be in the interval [0,1]'
+    assert 0 <= c.fitness <= 1, 'Fitness needs to be in the interval [0,1]'
     with pytest.raises(ValueError):
-        h.set_parameters({"zeta": 3.5, "F": 'some string'})
-    #Checking that zeta remains unchanged
-    assert h.parameters["zeta"] == 4
+        h = Herb(age=-1)
+    with pytest.raises(ValueError):
+        c = Carn(age=-300)
+    with pytest.raises(ValueError):
+        h = Herb(weight=-1)
+    with pytest.raises(ValueError):
+        c = Carn(weight=-1)
+    with pytest.raises(ValueError):
+        h = Herb(age="hello")
+    with pytest.raises(ValueError):
+        c = Carn(weight='hi')
+    with pytest.raises(ValueError):
+        h = Herb(weight=[1,2,3])
 
 
-def test_set_attributes_herb():
-    H = Herb()
-    assert H.are_params_set is True
-    assert H.w_half == 10
-    assert H.phi_weight == 0.1
-
-
-def test_init_function():
-    H = Herb()
-    assert H.a == 0
-    assert H.weight > 0
-    assert 0 <= H.fitness <= 1, 'Fitness needs to be in the interval [0,1]'
-
-
-def test_weight_probability_distribution():
-    #should i seed here?
-    #Should i use X^2 test?
+def test_weight_follows_normal_distribution():
+    np.random.seed(123)# need this?
     #Using D.agostinos K^2 test which is accessed from the normaltest in scipy
     n_trials = 1000
-    list_of_herbivores = []
-    for _ in range(n_trials):
-        list_of_herbivores.append(Herb())
+    list_of_herbivores = [Herb() for _ in range(n_trials)]
     weight_data = [h.weight for h in list_of_herbivores]
     stat, p = normaltest(weight_data)
     # Significance level 0.01.
@@ -93,38 +162,42 @@ def test_weight_probability_distribution():
 
 
 def test_age_function():
-    H= Herb()
-    H.age()
-    assert H.a == 1
+    h = Herb()
+    c = Carn()
+    h.age()
+    c.age()
+    assert h.a == 1
+    assert c.a == 1
     for _ in range(10):
-        H.age()
-    assert H.a == 11
+        h.age()
+        c.age()
+    assert h.a == 11
+    assert c.a == 11
 
 
-def test_feeding():
-    H = Herb()
-    H.weight = 3
-    return_fodder = H.feeding(300)
-    #Checking that weight gets updated
-    assert H.weight == 3 + H.beta*H.F
-    #Checking that we have the correct return foddervalue
-    assert return_fodder == H.F
-    H.weight = 3
-    return_fodder = H.feeding(5)
-    assert H.weight == 3 +H.beta*5
+def test_feeding_herb(mocker):
+    mocker.patch('numpy.random.normal', return_value=3)
+    h = Herb()
+    return_fodder = h.feeding(300)
+    assert h.weight == 3 + h.beta*h.F
+    assert return_fodder == h.F
+    h = Herb()
+    return_fodder = h.feeding(5)
+    assert h.weight == 3 +h.beta*5
     assert return_fodder == 5
-    #Testing that negative fodder value gives error
     with pytest.raises(ValueError):
-        H.feeding(-5)
+        h.feeding(-5)
 
 
 def test_fitness_update(mocker):
-    # Getting wrong return value from mocker patch?
+    h = Herb()
+    h.weight = -3
+    h.fitness_update()
+    assert h.fitness == 0
     mocker.patch('numpy.random.normal', return_value=0)
     h = Herb()
     h.fitness_update()
     assert h.fitness == 0
-    #H.weight = 1
     mocker.patch('numpy.random.normal', return_value=1)
     h = Herb()
     h.fitness_update()
@@ -132,15 +205,16 @@ def test_fitness_update(mocker):
 
 
 def test_will_birth(mocker):
-    mocker.patch('numpy.random.normal', return_value=1)
+    mocker.patch('numpy.random.normal', return_value=0)
     h = Herb()
-    return_value = h.will_birth(10)
-    assert return_value is False
+    c = Carn()
+    return_object_herb = h.will_birth(10)
+    return_object_carn = c.
+    assert return_object is None
     h = Herb()
-    h.weight = h.zeta * (h.w_birth + h.sigma_birth)
-    # Testing for probability = 1
-    return_value = h.will_birth(10000)
-    assert return_value is True
+    mocker.patch('Numpy.random.normal', return_value=1000)
+    return_object = h.will_birth(10000)
+    assert isinstance(return_object, Herb)
 
 
 def test_birth():

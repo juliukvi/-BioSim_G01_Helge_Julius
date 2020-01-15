@@ -85,11 +85,11 @@ class BioSim:
         :param params: Dict with valid parameter specification for landscape
         """
         if landscape == "J":
-            J = Jungle()
-            J.set_parameters(params)
+            j = Jungle()
+            j.set_parameters(params)
         else:
-            S = Savannah()
-            S.set_parameters(params)
+            s = Savannah()
+            s.set_parameters(params)
 
     def simulate(self, num_years, vis_years=1, img_years=None):
         """
