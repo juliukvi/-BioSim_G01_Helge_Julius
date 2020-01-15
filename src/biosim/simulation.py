@@ -108,18 +108,21 @@ class BioSim:
 
         Image files will be numbered consecutively.
         """
-        plt.figure()
+
         start_year = self._year
         while self.year < start_year + num_years:
-            if img_years == None:
-                img_years = vis_years
 
-            if self.year % vis_years == 0:
-                plt.plot(range(2+self.year), range(2+self.year))
-                #update graphics
-                pass
-            if self.year % img_years == 0:
-                self._save_graphics()
+            if vis_years:
+                if img_years == None:
+                    img_years = vis_years
+
+                if self.year % vis_years == 0:
+                    plt.plot(range(2+self.year), range(2+self.year))
+                    #update graphics
+                    pass
+                if self.year % img_years == 0:
+                    self._save_graphics()
+                    pass
 
 
             self.island.one_year()
@@ -197,8 +200,8 @@ class BioSim:
             self._animal_lines = self._fig.add_subplot(1, 1, 1)
             if self._ymax_animals:
                 self._animal_lines.set_ylim(0, self._ymax_animals)
-            else:
-                self.
+            #else:
+             #   self.
 
 
 

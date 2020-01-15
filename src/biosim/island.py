@@ -16,21 +16,22 @@ class Island:
                     try:
                         placeholder_list.append(map_dict[nature_square_char]()) # Creates nature objects
                     except KeyError:
-                        raise ValueError
+                        raise ValueError("Island map string contain invalid"
+                                         "character")
                 self.map_list.append(placeholder_list)
-            # Checks so that Ocean squares are on edges
+            # Checks so that Ocean squares are on edges of map
             for nature_square in self.map_list[0]:
                 if not isinstance(nature_square, Ocean):
-                    raise ValueError
+                    raise ValueError("Island not surrounded by ocean")
             for nature_square in self.map_list[len(self.map_list) - 1]:
                 if not isinstance(nature_square, Ocean):
-                    raise ValueError
+                    raise ValueError("Island not surrounded by ocean")
             for nature_square in range(len(self.map_list)):
                 if not isinstance(self.map_list[nature_square][0], Ocean):
-                    raise ValueError
+                    raise ValueError("Island not surrounded by ocean")
             for nature_square in range(len(self.map_list)):
                 if not isinstance(self.map_list[nature_square][len(self.map_list[0]) - 1], Ocean):
-                    raise ValueError
+                    raise ValueError("Island not surrounded by ocean")
 
 
             if ini_pop:  # If an initial population is provided right away

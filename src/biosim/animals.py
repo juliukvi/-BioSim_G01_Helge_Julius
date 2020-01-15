@@ -395,7 +395,7 @@ class Herb(Animal):
         More description...........
 
         """
-        if fodder > self.F:
+        if fodder >= self.F:
             self.weight += self.beta * self.F
             return self.F
         elif (fodder > 0) and (fodder < self.F):
