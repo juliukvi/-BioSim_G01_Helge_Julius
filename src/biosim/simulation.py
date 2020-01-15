@@ -66,8 +66,12 @@ class BioSim:
         self._cmax_animals = cmax_animals
         self._img_base = img_base
         self._img_fmt = img_fmt
-        # Set to true after graphics has been initialized
-        self._graphics_init = False
+        # the following will be initialized by _setup_graphics
+        self._fig = None
+        self._map_ax = None
+        self._img_axis = None
+        self._animal_lines_ax = None
+        self._herb_line = None
 
     def set_animal_parameters(self, species, params):
         """
@@ -110,15 +114,15 @@ class BioSim:
         """
 
         start_year = self._year
-        while self.year < start_year + num_years:
+        self._final_year = start_year + num_years
+        while self.year < self._final_year:
 
             if vis_years:
                 if img_years == None:
                     img_years = vis_years
 
                 if self.year % vis_years == 0:
-                    plt.plot(range(2+self.year), range(2+self.year))
-                    #update graphics
+                    self._update_graphics()
                     pass
                 if self.year % img_years == 0:
                     self._save_graphics()
@@ -194,20 +198,49 @@ class BioSim:
             raise ValueError('Unknown movie format: ' + movie_fmt)
 
     def _setup_graphics(self):
-        if not self._graphics_init:
+        if self._fig is None :
             self._fig = plt.figure()
-        if not self._graphics_init:
-            self._animal_lines = self._fig.add_subplot(1, 1, 1)
+        if self._animal_lines_ax is None:
+            self._animal_lines_ax = self._fig.add_subplot(1, 1, 1)
             if self._ymax_animals:
-                self._animal_lines.set_ylim(0, self._ymax_animals)
-            #else:
-             #   self.
+                self._animal_lines_ax.set_ylim(0, self._ymax_animals)
+            else:
+                self._animal_lines_ax.set_ylim(0, (self.num_animals+1)*1.3)
+        # year axis limit on plot needs to updated when you run multiple
+        # multiple simulations after each other
+        self._animal_lines_ax.set_xlim(0, self._final_year+1)
+
+        if self._herb_line is None:
+            # Creates plot object with no y-values that has the correct length,
+            # y-data will be gathered and set by self._update_graphics
+            herb_plot = self._animal_lines_ax.plot(np.arange(0, self._final_year),
+                                           np.full(self._final_year, np.nan))
+            # Saves the line object from herb_plot
+            self._herb_line = herb_plot[0]
+        else:
+            # Collects the data of the current active herb_line
+            xdata, ydata = self._herb_line.get_data()
+            # Creates array of values for the new years that is about to be
+            # simulated
+            xnew = np.arange(xdata[-1] + 1, self._final_year)
+            if len(xnew) > 0:  # Think this is unnecesary since _setup_graphics should not be called if self._final_year is equal to self._year
+                ynew = np.full(xnew.shape, np.nan)
+                self._herb_line.set_data(np.hstack((xdata, xnew)),
+                                         np.hstack((ydata, ynew)))
 
 
+    def _update_graphics(self):
+        """Updates the figure with """
+        self._update_animal_lines(self.num_animals_per_species["Herbivore"])
+        plt.pause(1e-6)
 
 
+    def _update_animal_lines(self, herb_data):
+        ydata = self._herb_line.get_ydata()
+        ydata[self._year] = herb_data
+        self._herb_line.set_ydata(ydata)
 
-        self._graphics_init = True
+
     def _save_graphics(self):
         """Saves graphics to file if file name given."""
 
