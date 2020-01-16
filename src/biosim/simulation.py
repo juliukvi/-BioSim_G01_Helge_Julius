@@ -59,7 +59,7 @@ class BioSim:
         """
         random.seed(seed)
         island_map = textwrap.dedent(island_map)
-        self.island = Island(island_map, ini_pop=ini_pop)
+        self._island = Island(island_map, ini_pop=ini_pop)
         self._year = 0
         self._img_ctr = 0
         self._ymax_animals = ymax_animals
@@ -74,6 +74,12 @@ class BioSim:
         self._herb_line = None
         self._carn_line = None
         self._animal_lines_ax_legend = None
+        self._herb_map_ax = None
+        self._herb_map = None
+        self._carn_map_ax = None
+        self._carn_map = None
+        self._cmax_herb = None
+        self._cmax_carn = None
 
     def set_animal_parameters(self, species, params):
         """
@@ -131,11 +137,11 @@ class BioSim:
 
 
 
-            self.island.one_year()
+            self._island.one_year()
             self._year += 1
 
     def add_population(self, population):
-        self.island.add_population(population)
+        self._island.add_population(population)
 
 
     @property
@@ -147,18 +153,18 @@ class BioSim:
     @property
     def num_animals(self):
         """Total number of animals on island."""
-        return self.island.count_animals()[2]
+        return self._island.count_animals()[2]
 
     @property
     def num_animals_per_species(self):
         """Number of animals per species in island, as dictionary."""
-        herbivore_count, carnivore_count = self.island.count_animals()[:2]
+        herbivore_count, carnivore_count = self._island.count_animals()[:2]
         num_animals_dict = {"Herbivore":herbivore_count, "Carnivore":carnivore_count}
         return num_animals_dict
     @property
     def animal_distribution(self):
         """Pandas DataFrame with animal count per species for each cell on island."""
-        animal_count_list = self.island.animals_on_square()
+        animal_count_list = self._island.animals_on_square()
         pd_data = pd.DataFrame(data=animal_count_list, columns=['Row', 'Col', 'Herbivore', 'Carnivore'])
         return pd_data
     def make_movie(self, movie_fmt="mp4"):
@@ -203,7 +209,7 @@ class BioSim:
         if self._fig is None:
             self._fig = plt.figure()
         if self._animal_lines_ax is None:
-            self._animal_lines_ax = self._fig.add_subplot(1, 1, 1)
+            self._animal_lines_ax = self._fig.add_subplot(2, 2, 1)
             self._animal_lines_ax.set_xlabel("Years")
             self._animal_lines_ax.set_ylabel("Animal count")
             if self._ymax_animals:
@@ -254,9 +260,26 @@ class BioSim:
 
         if self._animal_lines_ax_legend is None:
             self._animal_lines_ax.legend(loc="upper left")
+
+        if self._cmax_animals is None:
+            self._cmax_herb = 200
+            self._cmax_carn = 100
+        else:
+            self._cmax_herb = self._cmax_animals["Herbivore"]
+            self._cmax_carn = self._cmax_animals["Carnivore"]
+
+        if self._herb_map_ax is None:
+            self._herb_map_ax = self._fig.add_subplot(2, 2, 2)
+            self._herb_map_ax.set_xticks(range(0, 1 + self._island.map_columns, 1))
+            self._herb_map_ax.set_xticklabels(range(0, 1 + self._island.map_columns, 1))
+            self._herb_map_ax.set_yticks(range(0, 1 + self._island.map_rows, 1))
+            self._herb_map_ax.set_yticklabels(range(0, 1 + self._island.map_rows, 1))
+            self._herb_map_ax.set_title("Herbivore distribution")
+
     def _update_graphics(self):
         """Updates the figure with """
         self._update_animal_lines()
+        self._update_animal_heat_maps()
         plt.pause(1e-6)
 
 
@@ -273,7 +296,19 @@ class BioSim:
         ydata_carn[self.year] = self.num_animals_per_species['Carnivore']
         self._carn_line.set_ydata(ydata_carn)
 
+    def _update_animal_heat_maps(self):
 
+        if self._herb_map is not None:
+            self._herb_map.set_data(np.reshape(self.animal_distribution['Herbivore'].values,
+                                                     newshape=(self._island.map_rows, self._island.map_columns)))
+        else:
+            self._herb_map = self._herb_map_ax.imshow(np.reshape(self.animal_distribution[
+                                                                     'Herbivore'].values,
+                                                                 newshape=(self._island.map_rows,
+                                                                           self._island.map_columns)),
+                                                      vmax=self._cmax_herb)
+            plt.colorbar(self._herb_map, ax=self._herb_map_ax,
+                         orientation='horizontal')
     def _save_graphics(self):
         """Saves graphics to file if file name given."""
 
