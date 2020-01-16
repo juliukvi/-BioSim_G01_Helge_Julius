@@ -42,7 +42,7 @@ class Nature:
         if num_herb >= 2:
             newborn_list = []
             for animal in self.herb_list:
-                newborn = animal.will_birth(self.num_herb)
+                newborn = animal.will_birth(num_herb)
                 if newborn:
                     newborn_list.append(newborn)
             for newborn in newborn_list:
@@ -51,7 +51,7 @@ class Nature:
         if num_carn >= 2:
             newborn_list = []
             for animal in self.carn_list:
-                newborn = animal.will_birth(self.num_carn)
+                newborn = animal.will_birth(num_carn)
                 if newborn:
                     newborn_list.append(newborn)
             for newborn in newborn_list:
@@ -85,6 +85,9 @@ class Nature:
                 else:
                     west_propensity = 0
                 total_propensity = (north_propensity+east_propensity+south_propensity+west_propensity)
+                # if total_propensity is zero no animal can move so loop breaks
+                if total_propensity == 0:
+                    break
                 north_move_prob = north_propensity/total_propensity
                 east_move_prob = north_move_prob + east_propensity/total_propensity
                 south_move_prob = east_move_prob + south_propensity/total_propensity
@@ -139,6 +142,8 @@ class Nature:
                 else:
                     west_propensity = 0
                 total_propensity = (north_propensity + east_propensity + south_propensity + west_propensity)
+                if total_propensity == 0:
+                    break
                 north_move_prob = north_propensity / total_propensity
                 east_move_prob = north_move_prob + east_propensity / total_propensity
                 south_move_prob = east_move_prob + south_propensity / total_propensity

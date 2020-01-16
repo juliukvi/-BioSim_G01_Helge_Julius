@@ -18,6 +18,11 @@ import pandas as pd
 import textwrap
 
 
+# update these variables to point to your ffmpeg and convert binaries
+_FFMPEG_BINARY = 'C:\Program Files\ImageMagick-7.0.9-Q16'
+_CONVERT_BINARY = 'magick'
+
+
 class BioSim:
     def __init__(
         self,
@@ -54,13 +59,29 @@ class BioSim:
         """
         random.seed(seed)
         island_map = textwrap.dedent(island_map)
-        self.island = Island(island_map, ini_pop=ini_pop)
+        self._island_map = island_map
+        self._island = Island(island_map, ini_pop=ini_pop)
         self._year = 0
-        self.image_counter = 0
-        self.ymax_animals = ymax_animals
-        self.cmax_animals = cmax_animals
-        self.img_base = img_base
-        self.fmt = img_fmt
+        self._img_ctr = 0
+        self._ymax_animals = ymax_animals
+        self._cmax_animals = cmax_animals
+        self._img_base = img_base
+        self._img_fmt = img_fmt
+        # the following will be initialized by _setup_graphics
+        self._fig = None
+        self._map_ax = None
+        self._img_axis = None
+        self._animal_lines_ax = None
+        self._herb_line = None
+        self._carn_line = None
+        self._animal_lines_ax_legend = None
+        self._herb_map_ax = None
+        self._herb_map = None
+        self._carn_map_ax = None
+        self._carn_map = None
+        self._cmax_herb = None
+        self._cmax_carn = None
+        self._island_map_ax = None
 
     def set_animal_parameters(self, species, params):
         """
@@ -101,22 +122,28 @@ class BioSim:
 
         Image files will be numbered consecutively.
         """
-        start_year = self._year
-        while self.year < start_year + num_years:
-            if img_years == None:
-                img_years = vis_years
 
-            if self.year % vis_years:
-                #update graphics
-                pass
-            if self.year % img_years:
-                pass
-                #save graphics
-            self.island.one_year()
+        start_year = self._year
+        self._final_year = start_year + num_years
+        self._setup_graphics()
+        while self.year < self._final_year:
+
+            if vis_years:
+                if img_years == None:
+                    img_years = vis_years
+
+                if self.year % vis_years == 0:
+                    self._update_graphics()
+                if self.year % img_years == 0:
+                    self._save_graphics()
+
+
+
+            self._island.one_year()
             self._year += 1
 
     def add_population(self, population):
-        self.island.add_population(population)
+        self._island.add_population(population)
 
 
     @property
@@ -128,22 +155,214 @@ class BioSim:
     @property
     def num_animals(self):
         """Total number of animals on island."""
-        return self.island.count_animals()[2]
+        return self._island.count_animals()[2]
 
     @property
     def num_animals_per_species(self):
         """Number of animals per species in island, as dictionary."""
-        herbivore_count, carnivore_count = self.island.count_animals()[:2]
+        herbivore_count, carnivore_count = self._island.count_animals()[:2]
         num_animals_dict = {"Herbivore":herbivore_count, "Carnivore":carnivore_count}
         return num_animals_dict
     @property
     def animal_distribution(self):
         """Pandas DataFrame with animal count per species for each cell on island."""
-        animal_count_list = self.island.animals_on_square()
+        animal_count_list = self._island.animals_on_square()
         pd_data = pd.DataFrame(data=animal_count_list, columns=['Row', 'Col', 'Herbivore', 'Carnivore'])
         return pd_data
-    def make_movie(self):
-        """Create MPEG4 movie from visualization images saved."""
+    def make_movie(self, movie_fmt="mp4"):
+        """
+        Creates MPEG4 movie from visualization images saved.
+        .. :note:
+            Requires ffmpeg
+        The movie is stored as img_base + movie_fmt
+        """
+
+        if self._img_base is None:
+            raise RuntimeError("No filename defined.")
+
+        if movie_fmt == 'mp4':
+            try:
+                # Parameters chosen according to http://trac.ffmpeg.org/wiki/Encode/H.264,
+                # section "Compatibility"
+                subprocess.check_call([_FFMPEG_BINARY,
+                                       '-i', '{}_%05d.png'.format(self._img_base),
+                                       '-y',
+                                       '-profile:v', 'baseline',
+                                       '-level', '3.0',
+                                       '-pix_fmt', 'yuv420p',
+                                       '{}.{}'.format(self._img_base,
+                                                      movie_fmt)])
+            except subprocess.CalledProcessError as err:
+                raise RuntimeError('ERROR: ffmpeg failed with: {}'.format(err))
+        elif movie_fmt == 'gif':
+            try:
+                subprocess.check_call([_CONVERT_BINARY,
+                                       '-delay', '1',
+                                       '-loop', '0',
+                                       '{}_*.png'.format(self._img_base),
+                                       '{}.{}'.format(self._img_base,
+                                                      movie_fmt)])
+            except subprocess.CalledProcessError as err:
+                raise RuntimeError('ERROR: convert failed with: {}'.format(err))
+        else:
+            raise ValueError('Unknown movie format: ' + movie_fmt)
+
+    def _setup_graphics(self):
+        if self._fig is None:
+            self._fig = plt.figure(figsize=(15, 15))
+        if self._animal_lines_ax is None:
+            self._animal_lines_ax = self._fig.add_axes([0.6, 0.6, 0.35, 0.35])
+            self._animal_lines_ax.set_xlabel("Years")
+            self._animal_lines_ax.set_ylabel("Animal count")
+            if self._ymax_animals:
+                self._animal_lines_ax.set_ylim(0, self._ymax_animals)
+            else:
+                self._animal_lines_ax.set_ylim(0, (self.num_animals+1)*1.3)
+        # year axis limit on plot needs to updated when you run multiple
+        # multiple simulations after each other
+        self._animal_lines_ax.set_xlim(0, self._final_year+1)
+
+        if self._herb_line is None:
+            # Creates plot object with no y-values that has the correct length,
+            # y-data will be gathered and set by self._update_graphics
+            herb_plot = self._animal_lines_ax.plot(np.arange(0, self._final_year),
+                                                   np.full(self._final_year, np.nan),
+                                                   label='Herbivores')
+            # Saves the line object from herb_plot
+            self._herb_line = herb_plot[0]
+        else:
+            # Collects the data of the current active herb_line
+            xdata, ydata = self._herb_line.get_data()
+            # Creates array of values for the new years that is about to be
+            # simulated
+            xnew = np.arange(xdata[-1] + 1, self._final_year)
+            if len(xnew) > 0:  # Think this is unnecesary since _setup_graphics should not be called if self._final_year is equal to self._year
+                ynew = np.full(xnew.shape, np.nan)
+                self._herb_line.set_data(np.hstack((xdata, xnew)),
+                                         np.hstack((ydata, ynew)))
+
+        if self._carn_line is None:
+            # Creates plot object with no y-values that has the correct length,
+            # y-data will be gathered and set by self._update_graphics
+            carn_plot = self._animal_lines_ax.plot(np.arange(0, self._final_year),
+                                                   np.full(self._final_year, np.nan),
+                                                   label='Carnivores')
+            # Saves the line object from herb_plot
+            self._carn_line = carn_plot[0]
+        else:
+            # Collects the data of the current active herb_line
+            xdata, ydata = self._carn_line.get_data()
+            # Creates array of values for the new years that is about to be
+            # simulated
+            xnew = np.arange(xdata[-1] + 1, self._final_year)
+            if len(xnew) > 0:
+                ynew = np.full(xnew.shape, np.nan)
+                self._carn_line.set_data(np.hstack((xdata, xnew)),
+                                         np.hstack((ydata, ynew)))
+
+        if self._animal_lines_ax_legend is None:
+            self._animal_lines_ax.legend(loc="upper left")
+
+        if self._cmax_animals is None:
+            self._cmax_herb = 200
+            self._cmax_carn = 50
+        else:
+            self._cmax_herb = self._cmax_animals["Herbivore"]
+            self._cmax_carn = self._cmax_animals["Carnivore"]
+
+        if self._herb_map_ax is None:
+            self._herb_map_ax = self._fig.add_axes([0.05, 0.35, 0.25, 0.25])
+            self._herb_map_ax.set_xticks(range(0, 1 + self._island.map_columns, 1))
+            self._herb_map_ax.set_xticklabels(range(0, 1 + self._island.map_columns, 1))
+            self._herb_map_ax.set_yticks(range(0, 1 + self._island.map_rows, 1))
+            self._herb_map_ax.set_yticklabels(range(0, 1 + self._island.map_rows, 1))
+            self._herb_map_ax.set_title("Herbivore distribution")
+
+        if self._carn_map_ax is None:
+            self._carn_map_ax = self._fig.add_axes([0.05, 0.05, 0.25, 0.25])
+            self._carn_map_ax.set_xticks(range(0, 1 + self._island.map_columns, 1))
+            self._carn_map_ax.set_xticklabels(range(0, 1 + self._island.map_columns, 1))
+            self._carn_map_ax.set_yticks(range(0, 1 + self._island.map_rows, 1))
+            self._carn_map_ax.set_yticklabels(range(0, 1 + self._island.map_rows, 1))
+            self._carn_map_ax.set_title("Carnivore distribution")
+
+        if self._island_map_ax is None:
+            rgb_value = {'O': (0.0, 0.0, 1.0),  # blue
+                         'M': (0.5, 0.5, 0.5),  # grey
+                         'J': (0.0, 0.6, 0.0),  # dark green
+                         'S': (0.5, 1.0, 0.5),  # light green
+                         'D': (1.0, 1.0, 0.5)}  # light yellow
+            island_rgb = [[rgb_value[column] for column in row]
+                        for row in self._island_map.splitlines()]
+            self._island_map_ax = self._fig.add_axes([0.05, 0.7, 0.25, 0.25])  # llx, lly, w, h
+            self._island_map_ax.imshow(island_rgb)
+            self._island_map_ax.set_xticks(range(len(island_rgb[0])))
+            self._island_map_ax.set_xticklabels(range(0, 1 + len(island_rgb[0])))
+            self._island_map_ax.set_yticks(range(len(island_rgb)))
+            self._island_map_ax.set_yticklabels(range(0, 1 + len(island_rgb)))
+            self._island_map_ax.set_title("Island map")
+            map_rect = self._fig.add_axes([0.31, 0.7, 0.25, 0.25])  # llx, lly, w, h
+            map_rect.axis('off')
+            for ix, name in enumerate(('Ocean', 'Mountain', 'Jungle',
+                                      'Savannah', 'Desert')):
+               map_rect.add_patch(plt.Rectangle((0., ix * 0.2), 0.1, 0.1,
+                                            edgecolor='none',
+                                            facecolor=rgb_value[name[0]]))
+               map_rect.text(0.12, ix * 0.2, name, transform=map_rect.transAxes)
+
+    def _update_graphics(self):
+        """Updates the figure with """
+        self._update_animal_lines()
+        self._update_animal_heat_maps()
+        plt.pause(1e-6)
 
 
+    def _update_animal_lines(self):
+        if self._ymax_animals is None:
+            # Saves number of animals in a variable so that property num_animals dont need to be called multiple times
+            number_of_animals = self.num_animals
+            if number_of_animals > self._animal_lines_ax.get_ylim()[1]:
+                self._animal_lines_ax.set_ylim(0, number_of_animals + 100)
+        ydata_herb = self._herb_line.get_ydata()
+        ydata_herb[self._year] = self.num_animals_per_species["Herbivore"]
+        self._herb_line.set_ydata(ydata_herb)
+        ydata_carn = self._carn_line.get_ydata()
+        ydata_carn[self.year] = self.num_animals_per_species['Carnivore']
+        self._carn_line.set_ydata(ydata_carn)
 
+    def _update_animal_heat_maps(self):
+
+        if self._herb_map is not None:
+            self._herb_map.set_data(np.reshape(self.animal_distribution['Herbivore'].values,
+                                                     newshape=(self._island.map_rows, self._island.map_columns)))
+        else:
+            self._herb_map = self._herb_map_ax.imshow(np.reshape(self.animal_distribution[
+                                                                     'Herbivore'].values,
+                                                                 newshape=(self._island.map_rows,
+                                                                           self._island.map_columns)),
+                                                      vmax=self._cmax_herb)
+            plt.colorbar(self._herb_map, ax=self._herb_map_ax,
+                         orientation='horizontal')
+
+        if self._carn_map is not None:
+            self._carn_map.set_data(np.reshape(self.animal_distribution['Carnivore'].values,
+                                                     newshape=(self._island.map_rows, self._island.map_columns)))
+        else:
+            self._carn_map = self._carn_map_ax.imshow(np.reshape(self.animal_distribution[
+                                                                     'Carnivore'].values,
+                                                                 newshape=(self._island.map_rows,
+                                                                           self._island.map_columns)),
+                                                      vmax=self._cmax_carn)
+            plt.colorbar(self._carn_map, ax=self._carn_map_ax,
+                         orientation='horizontal')
+
+    def _save_graphics(self):
+        """Saves graphics to file if file name given."""
+
+        if self._img_base is None:
+            return
+
+        plt.savefig('{base}_{num:05d}.{type}'.format(base=self._img_base,
+                                                     num=self._img_ctr,
+                                                     type=self._img_fmt))
+        self._img_ctr += 1

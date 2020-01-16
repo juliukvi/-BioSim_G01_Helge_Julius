@@ -274,10 +274,10 @@ class Carn(Animal):
                     self.fitness_update()
                     eaten_herbs.append(herb)
                     break
-            self.weight += self.beta * herb.weight
-            amount_to_eat -= herb.weight
-            self.fitness_update()
-            eaten_herbs.append(herb)
+                self.weight += self.beta * herb.weight
+                amount_to_eat -= herb.weight
+                self.fitness_update()
+                eaten_herbs.append(herb)
         return eaten_herbs
 
     @staticmethod
@@ -395,7 +395,7 @@ class Herb(Animal):
         More description...........
 
         """
-        if fodder > self.F:
+        if fodder >= self.F:
             self.weight += self.beta * self.F
             return self.F
         elif (fodder > 0) and (fodder < self.F):

@@ -16,21 +16,22 @@ class Island:
                     try:
                         placeholder_list.append(map_dict[nature_square_char]()) # Creates nature objects
                     except KeyError:
-                        raise ValueError
+                        raise ValueError("Island map string contain invalid"
+                                         "character")
                 self.map_list.append(placeholder_list)
-            # Checks so that Ocean squares are on edges
+            # Checks so that Ocean squares are on edges of map
             for nature_square in self.map_list[0]:
                 if not isinstance(nature_square, Ocean):
-                    raise ValueError
+                    raise ValueError("Island not surrounded by ocean")
             for nature_square in self.map_list[len(self.map_list) - 1]:
                 if not isinstance(nature_square, Ocean):
-                    raise ValueError
+                    raise ValueError("Island not surrounded by ocean")
             for nature_square in range(len(self.map_list)):
                 if not isinstance(self.map_list[nature_square][0], Ocean):
-                    raise ValueError
+                    raise ValueError("Island not surrounded by ocean")
             for nature_square in range(len(self.map_list)):
                 if not isinstance(self.map_list[nature_square][len(self.map_list[0]) - 1], Ocean):
-                    raise ValueError
+                    raise ValueError("Island not surrounded by ocean")
 
 
             if ini_pop:  # If an initial population is provided right away
@@ -41,11 +42,11 @@ class Island:
             square_location = square["loc"]
             row = square_location[0]
             column = square_location[1]
-            if row <= 1 or row > self.map_rows:
+            if row < 0 or row >= self.map_rows:
                 raise ValueError("Square dont exist")
-            if column <= 1 or column > self.map_columns:
+            if column < 0 or column >= self.map_columns:
                 raise ValueError("Square dont exist")
-            nature_square = self.map_list[row-1][column-1]
+            nature_square = self.map_list[row][column]
             if not nature_square.habitable:
                 raise ValueError("non habitable square provided")
             animal_pop = square["pop"]
@@ -112,14 +113,12 @@ class Island:
 
     def animals_on_square(self):
         """Makes a list with the number of herbivores and carnivores on every
-        nature_square, indexing is adjusted so that square(0,0) becomes
-        square(1,1), this is done because pandas.dataframe starts index from
-        (1, 1)"""
+        nature_square"""
         animal_count_list = []
         for row in range(self.map_rows):
             for column in range(self.map_columns):
                 nature_square = self.map_list[row][column]
-                animal_count_list.append([row+1, column+1, nature_square.herbivore_number(),
+                animal_count_list.append([row, column, nature_square.herbivore_number(),
                                           nature_square.carnivore_number()])
         return animal_count_list
 
