@@ -228,8 +228,6 @@ class Carn(Animal):
             self._set_params_as_attributes()
         super().__init__(age=age, weight=weight)
 
-    def __repr__(self):
-        return "Carnivore(age={}, weight={})".format(self.a, self.weight)
 
 
     def feeding(self, sorted_herb_list):
@@ -369,7 +367,15 @@ class Herb(Animal):
         ValueError
             If the new value assigned to the key is not of type float or int
         """
-
+        for key in new_params:
+            if key not in cls.parameters.keys():
+                raise KeyError(f'Parameter {key} is not in valid')
+            if isinstance(new_params[key], int) or isinstance(new_params[key], float):
+                continue
+            else:
+                raise ValueError(f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
+        cls.parameters.update(new_params)
+        cls._set_params_as_attributes()
     @classmethod
     def _set_params_as_attributes(cls):
         """Sets the herbivore parameters to attributes on class level.
@@ -387,8 +393,7 @@ class Herb(Animal):
             self._set_params_as_attributes()
         super().__init__(age=age, weight=weight)
 
-    def __repr__(self):
-        return "Herbivore(age={}, weight={})".format(self.a, self.weight)
+
 
     def feeding(self, fodder):
         """Handles the feeding and weight of the herbivores
