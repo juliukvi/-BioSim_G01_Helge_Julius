@@ -53,7 +53,7 @@ class Animal:
             self.fitness = 0
         else:
             q_age = 1 / (1 + m.exp(self.phi_age * (self.a - self.a_half)))
-            q_weight = 1 / (1 + m.exp(-self.phi_age*(self.weight - self.w_half)))
+            q_weight = 1 / (1 + m.exp(-self.phi_weight*(self.weight - self.w_half)))
             self.fitness = q_age * q_weight
 
     def migrate(self):

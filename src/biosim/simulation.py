@@ -67,6 +67,7 @@ class BioSim:
         self._cmax_animals = cmax_animals
         self._img_base = img_base
         self._img_fmt = img_fmt
+        self._img_pause_time = 1e-6
         # the following will be initialized by _setup_graphics
         self._fig = None
         self._map_ax = None
@@ -136,11 +137,11 @@ class BioSim:
                     self._update_graphics()
                 if self.year % img_years == 0:
                     self._save_graphics()
-
-
+                plt.pause(self._img_pause_time)
 
             self._island.one_year()
             self._year += 1
+
 
     def add_population(self, population):
         self._island.add_population(population)
@@ -310,11 +311,12 @@ class BioSim:
                                             facecolor=rgb_value[name[0]]))
                map_rect.text(0.12, ix * 0.2, name, transform=map_rect.transAxes)
 
+
     def _update_graphics(self):
         """Updates the figure with """
         self._update_animal_lines()
         self._update_animal_heat_maps()
-        plt.pause(1e-6)
+        #plt.pause(1e-6)
 
 
     def _update_animal_lines(self):
