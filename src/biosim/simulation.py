@@ -265,13 +265,13 @@ class BioSim:
 
         if self._cmax_animals is None:
             self._cmax_herb = 200
-            self._cmax_carn = 100
+            self._cmax_carn = 50
         else:
             self._cmax_herb = self._cmax_animals["Herbivore"]
             self._cmax_carn = self._cmax_animals["Carnivore"]
 
         if self._herb_map_ax is None:
-            self._herb_map_ax = self._fig.add_subplot(2, 2, 2)
+            self._herb_map_ax = self._fig.add_axes([0.05, 0.35, 0.25, 0.25])
             self._herb_map_ax.set_xticks(range(0, 1 + self._island.map_columns, 1))
             self._herb_map_ax.set_xticklabels(range(0, 1 + self._island.map_columns, 1))
             self._herb_map_ax.set_yticks(range(0, 1 + self._island.map_rows, 1))
@@ -279,7 +279,7 @@ class BioSim:
             self._herb_map_ax.set_title("Herbivore distribution")
 
         if self._carn_map_ax is None:
-            self._carn_map_ax = self._fig.add_subplot(2, 2, 4)
+            self._carn_map_ax = self._fig.add_axes([0.05, 0.05, 0.25, 0.25])
             self._carn_map_ax.set_xticks(range(0, 1 + self._island.map_columns, 1))
             self._carn_map_ax.set_xticklabels(range(0, 1 + self._island.map_columns, 1))
             self._carn_map_ax.set_yticks(range(0, 1 + self._island.map_rows, 1))

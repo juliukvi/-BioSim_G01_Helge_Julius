@@ -42,11 +42,11 @@ class Island:
             square_location = square["loc"]
             row = square_location[0]
             column = square_location[1]
-            if row <= 1 or row > self.map_rows:
+            if row < 0 or row >= self.map_rows:
                 raise ValueError("Square dont exist")
-            if column <= 1 or column > self.map_columns:
+            if column < 0 or column >= self.map_columns:
                 raise ValueError("Square dont exist")
-            nature_square = self.map_list[row-1][column-1]
+            nature_square = self.map_list[row][column]
             if not nature_square.habitable:
                 raise ValueError("non habitable square provided")
             animal_pop = square["pop"]
