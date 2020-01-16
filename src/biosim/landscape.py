@@ -22,6 +22,7 @@ class Nature:
 
 
     def feed_all_animals(self):
+        #Putte sortering i metode?
         self.herb_list.sort(key=lambda x: x.fitness, reverse=True)
         for animal in self.herb_list:
             if self.fodder > 0:
