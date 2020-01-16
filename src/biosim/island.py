@@ -113,14 +113,12 @@ class Island:
 
     def animals_on_square(self):
         """Makes a list with the number of herbivores and carnivores on every
-        nature_square, indexing is adjusted so that square(0,0) becomes
-        square(1,1), this is done because pandas.dataframe starts index from
-        (1, 1)"""
+        nature_square"""
         animal_count_list = []
         for row in range(self.map_rows):
             for column in range(self.map_columns):
                 nature_square = self.map_list[row][column]
-                animal_count_list.append([row+1, column+1, nature_square.herbivore_number(),
+                animal_count_list.append([row, column, nature_square.herbivore_number(),
                                           nature_square.carnivore_number()])
         return animal_count_list
 

@@ -276,6 +276,14 @@ class BioSim:
             self._herb_map_ax.set_yticklabels(range(0, 1 + self._island.map_rows, 1))
             self._herb_map_ax.set_title("Herbivore distribution")
 
+        if self._carn_map_ax is None:
+            self._carn_map_ax = self._fig.add_subplot(2, 2, 4)
+            self._carn_map_ax.set_xticks(range(0, 1 + self._island.map_columns, 1))
+            self._carn_map_ax.set_xticklabels(range(0, 1 + self._island.map_columns, 1))
+            self._carn_map_ax.set_yticks(range(0, 1 + self._island.map_rows, 1))
+            self._carn_map_ax.set_yticklabels(range(0, 1 + self._island.map_rows, 1))
+            self._carn_map_ax.set_title("Carnivore distribution")
+
     def _update_graphics(self):
         """Updates the figure with """
         self._update_animal_lines()
@@ -309,6 +317,19 @@ class BioSim:
                                                       vmax=self._cmax_herb)
             plt.colorbar(self._herb_map, ax=self._herb_map_ax,
                          orientation='horizontal')
+
+        if self._carn_map is not None:
+            self._carn_map.set_data(np.reshape(self.animal_distribution['Carnivore'].values,
+                                                     newshape=(self._island.map_rows, self._island.map_columns)))
+        else:
+            self._carn_map = self._carn_map_ax.imshow(np.reshape(self.animal_distribution[
+                                                                     'Carnivore'].values,
+                                                                 newshape=(self._island.map_rows,
+                                                                           self._island.map_columns)),
+                                                      vmax=self._cmax_carn)
+            plt.colorbar(self._carn_map, ax=self._carn_map_ax,
+                         orientation='horizontal')
+
     def _save_graphics(self):
         """Saves graphics to file if file name given."""
 
