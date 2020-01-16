@@ -8,7 +8,7 @@ __email__ = "hege.helo.klemetsdal@nmbu.no & "
 
 from biosim.landscape import *
 from biosim.animals import *
-from biosim.animals import *
+from biosim.animals import Herb, Carn
 from biosim.island import *
 import pandas as pd
 import numpy as np
@@ -91,11 +91,11 @@ class BioSim:
         :param params: Dict with valid parameter specification for species
         """
         if species == "Herbivore":
-            H = Herb()
-            H.set_parameters(params)
+            h = Herb()
+            h.set_parameters(params)
         elif species == "Carnivore":
-            C = Carn()
-            C.set_parameters(params)
+            c = Carn()
+            c.set_parameters(params)
         else:
             raise ValueError(f'Got non existing species {species} ')
     def set_landscape_parameters(self, landscape, params):
@@ -106,11 +106,14 @@ class BioSim:
         :param params: Dict with valid parameter specification for landscape
         """
         if landscape == "J":
-            J = Jungle()
-            J.set_parameters(params)
+            j = Jungle()
+            j.set_parameters(params)
+        elif landscape == "S":
+            s = Savannah()
+            s.set_parameters(params)
         else:
-            S = Savannah()
-            S.set_parameters(params)
+            raise ValueError(f'Only jungle and svannah landscapes can have parameters'
+                             f' updated. Got landscape {landscape}')
 
     def simulate(self, num_years, vis_years=1, img_years=None):
         """
