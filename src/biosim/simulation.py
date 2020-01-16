@@ -72,6 +72,8 @@ class BioSim:
         self._img_axis = None
         self._animal_lines_ax = None
         self._herb_line = None
+        self._carn_line = None
+        self._animal_lines_ax_legend = None
 
     def set_animal_parameters(self, species, params):
         """
@@ -115,6 +117,7 @@ class BioSim:
 
         start_year = self._year
         self._final_year = start_year + num_years
+        self._setup_graphics()
         while self.year < self._final_year:
 
             if vis_years:
@@ -123,10 +126,9 @@ class BioSim:
 
                 if self.year % vis_years == 0:
                     self._update_graphics()
-                    pass
                 if self.year % img_years == 0:
                     self._save_graphics()
-                    pass
+
 
 
             self.island.one_year()
@@ -198,10 +200,12 @@ class BioSim:
             raise ValueError('Unknown movie format: ' + movie_fmt)
 
     def _setup_graphics(self):
-        if self._fig is None :
+        if self._fig is None:
             self._fig = plt.figure()
         if self._animal_lines_ax is None:
             self._animal_lines_ax = self._fig.add_subplot(1, 1, 1)
+            self._animal_lines_ax.set_xlabel("Years")
+            self._animal_lines_ax.set_ylabel("Animal count")
             if self._ymax_animals:
                 self._animal_lines_ax.set_ylim(0, self._ymax_animals)
             else:
@@ -214,7 +218,8 @@ class BioSim:
             # Creates plot object with no y-values that has the correct length,
             # y-data will be gathered and set by self._update_graphics
             herb_plot = self._animal_lines_ax.plot(np.arange(0, self._final_year),
-                                           np.full(self._final_year, np.nan))
+                                                   np.full(self._final_year, np.nan),
+                                                   label='Herbivores')
             # Saves the line object from herb_plot
             self._herb_line = herb_plot[0]
         else:
@@ -228,17 +233,45 @@ class BioSim:
                 self._herb_line.set_data(np.hstack((xdata, xnew)),
                                          np.hstack((ydata, ynew)))
 
+        if self._carn_line is None:
+            # Creates plot object with no y-values that has the correct length,
+            # y-data will be gathered and set by self._update_graphics
+            carn_plot = self._animal_lines_ax.plot(np.arange(0, self._final_year),
+                                                   np.full(self._final_year, np.nan),
+                                                   label='Carnivores')
+            # Saves the line object from herb_plot
+            self._carn_line = carn_plot[0]
+        else:
+            # Collects the data of the current active herb_line
+            xdata, ydata = self._carn_line.get_data()
+            # Creates array of values for the new years that is about to be
+            # simulated
+            xnew = np.arange(xdata[-1] + 1, self._final_year)
+            if len(xnew) > 0:
+                ynew = np.full(xnew.shape, np.nan)
+                self._carn_line.set_data(np.hstack((xdata, xnew)),
+                                         np.hstack((ydata, ynew)))
 
+        if self._animal_lines_ax_legend is None:
+            self._animal_lines_ax.legend(loc="upper left")
     def _update_graphics(self):
         """Updates the figure with """
-        self._update_animal_lines(self.num_animals_per_species["Herbivore"])
+        self._update_animal_lines()
         plt.pause(1e-6)
 
 
-    def _update_animal_lines(self, herb_data):
-        ydata = self._herb_line.get_ydata()
-        ydata[self._year] = herb_data
-        self._herb_line.set_ydata(ydata)
+    def _update_animal_lines(self):
+        if self._ymax_animals is None:
+            # Saves number of animals in a variable so that property num_animals dont need to be called multiple times
+            number_of_animals = self.num_animals
+            if number_of_animals > self._animal_lines_ax.get_ylim()[1]:
+                self._animal_lines_ax.set_ylim(0, number_of_animals + 100)
+        ydata_herb = self._herb_line.get_ydata()
+        ydata_herb[self._year] = self.num_animals_per_species["Herbivore"]
+        self._herb_line.set_ydata(ydata_herb)
+        ydata_carn = self._carn_line.get_ydata()
+        ydata_carn[self.year] = self.num_animals_per_species['Carnivore']
+        self._carn_line.set_ydata(ydata_carn)
 
 
     def _save_graphics(self):
