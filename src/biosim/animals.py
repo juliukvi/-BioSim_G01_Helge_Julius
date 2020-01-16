@@ -31,66 +31,12 @@ class BaseAnimal:
          Weight drawn from the Gaussian distribution if not assigned a value
 
     """
-    parameters_dict = {'Herb':
-        {
-            "w_birth": 8.0,
-            "sigma_birth": 1.5,
-            "beta": 0.9,
-            "eta": 0.05,
-            "a_half": 40.0,
-            "phi_age": 0.2,
-            "w_half": 10.0,
-            "phi_weight": 0.1,
-            "mu": 0.25,
-            "lambda": 1.0,
-            "gamma": 0.2,
-            "zeta": 3.5,
-            "xi": 1.2,
-            "omega": 0.4,
-            "F": 10.0,
-        },
-        'Carn': {
-            "w_birth": 6.0,
-            "sigma_birth": 1.0,
-            "beta": 0.75,
-            "eta": 0.125,
-            "a_half": 60.0,
-            "phi_age": 0.4,
-            "w_half": 4.0,
-            "phi_weight": 0.4,
-            "mu": 0.4,
-            "lambda": 1.0,
-            "gamma": 0.8,
-            "zeta": 3.5,
-            "xi": 1.1,
-            "omega": 0.9,
-            "F": 50.0,
-            "DeltaPhiMax": 10.0
-        }}
     parameters = None
-    are_params_set = False
-    @classmethod
-    def birth(cls):
-        if issubclass(cls, Herb):
-            return Herb()
-        elif issubclass(cls, Carn):
-            return Carn()
-        else:
-            raise ValueError('Only species of Carn and Herb can give birth')
 
     @classmethod
     def set_default_parameters_for_species(cls):
-        cls.parameters = cls.DEFAULT_PARAMETERS
+        cls.parameters = cls.DEFAULT_PARAMETERS.copy()
         cls._set_params_as_attributes()
-        
-        if issubclass(cls, Herb):
-            cls.parameters = cls.parameters_dict["Herb"]
-        elif issubclass(cls, Carn):
-            cls.parameters = cls.parameters_dict["Carn"]
-        else:
-            raise ValueError('Instances of the BaseAnimal class should not be '
-                             'created,'
-                             ' only instances of the subclasses Carn and Herb')
 
     @classmethod
     def set_parameters(cls, new_params):
@@ -129,13 +75,14 @@ class BaseAnimal:
 
         for key in new_params:
             if key not in cls.parameters.keys():
-                raise KeyError(f'Parameter {key} is not in valid')
+                raise KeyError(f'Parameter {key} is not valid')
             if isinstance(new_params[key], int) or isinstance(new_params[key],
                                                               float):
                 continue
             else:
                 raise ValueError(
-                    f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
+                    f'Value needs to be int or float, '
+                    f'got:{type(new_params[key]).__name__}')
         cls.parameters.update(new_params)
         cls._set_params_as_attributes()
 
@@ -149,12 +96,10 @@ class BaseAnimal:
                 setattr(cls, new_key, cls.parameters[key])
             else:
                 setattr(cls, key, cls.parameters[key])
-        cls.are_params_set = True
 
     def __init__(self, age=0, weight=None):
-        self.set_default_parameters_for_species()
-        if not self.are_params_set:
-            self._set_params_as_attributes()
+        if self.parameters is None:
+            self.set_default_parameters_for_species()
         self.fitness = 0
         if not isinstance(age, int):
             raise ValueError("Animal age must be an integer")
@@ -208,11 +153,11 @@ class BaseAnimal:
         """
         prob = min(1, self.gamma * self.fitness * (num_animal-1))
         number = random.uniform(0, 1)
-        if self.weight < self.zeta * (self.w_birth + self.sigma_birth):
+        if self.weight < (self.zeta * (self.w_birth + self.sigma_birth)):
             return
         if number <= prob:
             newborn = self.birth()
-            if (self.xi * newborn.weight) > self.weight:
+            if self.weight < (self.xi * newborn.weight):
                 return
             self.weight -= (self.xi * newborn.weight)
             self.fitness_update()
@@ -251,6 +196,8 @@ class BaseAnimal:
         else:
             return False
 
+    def birth(self):
+        return self.__class__()
 
 class Carn(BaseAnimal):
     """Carnivore species which lives on the island. Subclass of Animal class.
@@ -277,7 +224,24 @@ class Carn(BaseAnimal):
     parameters: dict
         Values that determines the behaviour of the animal
     """
-
+    DEFAULT_PARAMETERS = {
+            "w_birth": 6.0,
+            "sigma_birth": 1.0,
+            "beta": 0.75,
+            "eta": 0.125,
+            "a_half": 60.0,
+            "phi_age": 0.4,
+            "w_half": 4.0,
+            "phi_weight": 0.4,
+            "mu": 0.4,
+            "lambda": 1.0,
+            "gamma": 0.8,
+            "zeta": 3.5,
+            "xi": 1.1,
+            "omega": 0.9,
+            "F": 50.0,
+            "DeltaPhiMax": 10.0
+        }
     def __init__(self, age=0, weight=None):
         super().__init__(age=age, weight=weight)
 
@@ -327,10 +291,10 @@ class Carn(BaseAnimal):
                     self.fitness_update()
                     eaten_herbs.append(herb)
                     break
-            self.weight += self.beta * herb.weight
-            amount_to_eat -= herb.weight
-            self.fitness_update()
-            eaten_herbs.append(herb)
+                self.weight += self.beta * herb.weight
+                amount_to_eat -= herb.weight
+                self.fitness_update()
+                eaten_herbs.append(herb)
         return eaten_herbs
 
 class Herb(BaseAnimal):
@@ -359,6 +323,23 @@ class Herb(BaseAnimal):
     parameters: dict
         Values that determines the behaviour of the animal
     """
+    DEFAULT_PARAMETERS ={
+        "w_birth": 8.0,
+        "sigma_birth": 1.5,
+        "beta": 0.9,
+        "eta": 0.05,
+        "a_half": 40.0,
+        "phi_age": 0.2,
+        "w_half": 10.0,
+        "phi_weight": 0.1,
+        "mu": 0.25,
+        "lambda": 1.0,
+        "gamma": 0.2,
+        "zeta": 3.5,
+        "xi": 1.2,
+        "omega": 0.4,
+        "F": 10.0,
+    }
 
     def __init__(self, age=0, weight=None ):
         super().__init__(age=age, weight=weight)
@@ -379,3 +360,5 @@ class Herb(BaseAnimal):
             return fodder
         if fodder < 0:
             raise ValueError("Cannot have negative fodder value")
+
+

@@ -5,10 +5,13 @@ __email__ = 'hegkleme@nmbu.no'
 from biosim.landscape import *
 import pytest
 
-#def test_nature():
+def test_initiate_nature_class():
+    assert Nature()
 
 
-#def test_feed_all_animals(self):
+def test_sort_all_animals_by_fitness():
+    pass
+
 
 #def test_birth_all_animals(self):
 
