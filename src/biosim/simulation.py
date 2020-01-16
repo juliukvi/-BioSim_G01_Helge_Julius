@@ -19,7 +19,7 @@ import textwrap
 
 
 # update these variables to point to your ffmpeg and convert binaries
-_FFMPEG_BINARY = 'ffmpeg'
+_FFMPEG_BINARY = 'C:\Program Files\ImageMagick-7.0.9-Q16'
 _CONVERT_BINARY = 'magick'
 
 
@@ -59,6 +59,7 @@ class BioSim:
         """
         random.seed(seed)
         island_map = textwrap.dedent(island_map)
+        self._island_map = island_map
         self._island = Island(island_map, ini_pop=ini_pop)
         self._year = 0
         self._img_ctr = 0
@@ -80,6 +81,7 @@ class BioSim:
         self._carn_map = None
         self._cmax_herb = None
         self._cmax_carn = None
+        self._island_map_ax = None
 
     def set_animal_parameters(self, species, params):
         """
@@ -207,9 +209,9 @@ class BioSim:
 
     def _setup_graphics(self):
         if self._fig is None:
-            self._fig = plt.figure()
+            self._fig = plt.figure(figsize=(15, 15))
         if self._animal_lines_ax is None:
-            self._animal_lines_ax = self._fig.add_subplot(2, 2, 1)
+            self._animal_lines_ax = self._fig.add_axes([0.6, 0.6, 0.35, 0.35])
             self._animal_lines_ax.set_xlabel("Years")
             self._animal_lines_ax.set_ylabel("Animal count")
             if self._ymax_animals:
@@ -283,6 +285,30 @@ class BioSim:
             self._carn_map_ax.set_yticks(range(0, 1 + self._island.map_rows, 1))
             self._carn_map_ax.set_yticklabels(range(0, 1 + self._island.map_rows, 1))
             self._carn_map_ax.set_title("Carnivore distribution")
+
+        if self._island_map_ax is None:
+            rgb_value = {'O': (0.0, 0.0, 1.0),  # blue
+                         'M': (0.5, 0.5, 0.5),  # grey
+                         'J': (0.0, 0.6, 0.0),  # dark green
+                         'S': (0.5, 1.0, 0.5),  # light green
+                         'D': (1.0, 1.0, 0.5)}  # light yellow
+            island_rgb = [[rgb_value[column] for column in row]
+                        for row in self._island_map.splitlines()]
+            self._island_map_ax = self._fig.add_axes([0.05, 0.7, 0.25, 0.25])  # llx, lly, w, h
+            self._island_map_ax.imshow(island_rgb)
+            self._island_map_ax.set_xticks(range(len(island_rgb[0])))
+            self._island_map_ax.set_xticklabels(range(0, 1 + len(island_rgb[0])))
+            self._island_map_ax.set_yticks(range(len(island_rgb)))
+            self._island_map_ax.set_yticklabels(range(0, 1 + len(island_rgb)))
+            self._island_map_ax.set_title("Island map")
+            map_rect = self._fig.add_axes([0.31, 0.7, 0.25, 0.25])  # llx, lly, w, h
+            map_rect.axis('off')
+            for ix, name in enumerate(('Ocean', 'Mountain', 'Jungle',
+                                      'Savannah', 'Desert')):
+               map_rect.add_patch(plt.Rectangle((0., ix * 0.2), 0.1, 0.1,
+                                            edgecolor='none',
+                                            facecolor=rgb_value[name[0]]))
+               map_rect.text(0.12, ix * 0.2, name, transform=map_rect.transAxes)
 
     def _update_graphics(self):
         """Updates the figure with """

@@ -274,10 +274,10 @@ class Carn(Animal):
                     self.fitness_update()
                     eaten_herbs.append(herb)
                     break
-            self.weight += self.beta * herb.weight
-            amount_to_eat -= herb.weight
-            self.fitness_update()
-            eaten_herbs.append(herb)
+                self.weight += self.beta * herb.weight
+                amount_to_eat -= herb.weight
+                self.fitness_update()
+                eaten_herbs.append(herb)
         return eaten_herbs
 
     @staticmethod
