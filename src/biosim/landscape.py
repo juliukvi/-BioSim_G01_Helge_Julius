@@ -9,7 +9,7 @@ import math as m
 import random
 
 
-class Nature:
+class BaseNature:
     def __init__(self):
         self.fodder = 0
         self.habitable = True
@@ -198,48 +198,51 @@ class Nature:
     def carnivore_number(self):
         return len(self.carn_list)
 
-class Ocean(Nature):
+class Ocean(BaseNature):
     def __init__(self):
         super().__init__()
         self.habitable = False
 
 
-class Mountain(Nature):
+class Mountain(BaseNature):
     def __init__(self):
         super().__init__()
         self.habitable = False
 
 
-class Desert(Nature):
+class Desert(BaseNature):
     def __init__(self):
         super().__init__()
 
 
-class Savannah(Nature):
-    standard_parameters = {"f_max": 300, "alpha": 0.3}
-    are_params_set = False
+class Savannah(BaseNature):
+    DEFAULT_PARAMETERS = {"f_max": 300, "alpha": 0.3}
+    parameters = None
+    @classmethod
+    def set_default_parameters_for_savannah(cls):
+        cls.parameters = cls.DEFAULT_PARAMETERS.copy()
+        cls._set_params_as_attributes()
 
     @classmethod
     def set_parameters(cls, new_params):
         for key in new_params:
-            if key not in cls.standard_parameters.keys():
+            if key not in cls.DEFAULT_PARAMETERS.keys():
                 raise KeyError(f'Parameter {key} is not in valid')
             if isinstance(new_params[key], int) or isinstance(new_params[key], float):
                 continue
             else:
                 raise ValueError(f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
-        cls.standard_parameters.update(new_params)
+        cls.parameters.update(new_params)
         cls._set_params_as_attributes()
 
     @classmethod
     def _set_params_as_attributes(cls):
-        for key in cls.standard_parameters:
-            setattr(cls, key, cls.standard_parameters[key])
-        cls.are_params_set = True
+        for key in cls.parameters:
+            setattr(cls, key, cls.parameters[key])
 
     def __init__(self):
-        if not self.are_params_set:
-            self._set_params_as_attributes()
+        if self.parameters is None:
+            self.set_default_parameters_for_savannah()
         super().__init__()
         self.fodder = self.f_max
 
@@ -249,31 +252,34 @@ class Savannah(Nature):
 
 
 
-class Jungle(Nature):
-    standard_parameters = {"f_max": 800}
-    are_params_set = False
+class Jungle(BaseNature):
+    DEFAULT_PARAMETERS = {"f_max": 800}
+    parameters = None
+    @classmethod
+    def set_default_parameters_for_jungle(cls):
+        cls.parameters = cls.DEFAULT_PARAMETERS.copy()
+        cls._set_params_as_attributes()
 
     @classmethod
     def set_parameters(cls, new_params):
         for key in new_params:
-            if key not in cls.standard_parameters.keys():
+            if key not in cls.parameters.keys():
                 raise KeyError(f'Parameter {key} is not in valid')
             if isinstance(new_params[key], int) or isinstance(new_params[key], float):
                 continue
             else:
                 raise ValueError(f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
-        cls.standard_parameters.update(new_params)
+        cls.parameters.update(new_params)
         cls._set_params_as_attributes()
 
     @classmethod
     def _set_params_as_attributes(cls):
-        for key in cls.standard_parameters:
-            setattr(cls, key, cls.standard_parameters[key])
-        cls.are_params_set = True
+        for key in cls.parameters:
+            setattr(cls, key, cls.parameters[key])
 
     def __init__(self):
-        if not self.are_params_set:
-            self._set_params_as_attributes()
+        if self.parameters is None:
+            self.set_default_parameters_for_jungle()
         super().__init__()
         self.fodder = self.f_max
 
