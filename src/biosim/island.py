@@ -54,14 +54,14 @@ class Island:
                 if animal["species"] == "Carnivore":
                     animal_object = Carn()
                     animal_object.a = animal["age"]
-                    animal_object.w = animal["weight"]
+                    animal_object.weight = animal["weight"]
                     animal_object.fitness_update()
                     nature_square.carn_list.append(animal_object)
 
                 elif animal["species"] == "Herbivore":
                     animal_object = Herb()
                     animal_object.a = animal["age"]
-                    animal_object.w = animal["weight"]
+                    animal_object.weight = animal["weight"]
                     animal_object.fitness_update()
                     nature_square.herb_list.append(animal_object)
                 else:

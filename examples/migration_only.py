@@ -13,16 +13,23 @@ if __name__ == "__main__":
     plt.ion()
 
     geogr = """\
-               OOOOOOO
-               OJJJJJO
-               OJJJJJO
-               OJJJJJO
-               OOOOOOO"""
+               OOOOOOOOOOOOO
+               ODDDDDDDDDDDO
+               ODDDDDDDDDDDO
+               ODDDDDDDDDDDO
+               ODDDDDDDO
+               ODDDDDDDO
+               ODDDDDDDO
+               ODDDDDDDO
+               ODDDDDDDO
+               ODDDDDDDO
+               ODDDDDDDO
+               OOOOOOOOO"""
     geogr = textwrap.dedent(geogr)
 
     ini_herbs = [
         {
-            "loc": (2, 3),
+            "loc": (6, 6),
             "pop": [
                 {"species": "Herbivore", "age": 5, "weight": 50}
                 for _ in range(500)
@@ -31,7 +38,7 @@ if __name__ == "__main__":
     ]
     ini_carns = [
         {
-            "loc": (2, 3),
+            "loc": (6, 6),
             "pop": [
                 {"species": "Carnivore", "age": 5, "weight": 20}
                 for _ in range(500)
@@ -50,7 +57,7 @@ if __name__ == "__main__":
 
     sim.set_landscape_parameters("J", {"f_max": 700})
     sim._img_pause_time = 2
-    sim.simulate(num_years=2, vis_years=1, img_years=2000)
+    sim.simulate(num_years=100, vis_years=1, img_years=2000)
 
     sim.add_population(population=ini_carns)
     #sim.simulate(num_years=100, vis_years=1, img_years=2000)
