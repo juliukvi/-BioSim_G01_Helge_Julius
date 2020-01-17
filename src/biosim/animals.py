@@ -267,11 +267,11 @@ class Carn(Animal):
                 chance_to_kill = 1
             number = random.uniform(0, 1)
             if number <= chance_to_kill:
-                if herb.weight > amount_to_eat:
+                if amount_to_eat < herb.weight:
                     self.weight += self.beta * amount_to_eat
                     self.fitness_update()
                     eaten_herbs.append(herb)
-                    break
+                    return(eaten_herbs)
                 self.weight += self.beta * herb.weight
                 amount_to_eat -= herb.weight
                 self.fitness_update()
