@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     ini_herbs = [
         {
-            "loc": (2, 2),
+            "loc": (1, 1),
             "pop": [
                 {"species": "Herbivore", "age": 5, "weight": 20}
                 for _ in range(150)
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     ]
     ini_carns = [
         {
-            "loc": (2, 2),
+            "loc": (1, 1),
             "pop": [
                 {"species": "Carnivore", "age": 5, "weight": 20}
                 for _ in range(40)
@@ -58,17 +58,9 @@ if __name__ == "__main__":
         },
     )
     sim.set_landscape_parameters("J", {"f_max": 700})
-    print(sim.num_animals)
-    print(sim.num_animals_per_species)
-    sim.simulate(num_years=100, vis_years=None, img_years=2000)
-    print(sim.num_animals)
-    print(sim.num_animals_per_species)
+    sim.simulate(num_years=100, vis_years=1, img_years=2000)
     sim.add_population(population=ini_carns)
-    print(sim.num_animals)
-    print(sim.num_animals_per_species)
-    sim.simulate(num_years=100, vis_years=None, img_years=2000)
-    print(sim.num_animals)
-    print(sim.num_animals_per_species)
+    sim.simulate(num_years=100, vis_years=1, img_years=2000)
 
     plt.savefig("check_sim.pdf")
 

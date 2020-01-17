@@ -127,7 +127,7 @@ class BaseAnimal:
             self.fitness = 0
         else:
             q_age = 1 / (1 + m.exp(self.phi_age * (self.a - self.a_half)))
-            q_weight = 1 / (1 + m.exp(-self.phi_age*(self.weight - self.w_half)))
+            q_weight = 1 / (1 + m.exp(-self.phi_weight*(self.weight - self.w_half)))
             self.fitness = q_age * q_weight
 
     def migrate(self):
@@ -246,8 +246,6 @@ class Carn(BaseAnimal):
     def __init__(self, age=0, weight=None):
         super().__init__(age=age, weight=weight)
 
-    def __repr__(self):
-        return "Carnivore(age={}, weight={})".format(self.a, self.weight)
 
 
     def feeding(self, sorted_herb_list):
@@ -287,11 +285,11 @@ class Carn(BaseAnimal):
                 chance_to_kill = 1
             number = random.uniform(0, 1)
             if number <= chance_to_kill:
-                if herb.weight > amount_to_eat:
+                if amount_to_eat < herb.weight:
                     self.weight += self.beta * amount_to_eat
                     self.fitness_update()
                     eaten_herbs.append(herb)
-                    break
+                    return(eaten_herbs)
                 self.weight += self.beta * herb.weight
                 amount_to_eat -= herb.weight
                 self.fitness_update()
@@ -345,8 +343,7 @@ class Herb(BaseAnimal):
     def __init__(self, age=0, weight=None ):
         super().__init__(age=age, weight=weight)
 
-    def __repr__(self):
-        return "Herbivore(age={}, weight={})".format(self.a, self.weight)
+
 
     def feeding(self, fodder):
         """Handles the feeding and weight of the herbivores

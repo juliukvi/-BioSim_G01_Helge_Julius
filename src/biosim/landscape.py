@@ -65,10 +65,15 @@ class BaseNature:
                 east_nature_square = neighbors[1]
                 south_nature_square = neighbors[2]
                 west_nature_square = neighbors[3]
-                north_relative_abundance = (north_nature_square.fodder)/((len(north_nature_square.herb_list)+1)*animal.F)
-                east_relative_abundance =  (east_nature_square.fodder)/((len(east_nature_square.herb_list)+1)*animal.F)
-                south_relative_abundance = (south_nature_square.fodder)/((len(south_nature_square.herb_list)+1)*animal.F)
-                west_relative_abundance = (west_nature_square.fodder)/((len(west_nature_square.herb_list)+1)*animal.F)
+                if animal.F == 0:
+                    (north_relative_abundance,  east_relative_abundance,
+                     south_relative_abundance, west_relative_abundance) = (0,0,
+                                                                             0,0)
+                else:
+                    north_relative_abundance = (north_nature_square.fodder)/((len(north_nature_square.herb_list)+1)*animal.F)
+                    east_relative_abundance =  (east_nature_square.fodder)/((len(east_nature_square.herb_list)+1)*animal.F)
+                    south_relative_abundance = (south_nature_square.fodder)/((len(south_nature_square.herb_list)+1)*animal.F)
+                    west_relative_abundance = (west_nature_square.fodder)/((len(west_nature_square.herb_list)+1)*animal.F)
                 if north_nature_square.habitable:
                     north_propensity = m.exp(animal._lambda*north_relative_abundance)
                 else:
@@ -118,14 +123,20 @@ class BaseNature:
                 south_herb_weight = sum([herb.weight for herb in south_nature_square.herb_list])
                 west_herb_weight = sum([herb.weight for herb in west_nature_square.herb_list])
 
-                north_relative_abundance = (north_herb_weight) / (
-                            (len(north_nature_square.carn_list) + 1) * animal.F)
-                east_relative_abundance = (east_herb_weight) / (
-                            (len(east_nature_square.carn_list) + 1) * animal.F)
-                south_relative_abundance = (south_herb_weight) / (
-                            (len(south_nature_square.carn_list) + 1) * animal.F)
-                west_relative_abundance = (west_herb_weight) / (
-                            (len(west_nature_square.carn_list) + 1) * animal.F)
+                if animal.F == 0:
+                    (north_relative_abundance,  east_relative_abundance,
+                     south_relative_abundance, west_relative_abundance) = (0,0,
+                                                                             0,0)
+                else:
+                    north_relative_abundance = (north_herb_weight) / (
+                                (len(north_nature_square.carn_list) + 1) * animal.F)
+                    east_relative_abundance = (east_herb_weight) / (
+                                (len(east_nature_square.carn_list) + 1) * animal.F)
+                    south_relative_abundance = (south_herb_weight) / (
+                                (len(south_nature_square.carn_list) + 1) * animal.F)
+                    west_relative_abundance = (west_herb_weight) / (
+                                (len(west_nature_square.carn_list) + 1) * animal.F)
+
                 if north_nature_square.habitable:
                     north_propensity = m.exp(animal._lambda * north_relative_abundance)
                 else:
