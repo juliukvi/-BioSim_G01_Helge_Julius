@@ -43,7 +43,7 @@ if __name__ == "__main__":
         }
     ]
 
-    sim = BioSim(island_map=geogr, ini_pop=ini_herbs, seed=123456, cmax_animals={"Herbivore":100, "Carnivore": 50})
+    sim = BioSim(island_map=geogr, ini_pop=ini_herbs, seed=123456) #cmax_animals={"Herbivore":100, "Carnivore": 50})
 
     sim.set_animal_parameters('Herbivore',
                               {'mu': 1, 'omega': 0, 'gamma': 0,
