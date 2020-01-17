@@ -192,7 +192,7 @@ class BaseAnimal:
             return True
         prob = self.omega * (1 - self.fitness)
         number = random.uniform(0, 1)
-        if number <= prob:
+        if number < prob:
             return True
         else:
             return False
