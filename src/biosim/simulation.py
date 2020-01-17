@@ -300,10 +300,10 @@ class BioSim:
                         for row in self._island_map.splitlines()]
             self._island_map_ax = self._fig.add_axes([0.05, 0.7, 0.25, 0.25])  # llx, lly, w, h
             self._island_map_ax.imshow(island_rgb)
-            self._island_map_ax.set_xticks(range(len(island_rgb[0])))
-            self._island_map_ax.set_xticklabels(range(0, 1 + len(island_rgb[0])))
-            self._island_map_ax.set_yticks(range(len(island_rgb)))
-            self._island_map_ax.set_yticklabels(range(0, 1 + len(island_rgb)))
+            self._island_map_ax.set_xticks(self._setup_map_axis_ticks(len(island_rgb[0])-1))
+            self._island_map_ax.set_xticklabels(self._setup_map_axis_ticks(len(island_rgb[0])-1))
+            self._island_map_ax.set_yticks(range(0, 1 + self._island.map_rows, 1))
+            self._island_map_ax.set_yticklabels(range(0, 1 + self._island.map_rows, 1))
             self._island_map_ax.set_title("Island map")
             map_rect = self._fig.add_axes([0.31, 0.7, 0.25, 0.25])  # llx, lly, w, h
             map_rect.axis('off')
@@ -313,6 +313,13 @@ class BioSim:
                                             edgecolor='none',
                                             facecolor=rgb_value[name[0]]))
                map_rect.text(0.12, ix * 0.2, name, transform=map_rect.transAxes)
+
+    def _setup_map_axis_ticks(self, column):
+        for j in range(21, 1, -1):
+            if (column % (j-1)) == 0:
+                map_axis = np.linspace(0, column, j, dtype=np.int)
+                print(map_axis)
+                return(map_axis)
 
 
     def _update_graphics(self):
