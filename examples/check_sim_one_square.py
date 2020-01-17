@@ -58,17 +58,9 @@ if __name__ == "__main__":
         },
     )
     sim.set_landscape_parameters("J", {"f_max": 700})
-    print(sim.num_animals)
-    print(sim.num_animals_per_species)
     sim.simulate(num_years=100, vis_years=1, img_years=2000)
-    print(sim.num_animals)
-    print(sim.num_animals_per_species)
     sim.add_population(population=ini_carns)
-    print(sim.num_animals)
-    print(sim.num_animals_per_species)
     sim.simulate(num_years=100, vis_years=1, img_years=2000)
-    print(sim.num_animals)
-    print(sim.num_animals_per_species)
 
     plt.savefig("check_sim.pdf")
 

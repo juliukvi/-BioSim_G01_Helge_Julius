@@ -28,22 +28,22 @@ if __name__ == "__main__":
         {
             "loc": (4, 4),
             "pop": [
-                {"species": "Herbivore", "age": 0, "weight": 100}
+                {"species": "Herbivore", "age": 5, "weight": 50}
                 for _ in range(1000)
             ],
         }
     ]
     ini_carns = [
         {
-            "loc": (2, 3),
+            "loc": (4, 4),
             "pop": [
-                {"species": "Carnivore", "age": 0, "weight": 100}
+                {"species": "Carnivore", "age": 5, "weight": 50}
                 for _ in range(1000)
             ],
         }
     ]
 
-    sim = BioSim(island_map=geogr, ini_pop=ini_herbs, seed=123456)
+    sim = BioSim(island_map=geogr, ini_pop=ini_herbs, seed=123456, cmax_animals={"Herbivore":100, "Carnivore": 50})
 
     sim.set_animal_parameters('Herbivore',
                               {'mu': 1, 'omega': 0, 'gamma': 0,
@@ -53,7 +53,7 @@ if __name__ == "__main__":
                                'F': 0, 'a_half': 1000})
 
     sim.set_landscape_parameters("J", {"f_max": 700})
-    sim._img_pause_time = 1
+    sim._img_pause_time = 0.001
     sim.simulate(num_years=100, vis_years=1, img_years=2000)
 
     sim.add_population(population=ini_carns)
