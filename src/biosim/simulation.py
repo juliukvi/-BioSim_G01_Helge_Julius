@@ -20,8 +20,8 @@ from matplotlib.widgets import Button
 
 
 # update these variables to point to your ffmpeg and convert binaries
-_FFMPEG_BINARY = 'C:\Program Files\ImageMagick-7.0.9-Q16'
-_CONVERT_BINARY = 'magick'
+_FFMPEG_BINARY = r'C:\Users\hej\Downloads\ffmpeg-20200115-0dc0837-win64-static\ffmpeg-20200115-0dc0837-win64-static\bin\ffmpeg.exe'
+_CONVERT_BINARY = r'C:\Program Files\ImageMagick-7.0.9-Q16\magick.exe'
 
 
 class BioSim:
@@ -201,9 +201,9 @@ class BioSim:
                                        '-y',
                                        '-profile:v', 'baseline',
                                        '-level', '3.0',
-                                       '-pix_fmt', 'yuv420p',
+                                       '-pix_fmt', 'yuv420p', "-an"
                                        '{}.{}'.format(self._img_base,
-                                                      movie_fmt)])
+                                                      movie_fmt), "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2"])
             except subprocess.CalledProcessError as err:
                 raise RuntimeError('ERROR: ffmpeg failed with: {}'.format(err))
         elif movie_fmt == 'gif':
