@@ -222,9 +222,9 @@ class TestAnimal:
         h.fitness_update()
         c.fitness_update()
         assert h.fitness == pytest.approx(
-            1 / (1 + m.exp(0.2 * (0 - 40))) * 1 / (1 + m.exp(-0.2 * (1 - 10))))
+            1 / (1 + m.exp(h.phi_age * (h.a - h.a_half))) * 1 / (1 + m.exp(-h.phi_weight * (1 - h.w_half))))
         assert c.fitness == pytest.approx(
-            1 / (1 + m.exp(0.4 * (0 - 60))) * 1 / (1 + m.exp(-0.4 * (1 - 4))))
+            1 / (1 + m.exp(c.phi_age * (c.a - c.a_half))) * 1 / (1 + m.exp(-c.phi_weight * (1 - c.w_half))))
 
     def test_birth(self, herb, carn):
         assert isinstance(herb.birth(), Herb)
@@ -385,20 +385,18 @@ class TestCarnivore:
         assert killed_herbs == len(herb_list)
 
     def test_carnivore_weight_and_fitness_updates_after_feeding(
-            self, carn):
+            self, mocker):
         # usikker på denne testen.
         a = Herb()
-        b = Herb()
-        herb_list = [a, b]
+        mocker.patch("random.uniform", return_value=0)
+        c = Carn()
+        c.F = 10000
+        c.fitness = 1
+        herb_list = [a]
         herb_list.sort(key=lambda x: x.fitness, reverse=True)
         herb_weight_list = [h.weight for h in herb_list]
-        c = carn
-        carn_weight = c.weight
-
+        carn_weight = c.weight + c.beta * herb_weight_list[0]
         c.feeding(herb_list)
-        for weight in herb_weight_list:
-            carn_weight += c.beta * weight
-            print(c.weight)
         assert c.weight == pytest.approx(carn_weight)
         assert c.fitness == pytest.approx(
             1 / (1 + m.exp(c.phi_age * (c.a - c.a_half))) * 1 / (
