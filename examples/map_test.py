@@ -54,11 +54,11 @@ if __name__ == "__main__":
 
     sim.set_landscape_parameters("J", {"f_max": 700})
     sim._img_pause_time = 1
-    sim.simulate(num_years=2, vis_years=1, img_years=2000)
+    sim.simulate(num_years=10, vis_years=1, img_years=2000)
 
     sim.add_population(population=ini_carns)
     sim.simulate(num_years=10, vis_years=1, img_years=2000)
-    sim.make_movie()
-    sim.make_movie("gif")
+    #sim.make_movie()
+    #sim.make_movie("gif")
 
 
