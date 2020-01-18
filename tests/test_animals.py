@@ -226,6 +226,7 @@ class TestAnimal:
         assert c.fitness == pytest.approx(
             1 / (1 + m.exp(c.phi_age * (c.a - c.a_half))) * 1 / (1 + m.exp(-c.phi_weight * (1 - c.w_half))))
 
+
     def test_birth(self, herb, carn):
         assert isinstance(herb.birth(), Herb)
         assert isinstance(carn.birth(), Carn)
@@ -401,10 +402,14 @@ class TestCarnivore:
         assert c.fitness == pytest.approx(
             1 / (1 + m.exp(c.phi_age * (c.a - c.a_half))) * 1 / (
                         1 + m.exp(-c.phi_age * (c.weight - c.w_half))))
+        c = Carn()
+        c.fitness = 1
+        c.F = 0.001
+        herb_list[0].weight = 5
+        carn_weight = c.weight +c.beta*c.F
+        c.feeding(herb_list)
+        assert c.weight == pytest.approx(carn_weight)
 
-
-def test_binomial_distribution_feeding_carnivore():
-    pass
 
 
 def test_migration_distribution_with_chi_squared():
