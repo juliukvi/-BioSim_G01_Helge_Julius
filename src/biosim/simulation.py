@@ -16,6 +16,7 @@ import subprocess
 import matplotlib.pyplot as plt
 import pandas as pd
 import textwrap
+from matplotlib.widgets import Button
 
 
 # update these variables to point to your ffmpeg and convert binaries
@@ -83,6 +84,10 @@ class BioSim:
         self._cmax_herb = None
         self._cmax_carn = None
         self._island_map_ax = None
+        self._island_text_ax = None
+        self._pause_ax = None
+        self._pause_widget = None
+
 
     def set_animal_parameters(self, species, params):
         """
@@ -130,21 +135,24 @@ class BioSim:
         start_year = self._year
         self._final_year = start_year + num_years
         self._setup_graphics()
+        self._update_graphics()
+        plt.pause(self._img_pause_time)
         while self.year < self._final_year:
-
+            self._island.one_year()
+            self._year += 1
             if vis_years:
                 if img_years == None:
                     img_years = vis_years
-
                 if self.year % vis_years == 0:
                     self._update_graphics()
                 if self.year % img_years == 0:
                     self._save_graphics()
                 plt.pause(self._img_pause_time)
 
-            self._island.one_year()
-            self._year += 1
 
+
+            while self._paused:
+                plt.pause(0.05)
 
     def add_population(self, population):
         self._island.add_population(population)
@@ -229,8 +237,8 @@ class BioSim:
         if self._herb_line is None:
             # Creates plot object with no y-values that has the correct length,
             # y-data will be gathered and set by self._update_graphics
-            herb_plot = self._animal_lines_ax.plot(np.arange(0, self._final_year),
-                                                   np.full(self._final_year, np.nan),
+            herb_plot = self._animal_lines_ax.plot(np.arange(0, self._final_year+1),
+                                                   np.full(self._final_year+1, np.nan),
                                                    label='Herbivores')
             # Saves the line object from herb_plot
             self._herb_line = herb_plot[0]
@@ -239,7 +247,7 @@ class BioSim:
             xdata, ydata = self._herb_line.get_data()
             # Creates array of values for the new years that is about to be
             # simulated
-            xnew = np.arange(xdata[-1] + 1, self._final_year)
+            xnew = np.arange(xdata[-1] + 1, self._final_year+1)
             if len(xnew) > 0:  # Think this is unnecesary since _setup_graphics should not be called if self._final_year is equal to self._year
                 ynew = np.full(xnew.shape, np.nan)
                 self._herb_line.set_data(np.hstack((xdata, xnew)),
@@ -248,8 +256,8 @@ class BioSim:
         if self._carn_line is None:
             # Creates plot object with no y-values that has the correct length,
             # y-data will be gathered and set by self._update_graphics
-            carn_plot = self._animal_lines_ax.plot(np.arange(0, self._final_year),
-                                                   np.full(self._final_year, np.nan),
+            carn_plot = self._animal_lines_ax.plot(np.arange(0, self._final_year+1),
+                                                   np.full(self._final_year+1, np.nan),
                                                    label='Carnivores')
             # Saves the line object from herb_plot
             self._carn_line = carn_plot[0]
@@ -258,7 +266,7 @@ class BioSim:
             xdata, ydata = self._carn_line.get_data()
             # Creates array of values for the new years that is about to be
             # simulated
-            xnew = np.arange(xdata[-1] + 1, self._final_year)
+            xnew = np.arange(xdata[-1] + 1, self._final_year+1)
             if len(xnew) > 0:
                 ynew = np.full(xnew.shape, np.nan)
                 self._carn_line.set_data(np.hstack((xdata, xnew)),
@@ -276,18 +284,18 @@ class BioSim:
 
         if self._herb_map_ax is None:
             self._herb_map_ax = self._fig.add_axes([0.05, 0.35, 0.25, 0.25])
-            self._herb_map_ax.set_xticks(range(0, 1 + self._island.map_columns, 1))
-            self._herb_map_ax.set_xticklabels(range(0, 1 + self._island.map_columns, 1))
-            self._herb_map_ax.set_yticks(range(0, 1 + self._island.map_rows, 1))
-            self._herb_map_ax.set_yticklabels(range(0, 1 + self._island.map_rows, 1))
+            self._herb_map_ax.set_xticks(range(1 + self._island.map_columns))
+            self._herb_map_ax.set_xticklabels(range(1 + self._island.map_columns))
+            self._herb_map_ax.set_yticks(range(1 + self._island.map_rows))
+            self._herb_map_ax.set_yticklabels(range(1 + self._island.map_rows))
             self._herb_map_ax.set_title("Herbivore distribution")
 
         if self._carn_map_ax is None:
             self._carn_map_ax = self._fig.add_axes([0.05, 0.05, 0.25, 0.25])
-            self._carn_map_ax.set_xticks(range(0, 1 + self._island.map_columns, 1))
-            self._carn_map_ax.set_xticklabels(range(0, 1 + self._island.map_columns, 1))
-            self._carn_map_ax.set_yticks(range(0, 1 + self._island.map_rows, 1))
-            self._carn_map_ax.set_yticklabels(range(0, 1 + self._island.map_rows, 1))
+            self._carn_map_ax.set_xticks(range(1 + self._island.map_columns ))
+            self._carn_map_ax.set_xticklabels(range(1 + self._island.map_columns ))
+            self._carn_map_ax.set_yticks(range(1 + self._island.map_rows))
+            self._carn_map_ax.set_yticklabels(range(1 + self._island.map_rows ))
             self._carn_map_ax.set_title("Carnivore distribution")
 
         if self._island_map_ax is None:
@@ -298,12 +306,13 @@ class BioSim:
                          'D': (1.0, 1.0, 0.5)}  # light yellow
             island_rgb = [[rgb_value[column] for column in row]
                         for row in self._island_map.splitlines()]
+            island_rgb = np.array(island_rgb)
             self._island_map_ax = self._fig.add_axes([0.05, 0.7, 0.25, 0.25])  # llx, lly, w, h
+            self._island_map_ax.set_xticks(range(self._island.map_columns + 1))
+            self._island_map_ax.set_xticklabels(range(self._island.map_columns + 1))
+            self._island_map_ax.set_yticks(range(self._island.map_rows+1))
+            self._island_map_ax.set_yticklabels(range( self._island.map_rows+1))
             self._island_map_ax.imshow(island_rgb)
-            self._island_map_ax.set_xticks(range(len(island_rgb[0])))
-            self._island_map_ax.set_xticklabels(range(0, 1 + len(island_rgb[0])))
-            self._island_map_ax.set_yticks(range(len(island_rgb)))
-            self._island_map_ax.set_yticklabels(range(0, 1 + len(island_rgb)))
             self._island_map_ax.set_title("Island map")
             map_rect = self._fig.add_axes([0.31, 0.7, 0.25, 0.25])  # llx, lly, w, h
             map_rect.axis('off')
@@ -314,13 +323,48 @@ class BioSim:
                                             facecolor=rgb_value[name[0]]))
                map_rect.text(0.12, ix * 0.2, name, transform=map_rect.transAxes)
 
+        if self._island_text_ax is None:
+            self._island_text_ax = self._fig.add_axes([0.35, 0.3, 0.25, 0.25])
+            self._island_text_ax.axis('off')
+            self._island_text_values = 'Year: {}     ' \
+                                    'Total Animals: {}     ' \
+                                    'Herbivores: {}     ' \
+                                    'Carnivores: {}     '
+            self._island_text = self._island_text_ax.text(0., 0.,
+                                      self._island_text_values.format(
+                                          self._year,
+                                          self.num_animals,
+                                          self.num_animals_per_species['Herbivore'],
+                                          self.num_animals_per_species['Carnivore']),
+                                      horizontalalignment='left',
+                                      verticalalignment='top',
+                                      transform=self._island_text_ax.transAxes,
+                                      fontsize=14)
+
+        if self._pause_ax is None:
+            self._paused = False
+            self._pause_ax = self._fig.add_axes([0.8, 0.10, 0.15, 0.15])
+            self._pause_widget = Button(self._pause_ax, 'Pause/Run', hovercolor='0.5')
+            self._pause_widget.on_clicked(self._pause_button_click)
 
     def _update_graphics(self):
         """Updates the figure with """
         self._update_animal_lines()
         self._update_animal_heat_maps()
-        #plt.pause(1e-6)
+        self._update_text()
 
+    def _update_text(self):
+        self._island_text.set_text(self._island_text_values.format(
+            self.year,
+            self.num_animals,
+            self.num_animals_per_species['Herbivore'],
+            self.num_animals_per_species['Carnivore']))
+
+    def _pause_button_click(self, event):
+        if self._paused:
+            self._paused = False
+        else:
+            self._paused = True
 
     def _update_animal_lines(self):
         if self._ymax_animals is None:
