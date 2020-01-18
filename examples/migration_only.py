@@ -53,7 +53,7 @@ if __name__ == "__main__":
                                'F': 0, 'a_half': 1000})
 
     sim.set_landscape_parameters("J", {"f_max": 700})
-    sim._img_pause_time = 0.001
+    sim._img_pause_time = 1
     sim.simulate(num_years=100, vis_years=1, img_years=2000)
 
     sim.add_population(population=ini_carns)
