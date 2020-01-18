@@ -386,16 +386,20 @@ class TestCarnivore:
 
     def test_carnivore_weight_and_fitness_updates_after_feeding(
             self, carn):
+        # usikker på denne testen.
         a = Herb()
         b = Herb()
         herb_list = [a, b]
         herb_list.sort(key=lambda x: x.fitness, reverse=True)
+        herb_weight_list = [h.weight for h in herb_list]
         c = carn
-        c.F = 100000
-        c.fitness = 1
+        carn_weight = c.weight
+
         c.feeding(herb_list)
-        #Usikker på hvordan dette skal testes.
-        #assert c.weight == pytest.approx()
+        for weight in herb_weight_list:
+            carn_weight += c.beta * weight
+            print(c.weight)
+        assert c.weight == pytest.approx(carn_weight)
         assert c.fitness == pytest.approx(
             1 / (1 + m.exp(c.phi_age * (c.a - c.a_half))) * 1 / (
                         1 + m.exp(-c.phi_age * (c.weight - c.w_half))))
