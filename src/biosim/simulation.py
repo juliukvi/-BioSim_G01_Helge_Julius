@@ -201,9 +201,9 @@ class BioSim:
                                        '-y',
                                        '-profile:v', 'baseline',
                                        '-level', '3.0',
-                                       '-pix_fmt', 'yuv420p', "-an"
+                                       '-pix_fmt', 'yuv420p',
                                        '{}.{}'.format(self._img_base,
-                                                      movie_fmt), "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2"])
+                                                      movie_fmt)])
             except subprocess.CalledProcessError as err:
                 raise RuntimeError('ERROR: ffmpeg failed with: {}'.format(err))
         elif movie_fmt == 'gif':
@@ -221,7 +221,7 @@ class BioSim:
 
     def _setup_graphics(self):
         if self._fig is None:
-            self._fig = plt.figure(figsize=(15, 15))
+            self._fig = plt.figure(figsize=(15, 9))
         if self._animal_lines_ax is None:
             self._animal_lines_ax = self._fig.add_axes([0.6, 0.6, 0.35, 0.35])
             self._animal_lines_ax.set_xlabel("Years")
