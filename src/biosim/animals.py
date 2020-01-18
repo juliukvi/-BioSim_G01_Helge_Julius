@@ -84,11 +84,11 @@ class BaseAnimal:
                     f'Value needs to be int or float, '
                     f'got:{type(new_params[key]).__name__}')
         for key in new_params:
-            if new_params[key] <= 0:
+            if new_params[key] < 0:
                 raise ValueError("All values must be positive")
-            if key == "DeltaPhiMax" and new_params[key] < 0:
+            if key == "DeltaPhiMax" and new_params[key] <= 0:
                 raise ValueError("DeltaPhiMax must be strictly positive")
-            if key == "eta" and new_params[key] > 1:
+            if key == "eta" and new_params[key] >= 1:
                 raise ValueError("Eta must be less or equal to one")
         cls.parameters.update(new_params)
         cls._set_params_as_attributes()
