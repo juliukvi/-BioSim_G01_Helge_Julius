@@ -83,6 +83,13 @@ class BaseAnimal:
                 raise ValueError(
                     f'Value needs to be int or float, '
                     f'got:{type(new_params[key]).__name__}')
+        for key in new_params:
+            if new_params[key] <= 0:
+                raise ValueError("All values must be positive")
+            if key == "DeltaPhiMax" and new_params[key] < 0:
+                raise ValueError("DeltaPhiMax must be strictly positive")
+            if key == "eta" and new_params[key] > 1:
+                raise ValueError("Eta must be less or equal to one")
         cls.parameters.update(new_params)
         cls._set_params_as_attributes()
 
@@ -148,7 +155,7 @@ class BaseAnimal:
         -------
         Nonetype
             If the animal doesnt give birth
-        __main__Animal??
+        Animal
             If the animal gives birth
         """
         prob = min(1, self.gamma * self.fitness * (num_animal-1))
@@ -164,8 +171,6 @@ class BaseAnimal:
             return newborn
         else:
             return
-
-
 
     def age(self):
         """Ages the animal by one year
@@ -289,12 +294,13 @@ class Carn(BaseAnimal):
                     self.weight += self.beta * amount_to_eat
                     self.fitness_update()
                     eaten_herbs.append(herb)
-                    return(eaten_herbs)
+                    return eaten_herbs
                 self.weight += self.beta * herb.weight
                 amount_to_eat -= herb.weight
                 self.fitness_update()
                 eaten_herbs.append(herb)
         return eaten_herbs
+
 
 class Herb(BaseAnimal):
     """Carnivore species which lives on the island. Subclass of Animal class.
