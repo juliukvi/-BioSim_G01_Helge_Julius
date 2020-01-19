@@ -205,6 +205,7 @@ class BaseAnimal:
     def birth(self):
         return self.__class__()
 
+
 class Carn(BaseAnimal):
     """Carnivore species which lives on the island. Subclass of Animal class.
     Parameters
@@ -248,10 +249,9 @@ class Carn(BaseAnimal):
             "F": 50.0,
             "DeltaPhiMax": 10.0
         }
+
     def __init__(self, age=0, weight=None):
         super().__init__(age=age, weight=weight)
-
-
 
     def feeding(self, sorted_herb_list):
         """Handles the eating and weight of the carnivores
@@ -280,7 +280,7 @@ class Carn(BaseAnimal):
         eaten_herbs = []
         for herb in reversed(sorted_herb_list):
             if amount_to_eat <= 0:
-                break #Stop eating if carnivore is full
+                break  # Stop eating if carnivore is full
             fitness_diff = (self.fitness - herb.fitness)
             if fitness_diff < 0:
                 break
@@ -346,10 +346,8 @@ class Herb(BaseAnimal):
         "F": 10.0,
     }
 
-    def __init__(self, age=0, weight=None ):
+    def __init__(self, age=0, weight=None):
         super().__init__(age=age, weight=weight)
-
-
 
     def feeding(self, fodder):
         """Handles the feeding and weight of the herbivores
@@ -364,5 +362,3 @@ class Herb(BaseAnimal):
             return fodder
         if fodder < 0:
             raise ValueError("Cannot have negative fodder value")
-
-

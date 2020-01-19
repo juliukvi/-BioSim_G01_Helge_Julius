@@ -20,9 +20,7 @@ class BaseNature:
         self.carn_move_to_list = []
         self.carn_move_from_list = []
 
-
     def feed_all_animals(self):
-        #Putte sortering i metode?
         self.herb_list.sort(key=lambda x: x.fitness, reverse=True)
         for animal in self.herb_list:
             if self.fodder > 0:
@@ -36,7 +34,6 @@ class BaseNature:
             eaten_herbs = animal.feeding(self.herb_list)
             for eaten_herb in eaten_herbs:
                 self.herb_list.remove(eaten_herb)
-
 
     def birth_all_animals(self):
         num_herb = len(self.herb_list)
@@ -67,13 +64,13 @@ class BaseNature:
                 west_nature_square = neighbors[3]
                 if animal.F == 0:
                     (north_relative_abundance,  east_relative_abundance,
-                     south_relative_abundance, west_relative_abundance) = (0,0,
-                                                                             0,0)
+                     south_relative_abundance, west_relative_abundance) = (0, 0,
+                                                                           0, 0)
                 else:
-                    north_relative_abundance = (north_nature_square.fodder)/((len(north_nature_square.herb_list)+1)*animal.F)
-                    east_relative_abundance =  (east_nature_square.fodder)/((len(east_nature_square.herb_list)+1)*animal.F)
-                    south_relative_abundance = (south_nature_square.fodder)/((len(south_nature_square.herb_list)+1)*animal.F)
-                    west_relative_abundance = (west_nature_square.fodder)/((len(west_nature_square.herb_list)+1)*animal.F)
+                    north_relative_abundance = north_nature_square.fodder/((len(north_nature_square.herb_list)+1)*animal.F)
+                    east_relative_abundance = east_nature_square.fodder/((len(east_nature_square.herb_list)+1)*animal.F)
+                    south_relative_abundance = south_nature_square.fodder/((len(south_nature_square.herb_list)+1)*animal.F)
+                    west_relative_abundance = west_nature_square.fodder/((len(west_nature_square.herb_list)+1)*animal.F)
                 if north_nature_square.habitable:
                     north_propensity = m.exp(animal._lambda*north_relative_abundance)
                 else:
@@ -125,16 +122,16 @@ class BaseNature:
 
                 if animal.F == 0:
                     (north_relative_abundance,  east_relative_abundance,
-                     south_relative_abundance, west_relative_abundance) = (0,0,
-                                                                             0,0)
+                     south_relative_abundance, west_relative_abundance) = (0, 0,
+                                                                           0, 0)
                 else:
-                    north_relative_abundance = (north_herb_weight) / (
+                    north_relative_abundance = north_herb_weight / (
                                 (len(north_nature_square.carn_list) + 1) * animal.F)
-                    east_relative_abundance = (east_herb_weight) / (
+                    east_relative_abundance = east_herb_weight / (
                                 (len(east_nature_square.carn_list) + 1) * animal.F)
-                    south_relative_abundance = (south_herb_weight) / (
+                    south_relative_abundance = south_herb_weight / (
                                 (len(south_nature_square.carn_list) + 1) * animal.F)
-                    west_relative_abundance = (west_herb_weight) / (
+                    west_relative_abundance = west_herb_weight / (
                                 (len(west_nature_square.carn_list) + 1) * animal.F)
 
                 if north_nature_square.habitable:
@@ -142,15 +139,15 @@ class BaseNature:
                 else:
                     north_propensity = 0
                 if east_nature_square.habitable:
-                    east_propensity = m.exp(animal._lambda *east_relative_abundance)
+                    east_propensity = m.exp(animal._lambda * east_relative_abundance)
                 else:
                     east_propensity = 0
                 if south_nature_square.habitable:
-                    south_propensity = m.exp(animal._lambda *south_relative_abundance)
+                    south_propensity = m.exp(animal._lambda * south_relative_abundance)
                 else:
                     south_propensity = 0
                 if west_nature_square.habitable:
-                    west_propensity = m.exp(animal._lambda *west_relative_abundance)
+                    west_propensity = m.exp(animal._lambda * west_relative_abundance)
                 else:
                     west_propensity = 0
                 total_propensity = (north_propensity + east_propensity + south_propensity + west_propensity)
@@ -174,15 +171,13 @@ class BaseNature:
                     west_nature_square.carn_move_to_list.append(animal)
                     self.carn_move_from_list.append(animal)
 
-
-
     def aging_all_animals(self):
         for animal in self.herb_list:
             animal.age()
-            #animal.fitness_update()
+            # animal.fitness_update()
         for animal in self.carn_list:
             animal.age()
-            #animal.fitness_update()
+            # animal.fitness_update()
 
     def fodder_update(self):
         pass
@@ -209,6 +204,7 @@ class BaseNature:
     def carnivore_number(self):
         return len(self.carn_list)
 
+
 class Ocean(BaseNature):
     def __init__(self):
         super().__init__()
@@ -229,6 +225,7 @@ class Desert(BaseNature):
 class Savannah(BaseNature):
     DEFAULT_PARAMETERS = {"f_max": 300, "alpha": 0.3}
     parameters = None
+
     @classmethod
     def set_default_parameters_for_savannah(cls):
         cls.parameters = cls.DEFAULT_PARAMETERS.copy()
@@ -261,11 +258,10 @@ class Savannah(BaseNature):
         self.fodder = self.fodder + self.alpha * (self.f_max - self.fodder)
 
 
-
-
 class Jungle(BaseNature):
     DEFAULT_PARAMETERS = {"f_max": 800}
     parameters = None
+
     @classmethod
     def set_default_parameters_for_jungle(cls):
         cls.parameters = cls.DEFAULT_PARAMETERS.copy()
@@ -296,5 +292,3 @@ class Jungle(BaseNature):
 
     def fodder_update(self):
         self.fodder = self.f_max
-
-

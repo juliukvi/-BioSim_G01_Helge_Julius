@@ -1,41 +1,43 @@
 
 from biosim.landscape import *
 from biosim.animals import *
+
+
 class Island:
 
     def __init__(self, island_map, ini_pop=None):
-            self.map_list = []
-            self.map_columns = len(island_map.splitlines()[0])
-            self.map_rows = len(island_map.splitlines())
-            map_dict = {"O": Ocean, "S": Savannah, "M": Mountain, "J": Jungle, "D": Desert}
-            for line in island_map.splitlines():
-                if len(line) != self.map_columns:
-                    raise ValueError("Island map not rectangular")
-                placeholder_list = []
-                for nature_square_char in line:
-                    try:
-                        placeholder_list.append(map_dict[nature_square_char]()) # Creates nature objects
-                    except KeyError:
-                        raise ValueError("Island map string contain invalid"
-                                         "character")
-                self.map_list.append(placeholder_list)
-            # Checks so that Ocean squares are on edges of map
-            for nature_square in self.map_list[0]:
-                if not isinstance(nature_square, Ocean):
-                    raise ValueError("Island not surrounded by ocean")
-            for nature_square in self.map_list[len(self.map_list) - 1]:
-                if not isinstance(nature_square, Ocean):
-                    raise ValueError("Island not surrounded by ocean")
-            for nature_square in range(len(self.map_list)):
-                if not isinstance(self.map_list[nature_square][0], Ocean):
-                    raise ValueError("Island not surrounded by ocean")
-            for nature_square in range(len(self.map_list)):
-                if not isinstance(self.map_list[nature_square][len(self.map_list[0]) - 1], Ocean):
-                    raise ValueError("Island not surrounded by ocean")
+        self.map_list = []
+        self.map_columns = len(island_map.splitlines()[0])
+        self.map_rows = len(island_map.splitlines())
+        map_dict = {"O": Ocean, "S": Savannah, "M": Mountain, "J": Jungle, "D": Desert}
+        for line in island_map.splitlines():
+            if len(line) != self.map_columns:
+                raise ValueError("Island map not rectangular")
+            placeholder_list = []
+            for nature_square_char in line:
+                try:
+                    # Creates nature objects
+                    placeholder_list.append(map_dict[nature_square_char]())
+                except KeyError:
+                    raise ValueError("Island map string contain invalid"
+                                     "character")
+            self.map_list.append(placeholder_list)
+        # Checks so that Ocean squares are on edges of map
+        for nature_square in self.map_list[0]:
+            if not isinstance(nature_square, Ocean):
+                raise ValueError("Island not surrounded by ocean")
+        for nature_square in self.map_list[len(self.map_list) - 1]:
+            if not isinstance(nature_square, Ocean):
+                raise ValueError("Island not surrounded by ocean")
+        for nature_square in range(len(self.map_list)):
+            if not isinstance(self.map_list[nature_square][0], Ocean):
+                raise ValueError("Island not surrounded by ocean")
+        for nature_square in range(len(self.map_list)):
+            if not isinstance(self.map_list[nature_square][len(self.map_list[0]) - 1], Ocean):
+                raise ValueError("Island not surrounded by ocean")
 
-
-            if ini_pop:  # If an initial population is provided right away
-                self.add_population(population=ini_pop)  # Call the add_population method
+        if ini_pop:  # If an initial population is provided right away
+            self.add_population(population=ini_pop)  # Call the add_population method
 
     def add_population(self, population):
         for square in population:
@@ -134,32 +136,3 @@ class Island:
         carnivore_count = sum(row[3] for row in animal_count_list)
         animal_sum = herbivore_count + carnivore_count
         return herbivore_count, carnivore_count, animal_sum
-
-
-if __name__ == "__main__":
-    geogr = """\
-                   OOOOOOOOOOOOOOOOOOOOO
-                   OOOOOOOOSMMMMJJJJJJJO
-                   OSSSSSJJJJMMJJJJJJJOO
-                   OSSSSSSSSSMMJJJJJJOOO
-                   OSSSSSJJJJJJJJJJJJOOO
-                   OSSSSSJJJDDJJJSJJJOOO
-                   OSSJJJJJDDDJJJSSSSOOO
-                   OOSSSSJJJDDJJJSOOOOOO
-                   OSSSJJJJJDDJJJJJJJOOO
-                   OSSSSJJJJDDJJJJOOOOOO
-                   OOSSSSJJJJJJJJOOOOOOO
-                   OOOSSSSJJJJJJJOOOOOOO
-                   OOOOOOOOOOOOOOOOOOOOO"""
-    geogr = textwrap.dedent(geogr)
-
-    ini_herbs = [
-        {
-            "loc": (10, 10),
-            "pop": [
-                {"species": "Herbivore", "age": 5, "weight": 20}
-                for _ in range(150)
-            ],
-        }
-    ]
-    I = Island(geogr, ini_herbs)
