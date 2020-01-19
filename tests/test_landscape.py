@@ -5,6 +5,7 @@ __email__ = 'hegkleme@nmbu.no'
 from biosim.landscape import *
 import pytest
 
+
 class TestBaseNature:
     pass
 
@@ -25,8 +26,10 @@ class TestOcean:
     @pytest.fixture
     def ocean(self):
         return Ocean()
+
     def test_initiate_ocean(self, ocean):
         assert ocean
+
     def test_ocean(self, ocean):
         assert ocean.habitable is False
         assert ocean.fodder == 0
@@ -44,15 +47,18 @@ class TestMountain:
         assert mountain.habitable is False
         assert mountain.fodder == 0
 
+
 class TestDesert:
     @pytest.fixture
     def desert(self):
         return Desert()
+
     def test_initiate_desert(self, desert):
         assert desert
 
     def test_init_desert(self, desert):
         assert desert.habitable is True
+
 
 class TestSavannah:
     @pytest.fixture
@@ -143,7 +149,6 @@ class TestJungle:
         with pytest.raises(ValueError):
             jungle.set_parameters({"f_max": {"this is a dictionary": 1}})
 
-    
     def test_set_default_parameters_jungle(
             self, jungle, jungle_params, tear_down_params
     ):
@@ -171,13 +176,3 @@ class TestJungle:
         j.fodder = 100
         j.fodder_update()
         assert j.fodder == j.f_max   
-
-
-
-
-
-
-
-
-
-

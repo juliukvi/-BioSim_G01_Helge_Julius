@@ -88,7 +88,6 @@ class BioSim:
         self._pause_ax = None
         self._pause_widget = None
 
-
     def set_animal_parameters(self, species, params):
         """
         Set parameters for animal species.
@@ -104,6 +103,7 @@ class BioSim:
             c.set_parameters(params)
         else:
             raise ValueError(f'Got non existing species {species} ')
+
     def set_landscape_parameters(self, landscape, params):
         """
         Set parameters for landscape type.
@@ -157,12 +157,10 @@ class BioSim:
     def add_population(self, population):
         self._island.add_population(population)
 
-
     @property
     def year(self):
         """Last year simulated."""
         return self._year
-
 
     @property
     def num_animals(self):

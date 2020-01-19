@@ -2,9 +2,8 @@
 
 __author__ = 'Helge Helo Klemetsdal'
 __email__ = 'hegkleme@nmbu.no'
-from biosim.animals import BaseAnimal, Herb, Carn
+from biosim.animals import Herb, Carn
 import pytest
-import numpy as np
 from scipy.stats import normaltest, binom_test
 import math as m
 
