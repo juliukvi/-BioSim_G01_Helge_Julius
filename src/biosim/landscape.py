@@ -179,10 +179,10 @@ class BaseNature:
     def aging_all_animals(self):
         for animal in self.herb_list:
             animal.age()
-            animal.fitness_update()
+            #animal.fitness_update()
         for animal in self.carn_list:
             animal.age()
-            animal.fitness_update()
+            #animal.fitness_update()
 
     def fodder_update(self):
         pass
