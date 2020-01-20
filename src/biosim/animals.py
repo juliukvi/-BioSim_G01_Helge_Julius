@@ -13,23 +13,25 @@ class BaseAnimal:
     Parameters
     ----------
     age: int
-        Initial age of the animal
+        Initial age of the animal.
     weight: float
-        Initial weight of the animal
+        Initial weight of the animal.
+
+    Attributes
+    ----------
+    fitness: int
+        Value describing the animals fitness
+    age: int
+        Initial age of the animal.
+    weight: float
+         Weight drawn from the Gaussian distribution if not assigned a value.
+    parameters : dict
+        Values that describe the behaviour of the animals.
 
     Raises
     ------
     ValueError
         If age is below 0 or if weight is below, 0 or None.
-    Attributes
-    ----------
-    parameters : bool or dict?
-    fitness: int
-        Value describing the animals fitness
-    age: int
-        Initial age of the animal which can't be assigned a value below 0
-    weight: float
-         Weight drawn from the Gaussian distribution if not assigned a value
 
     """
     parameters = None
@@ -56,14 +58,20 @@ class BaseAnimal:
         Raises
         ------
         KeyError
-            If the key in new_params does not exist in parameters.
+            If the key(s) in new_params does not exist in parameters.
         ValueError
-            If the new value assigned to the key is not of type float or int.
+            If the new value assigned to the key(s) is not of type float or int
         ValueError
             If the assigned parameter values are not in the right ranges.
         """
 
         for key in new_params:
+            if new_params[key] < 0:
+                raise ValueError("All values must be positive")
+            if key == "DeltaPhiMax" and new_params[key] <= 0:
+                raise ValueError("DeltaPhiMax must be strictly positive")
+            if key == "eta" and new_params[key] > 1:
+                raise ValueError("Eta must be less or equal to one")
             if key not in cls.parameters.keys():
                 raise KeyError(f'Parameter {key} is not valid')
             if isinstance(new_params[key], int) or isinstance(new_params[key],
@@ -73,13 +81,7 @@ class BaseAnimal:
                 raise ValueError(
                     f'Value needs to be int or float, '
                     f'got:{type(new_params[key]).__name__}')
-        for key in new_params:
-            if new_params[key] < 0:
-                raise ValueError("All values must be positive")
-            if key == "DeltaPhiMax" and new_params[key] <= 0:
-                raise ValueError("DeltaPhiMax must be strictly positive")
-            if key == "eta" and new_params[key] > 1:
-                raise ValueError("Eta must be less or equal to one")
+
         cls.parameters.update(new_params)
         cls._set_params_as_attributes()
 
@@ -120,19 +122,30 @@ class BaseAnimal:
     def fitness_update(self):
         r"""Updates the animals fitness value
 
-        The fitness value :math:`\Phi`, is updated by formula:
+        The fitness value :math:`\Phi`, is updated by:
 
+        .. math::
+            \Phi = 0
+        if :math:`\omega \leq 0`,
 
+        .. math::
+            q^{+}(a,a_{\frac{1}{2}},\phi_{age})\times
+            q^{+}(\omega,\omega_{\frac{1}{2}},\phi_{weight})
 
+        else
 
-        where :math:`q^{\pm}(x,x_{\frac{1}{2}},\phi) =\frac{1}{1 + e^{\pm\phi(x-x_{\frac{1}{2}})}}`
+        where
 
+        .. math::
+            q^{\pm}(x,x_{\frac{1}{2}},\phi) =
+            \frac{1}{1 + e^{\pm\phi(x-x_{\frac{1}{2}})}}
         """
         if self.weight <= 0:
             self.fitness = 0
         else:
             q_age = 1 / (1 + m.exp(self.phi_age * (self.a - self.a_half)))
-            q_weight = 1 / (1 + m.exp(-self.phi_weight*(self.weight - self.w_half)))
+            q_weight = 1 / (1 + m.exp(
+                -self.phi_weight*(self.weight - self.w_half)))
             self.fitness = q_age * q_weight
 
     def migrate(self):
@@ -165,7 +178,7 @@ class BaseAnimal:
         .. math::
             \omega < \zeta(\omega_{birth}+\sigma_{birth})
 
-        When a mother gives birth it looses :math: `\xi` times the actual
+        When a mother gives birth it looses :math:`\xi` times the actual
         birthweight of the baby.
 
         Returns
@@ -211,8 +224,6 @@ class BaseAnimal:
         .. math::
             p_{death} = \omega(1-\Phi)
 
-
-
         Returns
         -------
         bool
@@ -233,38 +244,42 @@ class BaseAnimal:
         Returns
         -------
         BaseAnimal
-            An instance of the same class as the given animal species
+            An instance of the same classtype that gave birth
         """
         return self.__class__()
 
 
 class Carn(BaseAnimal):
-    """Carnivore species which lives on the island. Subclass of Animal class.
+    """Carnivore species which lives on the island.
+
+    The Carn class is a subclass of the BaseAnimal class, and it inherits
+    the classmethods and attributes from the parent class by the super()
+    function.
 
     Parameters
     ----------
     age: int
-        Initial age of the animal
+        Initial age of the carnivore.
     weight: float
-        Initial weight of the animal
-
-    Raises
-    ------
-    ValueError
-        If age is below 0 or if weight is below 0, 0 or None.
+        Initial weight of the carnivore.
 
     Attributes
     ----------
     DEFAULT_PARAMETERS : dict
         Default parameters for the carnivore species.
     fitness: int
-        Value describing the animals fitness.
+        Value describing the carnivore's fitness.
     age: int
-        Initial age of the animal which can't be assigned a value below 0
+        Initial age of the carnivore.
     weight: float
          Weight drawn from the Gaussian distribution if not assigned a value.
     parameters: dict
-        Values that determines the behaviour of the animal.
+        Values that determines the behaviour of the carnivores.
+
+    Raises
+    ------
+    ValueError
+        If age is below 0 or if weight is below 0, 0 or None.
     """
     DEFAULT_PARAMETERS = {
             "w_birth": 6.0,
@@ -299,14 +314,20 @@ class Carn(BaseAnimal):
         The probability of the carnivore killing a herbivore is given by:
 
         .. math::
-                 p=
-                    \begin{cases}
-                        0, & \omega \leq 0\\
-                        q^{+}(a,a_{\frac{1}{2}},\phi_{age})
-                        \times q^{-}(\omega,
-                        \omega_{\frac{1}{2}},\phi_{weight}), & \text{else}
+            p = 0
 
-                    \end{cases}
+        if :math:`\Phi_{carn} \leq \Phi_{herb}`,
+
+        .. math::
+            p = \frac{\Phi_{carn}-\Phi_{herb}}{\Delta\Phi_{max}}
+
+        if :math:`0 < \Phi_{carn}-\Phi_{herb} < \Delta\Phi_{max}`
+        and
+
+        .. math::
+             p = 1
+
+        otherwise.
 
         The weight of the carnivore increases by :math:`\beta\omega_{herb}`
         where :math:`\omega_{herb}` is the weight of the herbivore eaten.
@@ -352,30 +373,35 @@ class Carn(BaseAnimal):
 
 
 class Herb(BaseAnimal):
-    """Carnivore species which lives on the island. Subclass of Animal class.
+    """Herbivore species which lives on the island.
+
+    The Herb class is a subclass of the BaseAnimal class, and it inherits
+    the classmethods and attributes from the parent class by the super()
+    function.
 
     Parameters
     ----------
     age: int
-        Initial age of the animal.
+        Initial age of the Herbivore.
     weight: float
-        Initial weight of the animal.
-    Raises
-    ------
-    ValueError
-        If age is below 0 or if weight is below 0, 0 or None.
+        Initial weight of the Herbivore.
+
     Attributes
     ----------
     DEFAULT_PARAMETERS : dict
         Default parameters for the herbivore species.
     fitness: int
-        Value describing the animals fitness
+        Value describing the herbivore's fitness
     age: int
-        Initial age of the animal which can't be assigned a value below 0
+        Initial age of the herbivore.
     weight: float
-         Weight drawn from the Gaussian distribution if not assigned a value
+         Weight drawn from the Gaussian distribution if not assigned a value.
     parameters: dict
-        Values that determines the behaviour of the animal
+        Values that determines the behaviour of the herbivores.
+    Raises
+    ------
+    ValueError
+        If age is below 0 or if weight is below 0, 0 or None.
     """
     DEFAULT_PARAMETERS = {
         "w_birth": 8.0,
@@ -404,7 +430,7 @@ class Herb(BaseAnimal):
         The herbivore tries to eat an amount of fodder equal to its appetite F
         on the cell it habits.
         The herbivores weight increases by
-        :math:`\beta \times \text{fodder_eaten}`where the fodder_eaten
+        :math:`\beta \times fodder_{eaten}` where the fodder_eaten
         depends on how much fodder the given cell has.If the cell has more
         fodder than the the herbivore's appetite,fodder_eaten is equal to the
         appetite.

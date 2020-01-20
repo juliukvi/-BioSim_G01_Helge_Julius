@@ -10,6 +10,9 @@ Welcome to Biosim's documentation!
    :maxdepth: 2
    :caption: Contents:
       animals
+      landscape
+      Island
+      simulation
 
 
 

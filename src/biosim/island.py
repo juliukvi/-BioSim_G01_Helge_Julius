@@ -6,8 +6,6 @@ from biosim.animals import *
 class Island:
     """An island map with landscape cells and animals.
 
-    More description.
-
     Parameters
     ----------
     island_map : string
@@ -36,14 +34,15 @@ class Island:
         self.map_list = []
         self.map_columns = len(island_map.splitlines()[0])
         self.map_rows = len(island_map.splitlines())
-        map_dict = {"O": Ocean, "S": Savannah, "M": Mountain, "J": Jungle, "D": Desert}
+        map_dict = {
+            "O": Ocean, "S": Savannah, "M": Mountain, "J": Jungle, "D": Desert}
         for line in island_map.splitlines():
             if len(line) != self.map_columns:
                 raise ValueError("Island map not rectangular")
             placeholder_list = []
             for nature_square_char in line:
                 try:
-                    placeholder_list.append(map_dict[nature_square_char]()) # Creates nature objects
+                    placeholder_list.append(map_dict[nature_square_char]())
                 except KeyError:
                     raise ValueError("Island map string contains invalid"
                                      "character")
@@ -61,8 +60,8 @@ class Island:
         for nature_square in range(len(self.map_list)):
             if not isinstance(self.map_list[nature_square][len(self.map_list[0]) - 1], Ocean):
                 raise ValueError("Island not surrounded by ocean")
-        if ini_pop:  # If an initial population is provided right away
-            self.add_population(population=ini_pop)  # Call the add_population method
+        if ini_pop:
+            self.add_population(population=ini_pop)
 
     def add_population(self, population):
         """Adds a population of animals to a given location on the island.
@@ -137,8 +136,8 @@ class Island:
 
     def migration(self):
         """Migrates all animals that shall migrate.
-        The animals that migrate are removed from their current cell position,
-        and added to the cell that they are supposed to move to. This is done
+        The animals that migrate are removed from their current square,
+        and added to the square that they are supposed to move to. This is done
         by accessing the lists on each cell in which the animals that are
         supposed to migrate are stored.
         """
