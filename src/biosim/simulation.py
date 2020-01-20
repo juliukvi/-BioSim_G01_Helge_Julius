@@ -59,6 +59,7 @@ class BioSim:
         img_base should contain a path and beginning of a file name.
         """
         random.seed(seed)
+        np.random.seed(seed)
         island_map = textwrap.dedent(island_map)
         self._island_map = island_map
         self._island = Island(island_map, ini_pop=ini_pop)
