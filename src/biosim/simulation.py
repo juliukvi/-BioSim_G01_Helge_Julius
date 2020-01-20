@@ -400,7 +400,7 @@ class BioSim:
                map_rect.text(0.12, ix * 0.2, name, transform=map_rect.transAxes)
 
         if self._island_text_ax is None:
-            self._island_text_ax = self._fig.add_axes([0.52, 0.5, 0, 0])
+            self._island_text_ax = self._fig.add_axes([0.48, 0.5, 0, 0])
             self._island_text_ax.axis('off')
             self._island_text_values = 'Year: {}     ' \
                                     'Total Animals: {}     ' \
@@ -481,7 +481,7 @@ class BioSim:
                                                                            self._island.map_columns)),
                                                       vmax=self._cmax_herb)
             plt.colorbar(self._herb_map, ax=self._herb_map_ax,
-                         orientation='horizontal', fraction=0.05)
+                         orientation='vertical', fraction=0.05)
 
         if self._carn_map is not None:
             self._carn_map.set_data(np.reshape(self.animal_distribution['Carnivore'].values,
@@ -493,7 +493,7 @@ class BioSim:
                                                                            self._island.map_columns)),
                                                       vmax=self._cmax_carn)
             plt.colorbar(self._carn_map, ax=self._carn_map_ax,
-                         orientation='horizontal', fraction=0.05)
+                         orientation='vertical', fraction=0.05)
 
     def _save_graphics(self):
         """Saves graphics to file if file name given.
