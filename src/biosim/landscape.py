@@ -459,14 +459,15 @@ class Savannah(BaseNature):
             If the assigned parameter values are not in the right ranges.
         """
         for key in new_params:
-            if new_params[key] < 0:
-                raise ValueError("All values must be positive")
             if key not in cls.parameters.keys():
                 raise KeyError(f'Parameter {key} is not valid')
             if isinstance(new_params[key], int) or isinstance(new_params[key], float):
                 continue
             else:
                 raise ValueError(f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
+        for key in new_params:
+            if new_params[key] < 0:
+                raise ValueError("All parameters must be positive")
         cls.parameters.update(new_params)
         cls._set_params_as_attributes()
 
@@ -555,14 +556,15 @@ class Jungle(BaseNature):
             If the assigned parameter values are not in the right ranges.
         """
         for key in new_params:
-            if new_params[key] < 0:
-                raise ValueError("All values must be positive")
             if key not in cls.parameters.keys():
                 raise KeyError(f'Parameter {key} is not valid')
             if isinstance(new_params[key], int) or isinstance(new_params[key], float):
                 continue
             else:
                 raise ValueError(f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
+        for key in new_params:
+            if new_params[key] < 0:
+                raise ValueError("All parameters must be positive")
         cls.parameters.update(new_params)
         cls._set_params_as_attributes()
 

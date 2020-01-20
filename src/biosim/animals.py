@@ -66,12 +66,6 @@ class BaseAnimal:
         """
 
         for key in new_params:
-            if new_params[key] < 0:
-                raise ValueError("All values must be positive")
-            if key == "DeltaPhiMax" and new_params[key] <= 0:
-                raise ValueError("DeltaPhiMax must be strictly positive")
-            if key == "eta" and new_params[key] > 1:
-                raise ValueError("Eta must be less or equal to one")
             if key not in cls.parameters.keys():
                 raise KeyError(f'Parameter {key} is not valid')
             if isinstance(new_params[key], int) or isinstance(new_params[key],
@@ -81,7 +75,13 @@ class BaseAnimal:
                 raise ValueError(
                     f'Value needs to be int or float, '
                     f'got:{type(new_params[key]).__name__}')
-
+        for key in new_params:
+            if new_params[key] < 0:
+                raise ValueError("All values must be positive")
+            if key == "DeltaPhiMax" and new_params[key] <= 0:
+                raise ValueError("DeltaPhiMax must be strictly positive")
+            if key == "eta" and new_params[key] > 1:
+                raise ValueError("Eta must be less or equal to one")
         cls.parameters.update(new_params)
         cls._set_params_as_attributes()
 

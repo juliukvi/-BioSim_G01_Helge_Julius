@@ -55,6 +55,13 @@ class TestAnimal:
             herb.set_parameters(dict_with_invalid_value)
         with pytest.raises(ValueError):
             carn.set_parameters(dict_with_invalid_value)
+        with pytest.raises(ValueError):
+            carn.set_parameters({"DeltaPhiMax":0})
+        with pytest.raises(ValueError):
+            herb.set_parameters({"F": -1})
+        with pytest.raises(ValueError):
+            herb.set_parameters({"eta":3})
+
 
     def test_set_parameters(self, herb, carn, ex_params, tear_down_params):
         herb.set_parameters(ex_params)
