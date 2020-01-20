@@ -58,6 +58,7 @@ class BioSim:
         where img_no are consecutive image numbers starting from 0.
         img_base should contain a path and beginning of a file name.
         """
+        np.random.seed(seed)
         random.seed(seed)
         island_map = textwrap.dedent(island_map)
         self._island_map = island_map

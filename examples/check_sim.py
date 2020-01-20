@@ -2,7 +2,7 @@
 
 import textwrap
 import matplotlib.pyplot as plt
-
+import time
 from biosim.simulation import BioSim
 
 """
@@ -15,7 +15,7 @@ the INF200 project January 2019.
 __author__ = "Hans Ekkehard Plesser, NMBU"
 __email__ = "hans.ekkehard.plesser@nmbu.no"
 
-
+start = time.time()
 if __name__ == "__main__":
     plt.ion()
 
@@ -71,7 +71,8 @@ if __name__ == "__main__":
     sim.simulate(num_years=100, vis_years=1, img_years=2000)
     sim.add_population(population=ini_carns)
     sim.simulate(num_years=100, vis_years=1, img_years=2000)
-
+    end = time.time()
+    print(end-start)
     plt.savefig("check_sim.pdf")
 
     input("Press ENTER")
