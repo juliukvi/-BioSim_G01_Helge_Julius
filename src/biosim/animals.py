@@ -78,7 +78,7 @@ class BaseAnimal:
                 raise ValueError("All values must be positive")
             if key == "DeltaPhiMax" and new_params[key] <= 0:
                 raise ValueError("DeltaPhiMax must be strictly positive")
-            if key == "eta" and new_params[key] >= 1:
+            if key == "eta" and new_params[key] > 1:
                 raise ValueError("Eta must be less or equal to one")
         cls.parameters.update(new_params)
         cls._set_params_as_attributes()
@@ -122,15 +122,10 @@ class BaseAnimal:
 
         The fitness value :math:`\Phi`, is updated by formula:
 
-        .. math::
-            p =
-                \begin{cases}
-                    0 & \text{\omega \leg 0}\\
-                    q^{+}(\emph{a},\textit{a_{\frac{1}{2}}},\phi_{age})\timesq^{+}(\emph{\omega},\omega_{\frac{1}{2}}},\phi_{weight}) & \text{ else\
-                \end{cases}
 
-        where
-            q^{\pm}(\emph{x},\emph{x_{\frac{1}{2}}},\phi) = \frac{1}{1 + e^{\pm\phi(\emph{x}-\emph{x_\tiny{\frac{1}{2}}}})}
+
+
+        where :math:`q^{\pm}(x,x_{\frac{1}{2}},\phi) =\frac{1}{1 + e^{\pm\phi(x-x_{\frac{1}{2}})}}`
 
         """
         if self.weight <= 0:
@@ -143,7 +138,7 @@ class BaseAnimal:
     def migrate(self):
         """Estimates the probability for an animal to migrate
 
-        The probability of an animal migrating is given by :math: `\mu\Phi`
+        The probability of an animal migrating is given by :math:`\mu\Phi`
 
         Returns
         -------
@@ -166,6 +161,7 @@ class BaseAnimal:
         at the start of the breeding season.
         If there are no animals in the cell the probability is 0.
         The probability will also be zero if:
+
         .. math::
             \omega < \zeta(\omega_{birth}+\sigma_{birth})
 
@@ -212,7 +208,7 @@ class BaseAnimal:
         Death is guaranteed if :math:`\Phi = 0`, and else it occurs with
         probability given by the formula:
 
-        ..math::
+        .. math::
             p_{death} = \omega(1-\Phi)
 
 
@@ -301,12 +297,13 @@ class Carn(BaseAnimal):
         until it's appetite, given by the parameter F, is 0.
 
         The probability of the carnivore killing a herbivore is given by:
+
         .. math::
                  p=
                     \begin{cases}
                         0, & \omega \leq 0\\
-                        q^{+}(\emph{a},\emph{a_{\frac{1}{2}}},\phi_{age})
-                        \times q^{-}(\emph{\omega},
+                        q^{+}(a,a_{\frac{1}{2}},\phi_{age})
+                        \times q^{-}(\omega,
                         \omega_{\frac{1}{2}},\phi_{weight}), & \text{else}
 
                     \end{cases}
@@ -315,7 +312,7 @@ class Carn(BaseAnimal):
         where :math:`\omega_{herb}` is the weight of the herbivore eaten.
         If the weight of the herbivore is greater than the carnivore's
         appetite, the carnivore eats only a part of the
-        herbivore and the weight is updated by :math:`\betaF`.
+        herbivore and the weight is updated by :math:`\beta F`.
         The carnivore's fitness is reevaluated every time it feeds by using
         the fitness_update method.
 
@@ -406,14 +403,16 @@ class Herb(BaseAnimal):
 
         The herbivore tries to eat an amount of fodder equal to its appetite F
         on the cell it habits.
-        The herbivores weight increases by :math:`\beta \times fodder_eaten`
-        where the fodder_eaten depends on how much fodder the given cell has.
-        If the cell has more fodder than the the herbivore's appetite,
-        fodder_eaten is equal to the appetite.
+        The herbivores weight increases by
+        :math:`\beta \times \text{fodder_eaten}`where the fodder_eaten
+        depends on how much fodder the given cell has.If the cell has more
+        fodder than the the herbivore's appetite,fodder_eaten is equal to the
+        appetite.
 
         Parameters
         ----------
         fodder : int
+            The amount of fodder on the cell
 
         Returns
         -------
