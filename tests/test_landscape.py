@@ -134,7 +134,8 @@ class TestSavannah:
         assert savannah.DEFAULT_PARAMETERS["f_max"] == 300
         with pytest.raises(ValueError):
             savannah.set_parameters({"f_max": [1, 2]})
-
+        with pytest.raises(ValueError):
+            savannah.set_parameters({"f_max": -1})
     def test_set_parameters_savannah(
             self, savannah, savannah_params, tear_down_params
     ):
@@ -194,6 +195,8 @@ class TestJungle:
         assert jungle.parameters["f_max"] == 900
         with pytest.raises(ValueError):
             jungle.set_parameters({"f_max": {"this is a dictionary": 1}})
+        with pytest.raises(ValueError):
+            jungle.set_parameters({"f_max": -3})
 
     def test_set_default_parameters_jungle(
             self, jungle, jungle_params, tear_down_params
