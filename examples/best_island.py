@@ -13,15 +13,15 @@ if __name__ == "__main__":
     plt.ion()
 
     geogr = """\
-               OOOOOOOOO
-               ODDDDDDDO
-               ODDDDDDDO
-               ODDDDDDDO
-               ODDDDDDDO
-               ODDDDDDDO
-               ODDDDDDDO
-               ODDDDDDDO
-               OOOOOOOOO"""
+               OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"""
     geogr = textwrap.dedent(geogr)
 
     ini_herbs = [
@@ -54,11 +54,7 @@ if __name__ == "__main__":
 
     sim.set_landscape_parameters("J", {"f_max": 700})
     sim._img_pause_time = 1
-    sim.simulate(num_years=10, vis_years=1, img_years=2000)
+    sim.simulate(num_years=100, vis_years=1, img_years=2000)
 
-    sim.add_population(population=ini_carns)
-    sim.simulate(num_years=10, vis_years=1, img_years=2000)
-    #sim.make_movie()
-    #sim.make_movie("gif")
-
-
+    #sim.add_population(population=ini_carns)
+    #sim.simulate(num_years=100, vis_years=1, img_years=2000)

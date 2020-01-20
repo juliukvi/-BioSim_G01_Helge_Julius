@@ -89,7 +89,7 @@ class BioSim:
         self._cmax_animals = cmax_animals
         self._img_base = img_base
         self._img_fmt = img_fmt
-        self._img_pause_time = 1e-6
+        self._img_pause_time = 1e-20
         # the following will be initialized by _setup_graphics
         self._fig = None
         self._map_ax = None
@@ -108,6 +108,7 @@ class BioSim:
         self._island_text_ax = None
         self._pause_ax = None
         self._pause_widget = None
+        self._large_island = None
 
     def set_animal_parameters(self, species, params):
         """Sets parameters for animal species.
@@ -183,15 +184,13 @@ class BioSim:
             self._island.one_year()
             self._year += 1
             if vis_years:
-                if img_years == None:
+                if img_years is None:
                     img_years = vis_years
                 if self.year % vis_years == 0:
                     self._update_graphics()
                 if self.year % img_years == 0:
                     self._save_graphics()
                 plt.pause(self._img_pause_time)
-
-
 
             while self._paused:
                 plt.pause(0.05)
@@ -223,7 +222,7 @@ class BioSim:
         """Number of animals per species in island, as dictionary.
         """
         herbivore_count, carnivore_count = self._island.count_animals()[:2]
-        num_animals_dict = {"Herbivore":herbivore_count, "Carnivore":carnivore_count}
+        num_animals_dict = {"Herbivore": herbivore_count, "Carnivore": carnivore_count}
         return num_animals_dict
 
     @property
@@ -289,6 +288,9 @@ class BioSim:
         # multiple simulations after each other
         self._animal_lines_ax.set_xlim(0, self._final_year+1)
 
+        if (self._island.map_columns or self._island.map_rows) > 23:
+            self._large_island = True
+
         if self._herb_line is None:
             # Creates plot object with no y-values that has the correct length,
             # y-data will be gathered and set by self._update_graphics
@@ -338,20 +340,32 @@ class BioSim:
             self._cmax_carn = self._cmax_animals["Carnivore"]
 
         if self._herb_map_ax is None:
-            self._herb_map_ax = self._fig.add_axes([0.05, 0.35, 0.25, 0.25])
-            self._herb_map_ax.set_xticks(range(1 + self._island.map_columns))
-            self._herb_map_ax.set_xticklabels(range(1 + self._island.map_columns))
-            self._herb_map_ax.set_yticks(range(1 + self._island.map_rows))
-            self._herb_map_ax.set_yticklabels(range(1 + self._island.map_rows))
+            self._herb_map_ax = self._fig.add_axes([0.05, 0.37, 0.25, 0.25])
+            if self._large_island:
+                self._herb_map_ax.set_xticks((0, self._island.map_columns-1))
+                self._herb_map_ax.set_xticklabels((0, self._island.map_columns-1))
+                self._herb_map_ax.set_yticks((0, self._island.map_rows-1))
+                self._herb_map_ax.set_yticklabels((0, self._island.map_rows-1))
+            else:
+                self._herb_map_ax.set_xticks(range(self._island.map_columns))
+                self._herb_map_ax.set_xticklabels(range(self._island.map_columns))
+                self._herb_map_ax.set_yticks(range(self._island.map_rows))
+                self._herb_map_ax.set_yticklabels(range(self._island.map_rows))
             self._herb_map_ax.set_title("Herbivore distribution")
 
         if self._carn_map_ax is None:
             self._carn_map_ax = self._fig.add_axes([0.05, 0.05, 0.25, 0.25])
-            self._carn_map_ax.set_xticks(range(1 + self._island.map_columns ))
-            self._carn_map_ax.set_xticklabels(range(1 + self._island.map_columns ))
-            self._carn_map_ax.set_yticks(range(1 + self._island.map_rows))
-            self._carn_map_ax.set_yticklabels(range(1 + self._island.map_rows ))
-            self._carn_map_ax.set_title("Carnivore distribution")
+            if self._large_island:
+                self._carn_map_ax.set_xticks((0, self._island.map_columns-1))
+                self._carn_map_ax.set_xticklabels((0, self._island.map_columns-1))
+                self._carn_map_ax.set_yticks((0, self._island.map_rows-1))
+                self._carn_map_ax.set_yticklabels((0, self._island.map_rows-1))
+            else:
+                self._carn_map_ax.set_xticks(range(self._island.map_columns ))
+                self._carn_map_ax.set_xticklabels(range(self._island.map_columns))
+                self._carn_map_ax.set_yticks(range(self._island.map_rows))
+                self._carn_map_ax.set_yticklabels(range(self._island.map_rows))
+                self._carn_map_ax.set_title("Carnivore distribution")
 
         if self._island_map_ax is None:
             rgb_value = {'O': (0.0, 0.0, 1.0),  # blue
@@ -363,10 +377,16 @@ class BioSim:
                         for row in self._island_map.splitlines()]
             island_rgb = np.array(island_rgb)
             self._island_map_ax = self._fig.add_axes([0.05, 0.7, 0.25, 0.25])  # llx, lly, w, h
-            self._island_map_ax.set_xticks(range(self._island.map_columns + 1))
-            self._island_map_ax.set_xticklabels(range(self._island.map_columns + 1))
-            self._island_map_ax.set_yticks(range(self._island.map_rows+1))
-            self._island_map_ax.set_yticklabels(range( self._island.map_rows+1))
+            if self._large_island:
+                self._island_map_ax.set_xticks((0, self._island.map_columns - 1))
+                self._island_map_ax.set_xticklabels((0, self._island.map_columns - 1))
+                self._island_map_ax.set_yticks((0, self._island.map_rows - 1))
+                self._island_map_ax.set_yticklabels((0, self._island.map_rows - 1))
+            else:
+                self._island_map_ax.set_xticks(range(self._island.map_columns))
+                self._island_map_ax.set_xticklabels(range(self._island.map_columns))
+                self._island_map_ax.set_yticks(range(self._island.map_rows))
+                self._island_map_ax.set_yticklabels(range(self._island.map_rows))
             self._island_map_ax.imshow(island_rgb)
             self._island_map_ax.set_title("Island map")
             map_rect = self._fig.add_axes([0.31, 0.7, 0.25, 0.25])  # llx, lly, w, h
@@ -379,7 +399,7 @@ class BioSim:
                map_rect.text(0.12, ix * 0.2, name, transform=map_rect.transAxes)
 
         if self._island_text_ax is None:
-            self._island_text_ax = self._fig.add_axes([0.35, 0.3, 0.25, 0.25])
+            self._island_text_ax = self._fig.add_axes([0.52, 0.5, 0, 0])
             self._island_text_ax.axis('off')
             self._island_text_values = 'Year: {}     ' \
                                     'Total Animals: {}     ' \
@@ -398,7 +418,7 @@ class BioSim:
 
         if self._pause_ax is None:
             self._paused = False
-            self._pause_ax = self._fig.add_axes([0.8, 0.10, 0.15, 0.15])
+            self._pause_ax = self._fig.add_axes([0.6, 0.10, 0.3, 0.15])
             self._pause_widget = Button(self._pause_ax, 'Pause/Run', hovercolor='0.5')
             self._pause_widget.on_clicked(self._pause_button_click)
 
@@ -452,7 +472,7 @@ class BioSim:
 
         if self._herb_map is not None:
             self._herb_map.set_data(np.reshape(self.animal_distribution['Herbivore'].values,
-                                                     newshape=(self._island.map_rows, self._island.map_columns)))
+                newshape=(self._island.map_rows, self._island.map_columns)))
         else:
             self._herb_map = self._herb_map_ax.imshow(np.reshape(self.animal_distribution[
                                                                      'Herbivore'].values,
@@ -460,11 +480,11 @@ class BioSim:
                                                                            self._island.map_columns)),
                                                       vmax=self._cmax_herb)
             plt.colorbar(self._herb_map, ax=self._herb_map_ax,
-                         orientation='vertical', fraction=0.05)
+                         orientation='horizontal', fraction=0.05)
 
         if self._carn_map is not None:
             self._carn_map.set_data(np.reshape(self.animal_distribution['Carnivore'].values,
-                                                     newshape=(self._island.map_rows, self._island.map_columns)))
+                                               newshape=(self._island.map_rows, self._island.map_columns)))
         else:
             self._carn_map = self._carn_map_ax.imshow(np.reshape(self.animal_distribution[
                                                                      'Carnivore'].values,
@@ -472,7 +492,7 @@ class BioSim:
                                                                            self._island.map_columns)),
                                                       vmax=self._cmax_carn)
             plt.colorbar(self._carn_map, ax=self._carn_map_ax,
-                         orientation='vertical', fraction=0.05)
+                         orientation='horizontal', fraction=0.05)
 
     def _save_graphics(self):
         """Saves graphics to file if file name given.
