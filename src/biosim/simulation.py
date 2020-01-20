@@ -157,7 +157,7 @@ class BioSim:
             s = Savannah()
             s.set_parameters(params)
         else:
-            raise ValueError(f'Only jungle and svannah landscapes can have parameters'
+            raise ValueError(f'Only Jungle and Savannah landscapes can have parameters'
                              f' updated. Got landscape {landscape}')
 
     def simulate(self, num_years, vis_years=1, img_years=None):
