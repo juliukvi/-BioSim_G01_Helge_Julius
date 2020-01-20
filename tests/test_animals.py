@@ -2,10 +2,10 @@
 
 __author__ = 'Helge Helo Klemetsdal'
 __email__ = 'hegkleme@nmbu.no'
-from biosim.animals import BaseAnimal, Herb, Carn
+from biosim.animals import Herb, Carn
 import pytest
 import numpy as np
-from scipy.stats import normaltest, binom_test
+from scipy.stats import normaltest, binom_test, chisquare
 import math as m
 
 
@@ -44,7 +44,7 @@ class TestAnimal:
         Herb().set_default_parameters_for_species()
         Carn().set_default_parameters_for_species()
 
-    def test_set_parameters_raises_error(self, herb, carn):
+    def test_set_parameters_raises_errors(self, herb, carn):
         dict_with_invalid_key = {"zeta": 4, "key_not_valid": 1}
         with pytest.raises(KeyError):
             herb.set_parameters(dict_with_invalid_key)
@@ -111,7 +111,7 @@ class TestAnimal:
         assert all(h.xi for h in herb_list)
         assert all(c.xi for c in carn_list)
 
-    def test_BaseAnimal_init_function_inherits_correctly_to_subclass(
+    def test_baseanimal_init_function_inherits_correctly_to_subclass(
             self, herb, carn
     ):
         assert herb.a == 0
@@ -136,7 +136,18 @@ class TestAnimal:
             h = Herb(weight=[1, 2, 3])
 
     def test_weight_follows_normal_distribution(self):
-        #np.random.seed(123)  # need this?
+        """A statistical test for the distribution of animal weights.
+
+        The test determines whether it is probable that the drawn weights of
+        the animals follows a normal distribution.
+        The test uses  the normaltest from scipy, which is based on D.agostinos
+        K^2 test. The nullhypothesis for the test is that the weight follows a
+        normal distribution. If the assertion fails we reject the
+        nullhypothesis on the given significance level, which we have defined as
+        alpha.
+
+        """
+        np.random.seed(123)
         # Using D.agostinos K^2 test which is accessed from the normaltest in scipy
         n_trials = 10000
         some_herb_list = [Herb() for _ in range(n_trials)]
@@ -145,14 +156,7 @@ class TestAnimal:
         weight_data_carn = [c.weight for c in some_carn_list]
         stat, p_value1 = normaltest(weight_data_herb)
         stat, p_value2 = normaltest(weight_data_carn)
-        # Significance level 0.01.
         alpha = 0.01
-        # Nullhypothesis is that the weight follows a normal distribution.
-        # Weight follows a normal distribution if the test is passed.
-        # If it doesnt pass, we reject H0 on a 0.01 significance level. This
-        # means that it is more likely that the data doesnt follow a normal
-        # distribution. If it passes it means that its probable that it follows
-        # a normal distribution but we cant say for sure.
         assert p_value1 > alpha
         assert p_value2 > alpha
 
@@ -228,10 +232,14 @@ class TestAnimal:
 
 
     def test_birth(self, herb, carn):
+        """Tests that the birth method returns the correct class instance.
+        """
         assert isinstance(herb.birth(), Herb)
         assert isinstance(carn.birth(), Carn)
 
     def test_weightloss(self, mocker):
+        """Tests that the weight is updated according to the weightloss method.
+        """
         mocker.patch('numpy.random.normal', return_value=1)
         h = Herb()
         h.weightloss()
@@ -254,6 +262,8 @@ class TestAnimal:
                                    weight_list_carn[1:])])
 
     def test_death(self, mocker):
+        """Tests that the death functions works correctly.
+        """
         h = Herb()
         c = Carn()
         h.fitness = 0
@@ -272,10 +282,17 @@ class TestAnimal:
         assert c.death() is True
 
     def test_binomial_distribution_for_death_method(self, herb, carn):
-        # Testing if the death follows a binomial distribution for given probability
-        # for death. Using the scipy binomial test.
-        # H0-følger binomial distributuin
-        # Ha følger ikke
+        """A statistical test for the death_method.
+
+        The test determines whether it is probable that the death method
+        follows a binomial distribution given a fixed probability of death.
+        The test uses the binomial_test from scipy.
+        The nullhypothesis for the test is that the probability of death
+        follows a binomial distribution. If the assertion fails we reject the
+        nullhypothesis on the given significance level,
+        which we have defined as alpha.
+
+        """
         p_death = 0.3
         n_trials = 10000
         death_list_herb = []
@@ -413,4 +430,21 @@ class TestCarnivore:
 
 
 def test_migration_distribution_with_chi_squared():
-    pass
+    #Need to choose probabilities somehow
+
+    p_migration = np.array([0.2, 0.3, 0.3, 0.2])
+    num_observed = np.zeros_like(p_migration)
+    p = np.cumsum(p_migration)
+    n_trials = 1000
+    num_expected = n_trials * p_migration
+    num_observed = np.zeros_like(p_migration)
+    n_trials = 1000
+    for _ in range(n_trials):
+        n = 0
+        r = np.random.random()
+        while r >= p[n]:
+            n += 1
+        num_observed[n] += 1
+    chi2, p_value = chisquare(num_observed, num_expected)
+    alpha = 0.01
+    assert p_value > alpha
