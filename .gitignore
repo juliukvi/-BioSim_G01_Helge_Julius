@@ -224,3 +224,4 @@ dmypy.json
 .idea/
 
 data/
+examples/check_sim.pdf
