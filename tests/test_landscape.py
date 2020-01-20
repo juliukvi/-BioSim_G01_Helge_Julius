@@ -2,25 +2,71 @@
 
 __author__ = 'Helge Helo Klemetsdal'
 __email__ = 'hegkleme@nmbu.no'
-from biosim.landscape import *
+from biosim.animals import Carn, Herb
+from biosim.landscape import Jungle, Savannah, Mountain, Ocean, Desert
 import pytest
 
 
 class TestBaseNature:
-    pass
+    @pytest.fixture
+    def jungle(self):
+        return Jungle()
+    @pytest.fixture
+    def savannah(self):
+        return Savannah()
+    @pytest.fixture
+    def herb_list(self):
+        return [Herb() for _ in range(100)]
+    @pytest.fixture
+    def carn_list(self):
+        return [Carn() for _ in range(100)]
+
+    def test_sorting_list_by_fitness_in_feed_all_animals(
+            self, herb_list, carn_list):
+        herb_list = herb_list
+        carn_list = carn_list
+        herb_list.sort(key=lambda x: x.fitness, reverse=True)
+        carn_list.sort(key=lambda x: x.fitness, reverse=True)
+        fit_list_herb = [h.fitness for h in herb_list]
+        fit_list_carn = [c.fitness for c in carn_list]
+        assert all([fit_1 > fit_2 for fit_1, fit_2 in
+                    zip(fit_list_herb[:-1], fit_list_herb[1:])])
+        assert all([fit_1 > fit_2 for fit_1, fit_2 in
+                    zip(fit_list_carn[:-1], fit_list_carn[1:])])
+
+    def test_aging_all_animals(self, jungle, herb_list, carn_list):
+        j = jungle
+        j.herb_list = herb_list
+        j.carn_list = carn_list
+        j.aging_all_animals()
+        for animal in j.herb_list:
+            assert animal.a == 1
+        for animal in j.carn_list:
+            assert animal.a == 1
+
+    def test_birth_all_animals(self, mocker):
+        mocker.patch('random.uniform', return_value=0)
+        herb_list = [Herb() for _ in range(1000)]
+        carn_list = [Carn() for _ in range(1000)]
+        j = Jungle()
+        j.herb_list = herb_list
+        j.carn_list = carn_list
+        for h in herb_list:
+            h.fitness = 1
+            h.weight = 100
+        for c in carn_list:
+            c.fitness = 1
+            c.weight = 100
+        herbs_before_birth = j.herb_list
 
 
-def test_sort_all_animals_by_fitness():
-    pass
 
 
-#def test_birth_all_animals(self):
-
-#def test_aging_all_animals(self):
 
 #def test_weightloss_all_animals(self):
 
 #def test_death_all_animals(self):
+
 
 class TestOcean:
     @pytest.fixture

@@ -224,3 +224,5 @@ dmypy.json
 .idea/
 
 data/
+
+_build/
