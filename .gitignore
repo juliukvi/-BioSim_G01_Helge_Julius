@@ -223,6 +223,7 @@ dmypy.json
 
 .idea/
 
-data/
 
 _build/
+data/
+examples/check_sim.pdf
