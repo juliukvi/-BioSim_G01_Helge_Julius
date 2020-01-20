@@ -25,6 +25,49 @@ _CONVERT_BINARY = r'C:\Program Files\ImageMagick-7.0.9-Q16\magick.exe'
 
 
 class BioSim:
+    """Simulation class for the ecosystem on the island.
+
+    Parameters
+    ----------
+    island_map: string
+        Multi-line string specifying island geography.
+    ini_pop: list
+        List of dictionaries specifying initial population.
+    seed: int
+        Integer used as random number seed.
+    ymax_animals: float?
+        Number specifying y-axis limit for graph showing animal numbers.
+    cmax_animals: dict
+        Dict specifying color-code limits for animal densities.
+    img_base: string
+        String with beginning of file name for figures, including path.
+    img_fmt: string
+        String with file type for figures, e.g. 'png'.
+
+    Attributes
+    ----------
+    island_map : string
+        Multi-line string specifying island geography with removed whitespace.
+    island : Island
+        Island class instance with island_map and ini_pop parameters as input.
+    year : int
+        The year the simulation is simulating.
+
+
+    If ymax_animals is None, the y-axis limit should be adjusted automatically.
+
+    If cmax_animals is None, sensible, fixed default values should be used.
+    cmax_animals is a dict mapping species names to numbers, e.g.,
+    {'Herbivore': 50, 'Carnivore': 20}
+
+    If img_base is None, no figures are written to file.
+    Filenames are formed as
+
+        '{}_{:05d}.{}'.format(img_base, img_no, img_fmt)
+
+    where img_no are consecutive image numbers starting from 0.
+    img_base should contain a path and beginning of a file name.
+    """
     def __init__(
         self,
         island_map,
@@ -35,29 +78,7 @@ class BioSim:
         img_base=None,
         img_fmt="png",
     ):
-        """
-        :param island_map: Multi-line string specifying island geography
-        :param ini_pop: List of dictionaries specifying initial population
-        :param seed: Integer used as random number seed
-        :param ymax_animals: Number specifying y-axis limit for graph showing animal numbers
-        :param cmax_animals: Dict specifying color-code limits for animal densities
-        :param img_base: String with beginning of file name for figures, including path
-        :param img_fmt: String with file type for figures, e.g. 'png'
 
-        If ymax_animals is None, the y-axis limit should be adjusted automatically.
-
-        If cmax_animals is None, sensible, fixed default values should be used.
-        cmax_animals is a dict mapping species names to numbers, e.g.,
-           {'Herbivore': 50, 'Carnivore': 20}
-
-        If img_base is None, no figures are written to file.
-        Filenames are formed as
-
-            '{}_{:05d}.{}'.format(img_base, img_no, img_fmt)
-
-        where img_no are consecutive image numbers starting from 0.
-        img_base should contain a path and beginning of a file name.
-        """
         random.seed(seed)
         island_map = textwrap.dedent(island_map)
         self._island_map = island_map
@@ -89,11 +110,19 @@ class BioSim:
         self._pause_widget = None
 
     def set_animal_parameters(self, species, params):
-        """
-        Set parameters for animal species.
+        """Sets parameters for animal species.
 
-        :param species: String, name of animal species
-        :param params: Dict with valid parameter specification for species
+        Parameters
+        ----------
+        species : string
+            Animal of a given species.
+        params : dict
+            New parameters to be set for the animal species.
+        Raises
+        ------
+        ValueError:
+            If the species does not exist.
+
         """
         if species == "Herbivore":
             h = Herb()
@@ -105,11 +134,19 @@ class BioSim:
             raise ValueError(f'Got non existing species {species} ')
 
     def set_landscape_parameters(self, landscape, params):
-        """
-        Set parameters for landscape type.
+        """Sets parameters for landscape type.
 
-        :param landscape: String, code letter for landscape
-        :param params: Dict with valid parameter specification for landscape
+        Parameters
+        ----------
+        landscape : string
+            Landscape of a given type.
+        params : dict
+            New parameters to be set for given landscape.
+        Raises
+        ------
+        ValueError
+            If the given landscape type doesn't exist.
+
         """
         if landscape == "J":
             j = Jungle()
@@ -122,14 +159,19 @@ class BioSim:
                              f' updated. Got landscape {landscape}')
 
     def simulate(self, num_years, vis_years=1, img_years=None):
-        """
-        Run simulation while visualizing the result.
+        """Run simulation while visualizing the result.
 
-        :param num_years: number of years to simulate
-        :param vis_years: years between visualization updates
-        :param img_years: years between visualizations saved to files (default: vis_years)
-
-        Image files will be numbered consecutively.
+        Parameters
+        ----------
+        num_years: int
+            number of years to simulate
+        vis_years: int
+            years between visualization updates
+        img_years: int
+            years between visualizations saved to files (default: vis_years)
+        Notes
+        -----
+            Image files will be numbered consecutively.
         """
 
         start_year = self._year
@@ -155,36 +197,49 @@ class BioSim:
                 plt.pause(0.05)
 
     def add_population(self, population):
+        """Adds a population of animals to a given location on the island.
+
+        Parameters
+        ----------
+        population : dict
+            Dictionary with animals of given location and population.
+        """
         self._island.add_population(population)
 
     @property
     def year(self):
-        """Last year simulated."""
+        """Last year simulated.
+        """
         return self._year
 
     @property
     def num_animals(self):
-        """Total number of animals on island."""
+        """Total number of animals on island.
+        """
         return self._island.count_animals()[2]
 
     @property
     def num_animals_per_species(self):
-        """Number of animals per species in island, as dictionary."""
+        """Number of animals per species in island, as dictionary.
+        """
         herbivore_count, carnivore_count = self._island.count_animals()[:2]
         num_animals_dict = {"Herbivore":herbivore_count, "Carnivore":carnivore_count}
         return num_animals_dict
+
     @property
     def animal_distribution(self):
-        """Pandas DataFrame with animal count per species for each cell on island."""
+        """Pandas DataFrame with animal count per species for each cell on island.
+        """
         animal_count_list = self._island.animals_on_square()
         pd_data = pd.DataFrame(data=animal_count_list, columns=['Row', 'Col', 'Herbivore', 'Carnivore'])
         return pd_data
+
     def make_movie(self, movie_fmt="mp4"):
-        """
-        Creates MPEG4 movie from visualization images saved.
-        .. :note:
+        """Creates MPEG4 movie from visualization images saved.
+        Notes
+        -----
             Requires ffmpeg
-        The movie is stored as img_base + movie_fmt
+            The movie is stored as img_base + movie_fmt
         """
 
         if self._img_base is None:
@@ -218,6 +273,8 @@ class BioSim:
             raise ValueError('Unknown movie format: ' + movie_fmt)
 
     def _setup_graphics(self):
+        """ Sets up the graphic window.
+        """
         if self._fig is None:
             self._fig = plt.figure(figsize=(15, 9))
         if self._animal_lines_ax is None:
@@ -359,12 +416,24 @@ class BioSim:
             self.num_animals_per_species['Carnivore']))
 
     def _pause_button_click(self, event):
+        """ ?
+
+        Parameters
+        ----------
+        event : ?
+
+        Returns
+        -------
+
+        """
         if self._paused:
             self._paused = False
         else:
             self._paused = True
 
     def _update_animal_lines(self):
+        """ Updates the animal lines in the graphics.
+        """
         if self._ymax_animals is None:
             # Saves number of animals in a variable so that property num_animals dont need to be called multiple times
             number_of_animals = self.num_animals
@@ -378,6 +447,8 @@ class BioSim:
         self._carn_line.set_ydata(ydata_carn)
 
     def _update_animal_heat_maps(self):
+        """Updates the animal heat maps in the graphics.
+        """
 
         if self._herb_map is not None:
             self._herb_map.set_data(np.reshape(self.animal_distribution['Herbivore'].values,
@@ -404,7 +475,8 @@ class BioSim:
                          orientation='vertical', fraction=0.05)
 
     def _save_graphics(self):
-        """Saves graphics to file if file name given."""
+        """Saves graphics to file if file name given.
+        """
 
         if self._img_base is None:
             return
