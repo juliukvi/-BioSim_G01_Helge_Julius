@@ -325,7 +325,7 @@ class TestBaseAnimal:
         assert p_value2 > alpha
 
 
-class TestHerbivore:
+class TestHerb:
     @pytest.fixture
     def herb(self):
         return Herb()
@@ -347,7 +347,7 @@ class TestHerbivore:
             h.feeding(-5)
 
 
-class TestCarnivore:
+class TestCarn:
     @pytest.fixture
     def carn(self):
         return Carn()
