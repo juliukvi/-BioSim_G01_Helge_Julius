@@ -136,12 +136,12 @@ class BaseNature:
             A tuple containing the set of different neighbour locations.
 
         """
+        north_nature_square = neighbors[0]
+        east_nature_square = neighbors[1]
+        south_nature_square = neighbors[2]
+        west_nature_square = neighbors[3]
         for animal in self.herb_list:
             if animal.migrate():
-                north_nature_square = neighbors[0]
-                east_nature_square = neighbors[1]
-                south_nature_square = neighbors[2]
-                west_nature_square = neighbors[3]
                 if animal.F == 0:
                     (north_relative_abundance,  east_relative_abundance,
                      south_relative_abundance, west_relative_abundance) = (0, 0,
@@ -171,35 +171,22 @@ class BaseNature:
                 # if total_propensity is zero no animal can move so loop breaks
                 if total_propensity == 0:
                     break
-                north_move_prob = north_propensity/total_propensity
-                east_move_prob = north_move_prob + east_propensity/total_propensity
-                south_move_prob = east_move_prob + south_propensity/total_propensity
-                west_move_prob = south_move_prob + west_propensity/total_propensity
-                number = random.uniform(0, 1)
-                if number < north_move_prob:
-                    north_nature_square.herb_move_to_list.append(animal)
-                    self.herb_move_from_list.append(animal)
-                elif number < east_move_prob:
-                    east_nature_square.herb_move_to_list.append(animal)
-                    self.herb_move_from_list.append(animal)
-                elif number < south_move_prob:
-                    south_nature_square.herb_move_to_list.append(animal)
-                    self.herb_move_from_list.append(animal)
-                elif number < west_move_prob:
-                    west_nature_square.herb_move_to_list.append(animal)
-                    self.herb_move_from_list.append(animal)
+                north_move_prob = north_propensity / total_propensity
+                east_move_prob = east_propensity / total_propensity
+                south_move_prob = south_propensity / total_propensity
+                west_move_prob = west_propensity / total_propensity
+                p = (north_move_prob, east_move_prob, south_move_prob,
+                     west_move_prob)
+                n = self.square_random_select(p)
+                neighbors[n].herb_move_to_list.append(animal)
+                self.herb_move_from_list.append(animal)
 
+        north_herb_weight = sum([herb.weight for herb in north_nature_square.herb_list])
+        east_herb_weight = sum([herb.weight for herb in east_nature_square.herb_list])
+        south_herb_weight = sum([herb.weight for herb in south_nature_square.herb_list])
+        west_herb_weight = sum([herb.weight for herb in west_nature_square.herb_list])
         for animal in self.carn_list:
             if animal.migrate():
-                north_nature_square = neighbors[0]
-                east_nature_square = neighbors[1]
-                south_nature_square = neighbors[2]
-                west_nature_square = neighbors[3]
-                north_herb_weight = sum([herb.weight for herb in north_nature_square.herb_list])
-                east_herb_weight = sum([herb.weight for herb in east_nature_square.herb_list])
-                south_herb_weight = sum([herb.weight for herb in south_nature_square.herb_list])
-                west_herb_weight = sum([herb.weight for herb in west_nature_square.herb_list])
-
                 if animal.F == 0:
                     (north_relative_abundance,  east_relative_abundance,
                      south_relative_abundance, west_relative_abundance) = (0, 0,
@@ -233,23 +220,15 @@ class BaseNature:
                 total_propensity = (north_propensity + east_propensity + south_propensity + west_propensity)
                 if total_propensity == 0:
                     break
-                north_move_prob = north_propensity / total_propensity
-                east_move_prob = north_move_prob + east_propensity / total_propensity
-                south_move_prob = east_move_prob + south_propensity / total_propensity
-                west_move_prob = south_move_prob + west_propensity / total_propensity
-                number = random.uniform(0, 1)
-                if number < north_move_prob:
-                    north_nature_square.carn_move_to_list.append(animal)
-                    self.carn_move_from_list.append(animal)
-                elif number < east_move_prob:
-                    east_nature_square.carn_move_to_list.append(animal)
-                    self.carn_move_from_list.append(animal)
-                elif number < south_move_prob:
-                    south_nature_square.carn_move_to_list.append(animal)
-                    self.carn_move_from_list.append(animal)
-                elif number < west_move_prob:
-                    west_nature_square.carn_move_to_list.append(animal)
-                    self.carn_move_from_list.append(animal)
+                north_move_prob = north_propensity/total_propensity
+                east_move_prob = east_propensity/total_propensity
+                south_move_prob = south_propensity/total_propensity
+                west_move_prob =  west_propensity/total_propensity
+                p = (north_move_prob, east_move_prob, south_move_prob,
+                     west_move_prob)
+                n = self.square_random_select(p)
+                neighbors[n].carn_move_to_list.append(animal)
+                self.carn_move_from_list.append(animal)
 
     def aging_all_animals(self):
         """Determines which of the animals in the cell give birth.
@@ -289,6 +268,16 @@ class BaseNature:
         self.carn_list = [
             animal for animal in self.carn_list if not animal.death()
         ]
+
+    def square_random_select(self, p):
+        """Select a square based on their move probabilities using the
+        linear search method"""
+        r = random.uniform(0, 1)
+        n = 0
+        while r >= p[n]:
+            r -= p[n]
+            n += 1
+        return n
 
     def herbivore_number(self):
         """Returns the number of herbivores in the cell.
