@@ -225,4 +225,4 @@ dmypy.json
 
 data/
 examples/check_sim.pdf
-_build/
+doc/_build/

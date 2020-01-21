@@ -5,7 +5,7 @@ __email__ = 'hegkleme@nmbu.no, juliukvi@nmbu.no'
 from biosim.animals import Herb, Carn
 import pytest
 import numpy as np
-from scipy.stats import normaltest, binom_test, chisquare
+from scipy.stats import normaltest, binom_test
 import math as m
 
 
@@ -49,6 +49,8 @@ class TestBaseAnimal:
         Carn().set_default_parameters_for_species()
 
     def test_set_parameters_raises_errors(self, herb, carn):
+        """Tests that the set_parameters class method raises correct errors.
+        """
         dict_with_invalid_key = {"zeta": 4, "key_not_valid": 1}
         with pytest.raises(KeyError):
             herb.set_parameters(dict_with_invalid_key)
@@ -67,7 +69,9 @@ class TestBaseAnimal:
             herb.set_parameters({"eta": 3})
 
     def test_set_parameters(self, herb, carn, ex_params, tear_down_params):
-        """"""
+        """Testing that the set_parameters updates the parameters dictionary.
+
+        """
         herb.set_parameters(ex_params)
         carn.set_parameters(ex_params)
         assert herb.parameters["zeta"] == 4
@@ -133,7 +137,10 @@ class TestBaseAnimal:
     def test_baseanimal_init_function_inherits_correctly_to_subclass(
             self, herb, carn
     ):
-        """
+        """Tests that the attributes inherits correctly to the animal species.
+
+        This test function also tests if the class raises errors if the animals
+        are initiated with incorrect value ranges.
         """
         assert herb.a == 0
         assert carn.a == 0
@@ -317,7 +324,7 @@ class TestBaseAnimal:
         death_list_herb = []
         death_list_carn = []
 
-        # Fitness value and omega value creates a p_death = 0.3 in death method.
+        # Fitness value and omega value creates a p_death = 0.3 in death method
         herb.set_parameters({"omega": 1})
         for _ in range(n_trials):
             h = herb
@@ -339,10 +346,16 @@ class TestBaseAnimal:
 class TestHerb:
     @pytest.fixture
     def herb(self):
+        """A fixture that gives a hebrivore class instance.
+
+        Returns
+        Herb
+            A class instance of the herbivore object
+        """
         return Herb()
 
     def test_initiate_herb(self, herb):
-        assert herb
+        assert herb, 'Herbivore class cannot be initiated'
 
     def test_feeding_herb(self, mocker):
         mocker.patch('numpy.random.normal', return_value=3)
