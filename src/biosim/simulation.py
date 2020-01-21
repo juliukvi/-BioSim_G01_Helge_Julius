@@ -15,18 +15,11 @@ import subprocess
 import matplotlib.pyplot as plt
 import pandas as pd
 import textwrap
+import shutil
 from matplotlib.widgets import Button
 
 
-# update these variables to point to your ffmpeg and convert binaries
-# One way is to download ImageMagick and add its directory to system path
-_FFMPEG_BINARY = "ffmpeg"
-    #r"C:\Users\hej\Downloads\ffmpeg-20200115-0dc0837-win64" \
-    #             r"-static\ffmpeg-20200115-0dc0837-win64-static\bin\ffmpeg
-#             .exe"
 
-#if
-_CONVERT_BINARY = "magick"
 
 
 class BioSim:
@@ -272,6 +265,10 @@ class BioSim:
             raise RuntimeError("No filename defined.")
 
         if movie_fmt == "mp4":
+            _FFMPEG_BINARY = shutil.which("ffmpeg")
+            if _FFMPEG_BINARY is None:
+                raise RuntimeError("Need to add ffmpeg binary in path to "
+                                     "make mp4")
             try:
                 # Parameters chosen according to http://trac.ffmpeg.org/wiki/
                 # Encode/H.264,vsection "Compatibility"
@@ -293,6 +290,10 @@ class BioSim:
             except subprocess.CalledProcessError as err:
                 raise RuntimeError("ERROR: ffmpeg failed with: {}".format(err))
         elif movie_fmt == "gif":
+            _CONVERT_BINARY = shutil.which("magick")
+            if _CONVERT_BINARY is None:
+                raise RuntimeError("Need to add magick binary in path to "
+                                    "make gif")
             try:
                 subprocess.check_call(
                     [

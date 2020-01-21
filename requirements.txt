@@ -3,6 +3,6 @@ numpy
 pytest
 tox
 numpydoc
+pytest-mock
 pandas
 matplotlib
-pytest-mock
