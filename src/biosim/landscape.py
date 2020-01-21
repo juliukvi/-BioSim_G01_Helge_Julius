@@ -89,18 +89,18 @@ class BaseNature:
     def migrate_all_animals(self, neighbors):
         r"""Determines all animals in the cell that shall migrate.
 
-        The animals can migrate to the cell located directly north, west,
-        south, or east of their current cell. This set of cells are defined
+        The animals can migrate to the square located directly north, west,
+        south, or east of their current square. This set of squares are defined
         as the set :math:`C^{i}`.
-        For all the four neighbour cells we define a relative abundance of
+        For all the four neighbour squares we define a relative abundance of
         fodder given by following formula:
 
         .. math::
             \epsilon_{k} = \frac{f_{k}}{(n_{k}+1)F'}
 
         where :math:`f_{k}` is the amount of relevant fodder for the
-        species available in the cell k :math:`n_{k}` is the
-        number of animals of the same species in cell k,
+        species available in the square k :math:`n_{k}` is the
+        number of animals of the same species in square k,
         and "F" the appetite of the species.
 
         The propensity of moving to a neighbour cell is dependent on the
@@ -120,7 +120,7 @@ class BaseNature:
 
         given that the animal would move from cell i to cell j.
         If the animal migrates, the probability of moving to each of the four
-        neighbour cell is calculated based on the propensity to move to each
+        neighbour square is calculated based on the propensity to move to each
         cell. The probability to move from i to j follows the formula:
 
         .. math::
@@ -128,8 +128,8 @@ class BaseNature:
             \frac{\pi_{i\rightarrow j}}
             {\Sigma_{j\in C^{({i})}}\pi_{i\rightarrow j}}
 
-        The animals that migrate to a neighbouring cell are placed in lists
-        according to their current cell and the cell they will migrate to.
+        The animals that migrate to a neighbouring squares are placed in lists
+        according to their current square and the square they will migrate to.
 
         In the case that all cells in :math:`{C^{i}}` are Mountain or
         ocean, the animal will not migrate.
