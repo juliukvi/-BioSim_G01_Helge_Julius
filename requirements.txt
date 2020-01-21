@@ -3,3 +3,5 @@ numpy
 pytest
 tox
 numpydoc
+pandas
+matplotlib

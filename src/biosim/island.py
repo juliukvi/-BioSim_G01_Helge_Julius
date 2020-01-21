@@ -58,7 +58,8 @@ class Island:
             if not isinstance(self.map_list[nature_square][0], Ocean):
                 raise ValueError("Island not surrounded by ocean")
         for nature_square in range(len(self.map_list)):
-            if not isinstance(self.map_list[nature_square][len(self.map_list[0]) - 1], Ocean):
+            if not isinstance(self.map_list[nature_square][len(
+                                                self.map_list[0]) - 1], Ocean):
                 raise ValueError("Island not surrounded by ocean")
         if ini_pop:
             self.add_population(population=ini_pop)
@@ -181,7 +182,8 @@ class Island:
         for row in range(self.map_rows):
             for column in range(self.map_columns):
                 nature_square = self.map_list[row][column]
-                animal_count_list.append([row, column, nature_square.herbivore_number(),
+                animal_count_list.append([row, column,
+                                          nature_square.herbivore_number(),
                                           nature_square.carnivore_number()])
         return animal_count_list
 

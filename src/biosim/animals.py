@@ -104,7 +104,8 @@ class BaseAnimal:
             raise ValueError("Animal age must be an integer")
         if age < 0:
             raise ValueError("Animal age cant be below 0")
-        if weight is None or isinstance(weight, int) or isinstance(weight, float):
+        if weight is None or isinstance(weight, int) or isinstance(weight,
+                                                                   float):
             pass
         else:
             raise ValueError("Animal weight must be int or float")

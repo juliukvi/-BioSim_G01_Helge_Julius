@@ -6,7 +6,7 @@
 __author__ = 'Helge Helo Klemetsdal, Adam Julius Olof Kviman'
 __email__ = 'hegkleme@nmbu.no, juliukvi@nmbu.no'
 
-from biosim.landscape import
+from biosim.landscape import *
 from biosim.animals import *
 from biosim.animals import Herb, Carn
 from biosim.island import Island
@@ -156,8 +156,8 @@ class BioSim:
             s = Savannah()
             s.set_parameters(params)
         else:
-            raise ValueError(f'Only Jungle and Savannah landscapes can have parameters'
-                             f' updated. Got landscape {landscape}')
+            raise ValueError(f'Only Jungle and Savannah landscapes can have'
+                             f' parameters updated. Got landscape {landscape}')
 
     def simulate(self, num_years, vis_years=1, img_years=None):
         """Run simulation while visualizing the result.
@@ -222,15 +222,19 @@ class BioSim:
         """Number of animals per species in island, as dictionary.
         """
         herbivore_count, carnivore_count = self._island.count_animals()[:2]
-        num_animals_dict = {"Herbivore": herbivore_count, "Carnivore": carnivore_count}
+        num_animals_dict = {"Herbivore": herbivore_count,
+                            "Carnivore": carnivore_count}
         return num_animals_dict
 
     @property
     def animal_distribution(self):
-        """Pandas DataFrame with animal count per species for each cell on island.
+        """Pandas DataFrame with animal count per species for each cell
+        on island.
         """
         animal_count_list = self._island.animals_on_square()
-        pd_data = pd.DataFrame(data=animal_count_list, columns=['Row', 'Col', 'Herbivore', 'Carnivore'])
+        pd_data = pd.DataFrame(data=animal_count_list,
+                               columns=['Row', 'Col',
+                                        'Herbivore', 'Carnivore'])
         return pd_data
 
     def make_movie(self, movie_fmt="mp4"):
@@ -249,7 +253,8 @@ class BioSim:
                 # Parameters chosen according to http://trac.ffmpeg.org/wiki/Encode/H.264,
                 # section "Compatibility"
                 subprocess.check_call([_FFMPEG_BINARY,
-                                       '-i', '{}_%05d.png'.format(self._img_base),
+                                       '-i',
+                                       '{}_%05d.png'.format(self._img_base),
                                        '-y',
                                        '-profile:v', 'baseline',
                                        '-level', '3.0',
@@ -294,9 +299,11 @@ class BioSim:
         if self._herb_line is None:
             # Creates plot object with no y-values that has the correct length,
             # y-data will be gathered and set by self._update_graphics
-            herb_plot = self._animal_lines_ax.plot(np.arange(0, self._final_year+1),
-                                                   np.full(self._final_year+1, np.nan),
-                                                   label='Herbivores')
+            herb_plot = self._animal_lines_ax.plot(
+                np.arange(0, self._final_year+1),
+                np.full(self._final_year+1, np.nan),
+                label='Herbivores'
+            )
             # Saves the line object from herb_plot
             self._herb_line = herb_plot[0]
         else:
@@ -305,7 +312,7 @@ class BioSim:
             # Creates array of values for the new years that is about to be
             # simulated
             xnew = np.arange(xdata[-1] + 1, self._final_year+1)
-            if len(xnew) > 0:  # Think this is unnecesary since _setup_graphics should not be called if self._final_year is equal to self._year
+            if len(xnew) > 0:
                 ynew = np.full(xnew.shape, np.nan)
                 self._herb_line.set_data(np.hstack((xdata, xnew)),
                                          np.hstack((ydata, ynew)))
@@ -343,7 +350,8 @@ class BioSim:
             self._herb_map_ax = self._fig.add_axes([0.05, 0.37, 0.25, 0.25])
             if self._large_island:
                 self._herb_map_ax.set_xticks((0, self._island.map_columns-1))
-                self._herb_map_ax.set_xticklabels((0, self._island.map_columns-1))
+                self._herb_map_ax.set_xticklabels((0,
+                                                   self._island.map_columns-1))
                 self._herb_map_ax.set_yticks((0, self._island.map_rows-1))
                 self._herb_map_ax.set_yticklabels((0, self._island.map_rows-1))
             else:
@@ -357,7 +365,8 @@ class BioSim:
             self._carn_map_ax = self._fig.add_axes([0.05, 0.05, 0.25, 0.25])
             if self._large_island:
                 self._carn_map_ax.set_xticks((0, self._island.map_columns-1))
-                self._carn_map_ax.set_xticklabels((0, self._island.map_columns-1))
+                self._carn_map_ax.set_xticklabels((0,
+                                                   self._island.map_columns-1))
                 self._carn_map_ax.set_yticks((0, self._island.map_rows-1))
                 self._carn_map_ax.set_yticklabels((0, self._island.map_rows-1))
             else:
@@ -378,10 +387,15 @@ class BioSim:
             island_rgb = np.array(island_rgb)
             self._island_map_ax = self._fig.add_axes([0.05, 0.7, 0.25, 0.25])  # llx, lly, w, h
             if self._large_island:
-                self._island_map_ax.set_xticks((0, self._island.map_columns - 1))
-                self._island_map_ax.set_xticklabels((0, self._island.map_columns - 1))
+                self._island_map_ax.set_xticks((0,
+                                                self._island.map_columns - 1))
+                self._island_map_ax.set_xticklabels((0,
+                                                     self._island.map_columns -
+                                                     1))
                 self._island_map_ax.set_yticks((0, self._island.map_rows - 1))
-                self._island_map_ax.set_yticklabels((0, self._island.map_rows - 1))
+                self._island_map_ax.set_yticklabels((0,
+                                                     self._island.map_rows -
+                                                     1))
             else:
                 self._island_map_ax.set_xticks(range(self._island.map_columns))
                 self._island_map_ax.set_xticklabels(range(self._island.map_columns))
@@ -396,7 +410,8 @@ class BioSim:
                map_rect.add_patch(plt.Rectangle((0., ix * 0.2), 0.1, 0.1,
                                             edgecolor='none',
                                             facecolor=rgb_value[name[0]]))
-               map_rect.text(0.12, ix * 0.2, name, transform=map_rect.transAxes)
+               map_rect.text(0.12, ix * 0.2, name,
+                             transform=map_rect.transAxes)
 
         if self._island_text_ax is None:
             self._island_text_ax = self._fig.add_axes([0.48, 0.5, 0, 0])
@@ -457,7 +472,8 @@ class BioSim:
         """ Updates the animal lines in the graphics.
         """
         if self._ymax_animals is None:
-            # Saves number of animals in a variable so that property num_animals dont need to be called multiple times
+            # Saves number of animals in a variable so that property
+            # num_animals dont need to be called multiple times
             number_of_animals = self.num_animals
             if number_of_animals > self._animal_lines_ax.get_ylim()[1]:
                 self._animal_lines_ax.set_ylim(0, number_of_animals + 100)
