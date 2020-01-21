@@ -39,8 +39,34 @@ def figfile_root():
         os.remove(f)
 
 
-def test_simulation_make_movie_mp4():
+def test_simulation_make_movie_mp4(figfile_root):
     """Test to see that movie can be made with mp4 format"""
     sim = BioSim(island_map="OO\nOO", ini_pop=[], seed=1, img_base=figfile_root)
     sim.simulate(5, 1)
     sim.make_movie()
+    assert os.path.isfile(figfile_root + ".mp4")
+
+def test_simulation_make_movie_gif(figfile_root):
+    """Test to see that movie can be made with gif format"""
+    sim = BioSim(island_map="OO\nOO", ini_pop=[], seed=1, img_base=figfile_root)
+    sim.simulate(5, 1)
+    sim.make_movie(movie_fmt="gif")
+    assert os.path.isfile(figfile_root + ".gif")
+
+def test_simulation_large_island():
+    """Test to see that a island with column or row length bigger than 23
+    initialize self._large_island.
+    """
+    map = """\
+               OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               ODDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDO
+               OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"""
+    sim = BioSim(island_map=map,  ini_pop=[], seed=1)
+    sim.simulate(1, 1)
+    assert sim._large_island
