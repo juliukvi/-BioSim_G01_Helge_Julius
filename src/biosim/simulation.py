@@ -6,10 +6,10 @@
 __author__ = 'Helge Helo Klemetsdal, Adam Julius Olof Kviman'
 __email__ = 'hegkleme@nmbu.no, juliukvi@nmbu.no'
 
-from biosim.landscape import
-from biosim.animals import *
+from .landscape import Ocean, Mountain, Desert, Jungle, Savannah
 from biosim.animals import Herb, Carn
 from biosim.island import Island
+import random as rd
 import numpy as np
 import subprocess
 import matplotlib.pyplot as plt
@@ -78,7 +78,7 @@ class BioSim:
         img_fmt="png",
     ):
 
-        random.seed(seed)
+        rd.seed(seed)
         np.random.seed(seed)
         island_map = textwrap.dedent(island_map)
         self._island_map = island_map
