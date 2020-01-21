@@ -302,10 +302,8 @@ class BaseNature:
         """
         for animal in self.herb_list:
             animal.age_animal()
-            # animal.fitness_update()
         for animal in self.carn_list:
             animal.age_animal()
-            # animal.fitness_update()
 
     def fodder_update(self):
         """An empty function that is overwritten by certain landscape types.
@@ -524,7 +522,8 @@ class Savannah(BaseNature):
                 continue
             else:
                 raise ValueError(
-                    f"Value needs to be int or float, got:{type(new_params[key]).__name__}"
+                    f"Value needs to be int or float, "
+                    f"got:{type(new_params[key]).__name__}"
                 )
         for key in new_params:
             if new_params[key] < 0:

@@ -6,7 +6,7 @@
 __author__ = "Helge Helo Klemetsdal, Adam Julius Olof Kviman"
 __email__ = "hegkleme@nmbu.no, juliukvi@nmbu.no"
 
-from .landscape import Ocean, Mountain, Desert, Jungle, Savannah
+from .landscape import Jungle, Savannah
 from biosim.animals import BaseAnimal, Herb, Carn
 from biosim.island import Island
 import random as rd
@@ -17,9 +17,6 @@ import pandas as pd
 import textwrap
 import shutil
 from matplotlib.widgets import Button
-
-
-
 
 
 class BioSim:
@@ -33,7 +30,7 @@ class BioSim:
         List of dictionaries specifying initial population.
     seed: int
         Integer used as random number seed.
-    ymax_animals: float?
+    ymax_animals: float
         Number specifying y-axis limit for graph showing animal numbers.
     cmax_animals: dict
         Dict specifying color-code limits for animal densities.
@@ -268,7 +265,7 @@ class BioSim:
             _FFMPEG_BINARY = shutil.which("ffmpeg")
             if _FFMPEG_BINARY is None:
                 raise RuntimeError("Need to add ffmpeg binary in path to "
-                                     "make mp4")
+                                   "make mp4")
             try:
                 # Parameters chosen according to http://trac.ffmpeg.org/wiki/
                 # Encode/H.264,vsection "Compatibility"
@@ -293,7 +290,7 @@ class BioSim:
             _CONVERT_BINARY = shutil.which("magick")
             if _CONVERT_BINARY is None:
                 raise RuntimeError("Need to add magick binary in path to "
-                                    "make gif")
+                                   "make gif")
             try:
                 subprocess.check_call(
                     [
@@ -518,12 +515,15 @@ class BioSim:
             self._pause_widget.on_clicked(self._pause_button_click)
 
     def _update_graphics(self):
-        """Updates the figure with """
+        """Updates the graphics figure
+        """
         self._update_animal_lines()
         self._update_animal_heat_maps()
         self._update_text()
 
     def _update_text(self):
+        """Updates the text in the graphics
+        """
         self._island_text.set_text(
             self._island_text_values.format(
                 self.year,
@@ -541,6 +541,7 @@ class BioSim:
         Parameters
         ----------
         event : mouseclick
+            A mouseclick to pause and run the simulation.
 
         Returns
         -------
