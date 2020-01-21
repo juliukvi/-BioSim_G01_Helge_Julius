@@ -3,8 +3,7 @@
 __author__ = "Helge Helo Klemetsdal, Adam Julius Olof Kviman"
 __email__ = "hegkleme@nmbu.no, juliukvi@nmbu.no"
 
-import textwrap
-from biosim.animals import Herb
+
 import math as m
 import random
 

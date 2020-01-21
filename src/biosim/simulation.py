@@ -7,8 +7,8 @@ __author__ = "Helge Helo Klemetsdal, Adam Julius Olof Kviman"
 __email__ = "hegkleme@nmbu.no, juliukvi@nmbu.no"
 
 from .landscape import Jungle, Savannah
-from biosim.animals import BaseAnimal, Herb, Carn
-from biosim.island import Island
+from .animals import BaseAnimal, Herb, Carn
+from .island import Island
 import random as rd
 import numpy as np
 import subprocess
@@ -47,6 +47,9 @@ class BioSim:
         Island class instance with island_map and ini_pop parameters as input.
     year : int
         The year the simulation is simulating.
+    img_ctr : int
+        Keeps track of how many images that has been saved to disk
+
 
 
     If ymax_animals is None, the y-axis limit should be adjusted automatically.
@@ -210,8 +213,8 @@ class BioSim:
 
         Parameters
         ----------
-        population : dict
-            Dictionary with animals of given location and population.
+        population : list
+            List of dictionaries with animals of given location and population.
         """
         self._island.add_population(population)
 

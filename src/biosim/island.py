@@ -1,6 +1,10 @@
-from biosim.landscape import *
-from biosim.animals import *
+# -*- coding: utf-8 -*-
 
+__author__ = "Helge Helo Klemetsdal, Adam Julius Olof Kviman"
+__email__ = "hegkleme@nmbu.no, juliukvi@nmbu.no"
+
+from .landscape import Ocean, Mountain, Jungle, Savannah, Desert
+from .animals import Herb, Carn
 
 class Island:
     """An island map with landscape cells and animals.
