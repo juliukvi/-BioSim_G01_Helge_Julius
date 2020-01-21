@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-__author__ = 'Helge Helo Klemetsdal, Adam Julius Olof Kviman'
-__email__ = 'hegkleme@nmbu.no, juliukvi@nmbu.no'
+__author__ = "Helge Helo Klemetsdal, Adam Julius Olof Kviman"
+__email__ = "hegkleme@nmbu.no, juliukvi@nmbu.no"
 import math as m
 import random
 import numpy as np
@@ -34,6 +34,7 @@ class BaseAnimal:
         If age is below 0 or if weight is below, 0 or None.
 
     """
+
     parameters = None
 
     @classmethod
@@ -67,14 +68,16 @@ class BaseAnimal:
 
         for key in new_params:
             if key not in cls.parameters.keys():
-                raise KeyError(f'Parameter {key} is not valid')
-            if isinstance(new_params[key], int) or isinstance(new_params[key],
-                                                              float):
+                raise KeyError(f"Parameter {key} is not valid")
+            if isinstance(new_params[key], int) or isinstance(
+                new_params[key], float
+            ):
                 continue
             else:
                 raise ValueError(
-                    f'Value needs to be int or float, '
-                    f'got:{type(new_params[key]).__name__}')
+                    f"Value needs to be int or float, "
+                    f"got:{type(new_params[key]).__name__}"
+                )
         for key in new_params:
             if new_params[key] < 0:
                 raise ValueError("All values must be positive")
@@ -104,7 +107,11 @@ class BaseAnimal:
             raise ValueError("Animal age must be an integer")
         if age < 0:
             raise ValueError("Animal age cant be below 0")
-        if weight is None or isinstance(weight, int) or isinstance(weight, float):
+        if (
+            weight is None
+            or isinstance(weight, int)
+            or isinstance(weight, float)
+        ):
             pass
         else:
             raise ValueError("Animal weight must be int or float")
@@ -144,8 +151,9 @@ class BaseAnimal:
             self.fitness = 0
         else:
             q_age = 1 / (1 + m.exp(self.phi_age * (self.a - self.a_half)))
-            q_weight = 1 / (1 + m.exp(
-                -self.phi_weight*(self.weight - self.w_half)))
+            q_weight = 1 / (
+                1 + m.exp(-self.phi_weight * (self.weight - self.w_half))
+            )
             self.fitness = q_age * q_weight
 
     def migrate(self):
@@ -188,7 +196,7 @@ class BaseAnimal:
         newborn: BaseAnimal
             If the animal gives birth
         """
-        prob = min(1, self.gamma * self.fitness * (num_animal-1))
+        prob = min(1, self.gamma * self.fitness * (num_animal - 1))
         number = random.uniform(0, 1)
         if self.weight < (self.zeta * (self.w_birth + self.sigma_birth)):
             return
@@ -196,7 +204,7 @@ class BaseAnimal:
             newborn = self.birth()
             if self.weight < (self.xi * newborn.weight):
                 return
-            self.weight -= (self.xi * newborn.weight)
+            self.weight -= self.xi * newborn.weight
             self.fitness_update()
             return newborn
         else:
@@ -281,24 +289,25 @@ class Carn(BaseAnimal):
     ValueError
         If age is below 0 or if weight is below 0, 0 or None.
     """
+
     DEFAULT_PARAMETERS = {
-            "w_birth": 6.0,
-            "sigma_birth": 1.0,
-            "beta": 0.75,
-            "eta": 0.125,
-            "a_half": 60.0,
-            "phi_age": 0.4,
-            "w_half": 4.0,
-            "phi_weight": 0.4,
-            "mu": 0.4,
-            "lambda": 1.0,
-            "gamma": 0.8,
-            "zeta": 3.5,
-            "xi": 1.1,
-            "omega": 0.9,
-            "F": 50.0,
-            "DeltaPhiMax": 10.0
-        }
+        "w_birth": 6.0,
+        "sigma_birth": 1.0,
+        "beta": 0.75,
+        "eta": 0.125,
+        "a_half": 60.0,
+        "phi_age": 0.4,
+        "w_half": 4.0,
+        "phi_weight": 0.4,
+        "mu": 0.4,
+        "lambda": 1.0,
+        "gamma": 0.8,
+        "zeta": 3.5,
+        "xi": 1.1,
+        "omega": 0.9,
+        "F": 50.0,
+        "DeltaPhiMax": 10.0,
+    }
 
     def __init__(self, age=0, weight=None):
         super().__init__(age=age, weight=weight)
@@ -351,11 +360,11 @@ class Carn(BaseAnimal):
         for herb in reversed(sorted_herb_list):
             if amount_to_eat <= 0:
                 break
-            fitness_diff = (self.fitness - herb.fitness)
+            fitness_diff = self.fitness - herb.fitness
             if fitness_diff < 0:
                 break
             elif fitness_diff < self.DeltaPhiMax:
-                chance_to_kill = fitness_diff/self.DeltaPhiMax
+                chance_to_kill = fitness_diff / self.DeltaPhiMax
             else:
                 chance_to_kill = 1
             number = random.uniform(0, 1)
@@ -403,6 +412,7 @@ class Herb(BaseAnimal):
     ValueError
         If age is below 0 or if weight is below 0, 0 or None.
     """
+
     DEFAULT_PARAMETERS = {
         "w_birth": 8.0,
         "sigma_birth": 1.5,
