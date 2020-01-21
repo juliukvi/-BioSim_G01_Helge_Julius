@@ -308,7 +308,6 @@ class TestSavannah:
     def test_set_parameters_savannah_raises_errors(self, savannah):
         """Tests that the set_parameters class method raises errors correctly.
         """
-
         dict_with_key_error = {"f_max": 400, "key_not_valid": 1}
         with pytest.raises(KeyError):
             savannah.set_parameters(dict_with_key_error)
@@ -339,14 +338,13 @@ class TestSavannah:
         savannah.set_default_parameters_for_savannah()
         assert savannah.parameters == savannah.DEFAULT_PARAMETERS
 
-    def test_set_attributes_as_params_savannah(
+    def test_set_params_as_attributes_savannah(
             self, savannah, savannah_params, tear_down_params
     ):
-        """"Tests if the default parameters gets set as attributes.
+        """"Tests if parameters gets set as attributes.
 
-        The _set_default_params_as_attributes class method is called in the
-        set_parameters_default_parameters class method, and as a result it's
-        only
+        The _set_params_as_attributes class method is called in the
+        set_parameters class method, and as a result it's only
         necessary to call set_default_parameters to test.
         """
         savannah.set_parameters(savannah_params)
@@ -354,11 +352,19 @@ class TestSavannah:
         assert savannah.alpha == 0.4
 
     def test_set_default_params_as_attributes_savannah(self, savannah):
+        """Tests if the default parameters gets set as attributes.
+
+        The _set_params_as_attributes class method is called in the
+        set_parameters_default_parameters class method, and as a result it's
+        only necessary to call set_default_parameters to test.
+         """
         savannah.set_default_parameters_for_savannah()
         assert savannah.f_max == 300
         assert savannah.alpha == 0.3
 
     def test_savannah_fodder_update(self, savannah):
+        """Tests that the fodder in the savannah is updated correctly.
+        """
         s = savannah
         s.fodder = 100
         s.fodder_update()
@@ -368,22 +374,33 @@ class TestSavannah:
 class TestJungle:
     @pytest.fixture
     def jungle(self):
-        Jungle().set_default_parameters_for_jungle()
+        """Creates a fixture of a jungle class instance.
+        """
         return Jungle()
     @pytest.fixture
     def jungle_params(self):
+        """Creates a fixture of parameters for the jungle class.
+        """
         return {"f_max": 900}
 
     @pytest.fixture
     def tear_down_params(self):
+        """
+        Creates a tear_down fixture that resets the parameters to default for
+        the jungle class instances.
+        """
         yield None
         Jungle().set_default_parameters_for_jungle()
 
     def test_initiate_jungle(self, jungle):
+        """Test to see if the jungle class can be initiated.
+        """
         assert jungle
 
 
     def test_set_parameters_jungle_raises_errors(self, jungle, jungle_params):
+        """Tests that the set_parameters class method raises errors correctly.
+        """
         dict_with_key_not_valid = {"key_not_valid": 1}
         with pytest.raises(KeyError):
             jungle.set_parameters(dict_with_key_not_valid)
@@ -398,6 +415,10 @@ class TestJungle:
     def test_set_default_parameters_jungle(
             self, jungle, jungle_params, tear_down_params
     ):
+        """
+        Tests that the set_default_parameters_jungle sets the default
+        parameters for the jungle class.
+        """
         jungle.set_default_parameters_for_jungle()
         assert jungle.parameters == jungle.DEFAULT_PARAMETERS
         jungle.set_parameters(jungle_params)
@@ -407,7 +428,7 @@ class TestJungle:
     def test_set_default_params_as_attributes_jungle(self, jungle):
         """Tests if the default parameters gets set as attributes.
 
-        The _set_default_params_as_attributes class method is called in the
+        The _set_params_as_attributes class method is called in the
         set_parameters_default_parameters class method, and as a result it's
         only necessary to call set_default_parameters to test.
         """
@@ -416,14 +437,24 @@ class TestJungle:
 
     def test_set_params_as_attributes_jungle(
             self, jungle, jungle_params, tear_down_params):
+        """Tests if parameters gets set as attributes.
+
+        The _set_params_as_attributes class method is called in the
+        set_parameters class method, and as a result it's only
+        necessary to call set_default_parameters to test.
+        """
         jungle.set_parameters(jungle_params)
         assert jungle.f_max == 900
 
     def test_init_jungle(self, jungle):
+        """Tests that the correct attributes are assigned to the jungle class.
+        """
         assert jungle.habitable is True
         assert jungle.fodder == jungle.f_max
 
     def test_jungle_fodder_update(self, jungle):
+        """Tests that the fodder_update method works correctly.
+        """
         j = jungle
         j.fodder = 100
         j.fodder_update()

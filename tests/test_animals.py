@@ -96,7 +96,7 @@ class TestBaseAnimal:
     def test_set_default_params_as_attr(self, herb, carn, ex_params):
         """"Tests if the default parameters gets set as attributes.
 
-        The _set_default_params_as_attributes class method is called in the
+        The _set_params_as_attributes class method is called in the
         set_parameters_default_parameters class method, and as a result it's
         only
         necessary to call set_default_parameters to test.
