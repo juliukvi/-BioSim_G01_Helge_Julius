@@ -3,14 +3,13 @@
 """
 """
 
-__author__ = "Helge Helø Klemetsdal & Adam Julius Olof Kviman"
-__email__ = "hege.helo.klemetsdal@nmbu.no & "
+__author__ = 'Helge Helo Klemetsdal, Adam Julius Olof Kviman'
+__email__ = 'hegkleme@nmbu.no, juliukvi@nmbu.no'
 
-from biosim.landscape import *
+from biosim.landscape import
 from biosim.animals import *
 from biosim.animals import Herb, Carn
-from biosim.island import *
-import pandas as pd
+from biosim.island import Island
 import numpy as np
 import subprocess
 import matplotlib.pyplot as plt
@@ -273,7 +272,7 @@ class BioSim:
             raise ValueError('Unknown movie format: ' + movie_fmt)
 
     def _setup_graphics(self):
-        """ Sets up the graphic window.
+        """ Sets up the graphic windows.
         """
         if self._fig is None:
             self._fig = plt.figure(figsize=(15, 9))
@@ -437,11 +436,13 @@ class BioSim:
             self.num_animals_per_species['Carnivore']))
 
     def _pause_button_click(self, event):
-        """ ?
+        """
+        Changes the self._paused flag when pause button is clicked. This
+        will cause the simulation to pause                                  
 
         Parameters
         ----------
-        event : ?
+        event : mouseclick
 
         Returns
         -------

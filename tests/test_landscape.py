@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-__author__ = 'Helge Helo Klemetsdal'
-__email__ = 'hegkleme@nmbu.no'
+__author__ = 'Helge Helo Klemetsdal, Adam Julius Olof Kviman'
+__email__ = 'hegkleme@nmbu.no, juliukvi@nmbu.no'
 from biosim.animals import Carn, Herb
 from biosim.landscape import BaseNature, Jungle, Savannah, Mountain, Ocean, Desert
 import pytest

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-__author__ = 'Helge Helo Klemetsdal'
-__email__ = 'hegkleme@nmbu.no'
+__author__ = 'Helge Helo Klemetsdal, Adam Julius Olof Kviman'
+__email__ = 'hegkleme@nmbu.no, juliukvi@nmbu.no'
 
 import pytest
 from biosim.simulation import BioSim
