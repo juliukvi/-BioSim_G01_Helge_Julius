@@ -10,7 +10,7 @@ class Island:
     ----------
     island_map : string
         A multiline string with letters mapping to landscape type.
-    ini_pop : dict
+    ini_pop : list
         An initial population of animals placed on the island
 
     Attributes
@@ -68,8 +68,8 @@ class Island:
         """Adds a population of animals to a given location on the island.
         Parameters
         ----------
-        population : dict
-            Dictionary with location and animal population
+        population : list
+            List with dictionary that contains and animal population location.
 
         Raises
         ------
