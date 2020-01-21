@@ -3,38 +3,55 @@
 __author__ = 'Helge Helo Klemetsdal, Adam Julius Olof Kviman'
 __email__ = 'hegkleme@nmbu.no, juliukvi@nmbu.no'
 from biosim.animals import Carn, Herb
-from biosim.landscape import BaseNature, Jungle, Savannah, Mountain, Ocean, Desert
+from biosim.landscape import BaseNature, Jungle, Savannah, Mountain, Ocean, \
+    Desert
 import pytest
 from scipy.stats import chisquare
 import numpy as np
 
 
 class TestBaseNature:
+    """Test class for BaseNature class.
+    """
     @pytest.fixture
     def jungle(self):
-        Jungle().set_default_parameters_for_jungle()
+        """Creates a fixture of a jungle class instance.
+        """
         return Jungle()
+
     @pytest.fixture
     def savannah(self):
+        """Creates a fixture of a savannah class instance.
+        """
         return Savannah()
+
     @pytest.fixture
     def herb_list_gen(self):
-        Herb().set_default_parameters_for_species()
+        """Creates a fixture which returns a list of 100 herbivores.
+        """
         return [Herb() for _ in range(100)]
+
     @pytest.fixture
     def carn_list_gen(self):
-        Carn().set_default_parameters_for_species()
+        """Creates a fixture which returns a list of 100 carnivores.
+        """
         return [Carn() for _ in range(100)]
+
     @pytest.fixture
     def herb_list_big(self):
+        """Creates a fixture that returns a list of 1000 herbivores.
+        """
         Herb().set_default_parameters_for_species()
         return[Herb() for _ in range(1000)]
+
     @pytest.fixture
     def carn_list_big(self):
+        """Creates a fixture that returns a list of 1000 carnivores.
+        """
         Carn().set_default_parameters_for_species()
         return[Carn() for _ in range(1000)]
 
-    def test_BaseNature_fodder_update(self):
+    def test_basenature_fodder_update(self):
         b = BaseNature()
         ret = b.fodder_update()
         assert ret is None
@@ -48,11 +65,16 @@ class TestBaseNature:
         fit_list_herb = [h.fitness for h in herb_list]
         fit_list_carn = [c.fitness for c in carn_list]
         assert all([fit_1 > fit_2 for fit_1, fit_2 in
-                    zip(fit_list_herb[:-1], fit_list_herb[1:])])
+                    zip(fit_list_herb[:-1], fit_list_herb[1:])]),\
+            'The herbivore fitness list is not sorted by fitness'
         assert all([fit_1 > fit_2 for fit_1, fit_2 in
-                    zip(fit_list_carn[:-1], fit_list_carn[1:])])
+                    zip(fit_list_carn[:-1], fit_list_carn[1:])]),\
+            'The carnivore list is not sorted by fitness'
+
 
     def test_aging_all_animals(self, jungle, herb_list_gen, carn_list_gen):
+        """Tests that all animals on the nature square ages correctly.
+        """
         j = jungle
         j.herb_list = herb_list_gen
         j.carn_list = carn_list_gen
@@ -63,6 +85,10 @@ class TestBaseNature:
             assert animal.a == 1
 
     def test_birth_all_animals(self, jungle, herb_list_gen, carn_list_gen):
+        """Tests that all animals give birth if birth is guaranteed.
+        The weight and number of animals in the herb_list_gen and
+        carn_list_gen guarantees birth probability of 100%.
+        """
         j = jungle
         j.herb_list = herb_list_gen
         old_num_herb = len(j.herb_list)
@@ -73,8 +99,10 @@ class TestBaseNature:
         for animal in j.carn_list:
             animal.weight = 50
         j.birth_all_animals()
-        assert old_num_herb < len(j.herb_list)
-        assert old_num_carn < len(j.carn_list)
+        assert old_num_herb < len(j.herb_list), \
+            'The herbivores did not give birth'
+        assert old_num_carn < len(j.carn_list), \
+            'The herbivores did not give birth'
 
 
 
@@ -96,6 +124,8 @@ class TestBaseNature:
 
 
     def test_feed_all_animals(self, jungle, herb_list_gen, carn_list_big):
+        """Tests that all animals get feed according to feed_all_animals_method
+        """
         j = jungle
         j.herb_list = herb_list_gen
         j.feed_all_animals()
@@ -112,7 +142,13 @@ class TestBaseNature:
         assert len(j.herb_list) == 0
 
 
-    def test_weightloss_all_animals(self, jungle, herb_list_gen, carn_list_gen):
+    def test_weightloss_all_animals(
+            self, jungle, herb_list_gen, carn_list_gen
+    ):
+        """
+        Test that the weightloss is implemented on all animals in the nature
+        square.
+        """
         j = jungle
         j.herb_list = herb_list_gen
         for animal in j.herb_list:
@@ -127,8 +163,11 @@ class TestBaseNature:
             assert animal.weight == (50 - animal.eta * 50)
 
 
-    def test_migrate_all_animals_oceans(self, jungle, herb_list_gen, carn_list_gen):
-        # Test to see that animals can not move to Ocean square
+    def test_migrate_all_animals_oceans(
+            self, jungle, herb_list_gen, carn_list_gen
+    ):
+        """Test to see that animals can not move to Ocean square.
+        """
         j = jungle
         j.herb_list = herb_list_gen
         j.carn_list = carn_list_gen
@@ -138,8 +177,8 @@ class TestBaseNature:
         assert len(j.herb_move_from_list) == 0
 
     def test_migrate_all_animals_all_move(self, jungle, herb_list_big, carn_list_big):
-        # Test to see that all animals migrate if animal.migrate() is True for
-        # all animals
+        """Test to see that all animals migrate if they deside to migrate.
+         """
         j = jungle
         j.herb_list = herb_list_big
         j.carn_list = carn_list_big
@@ -151,8 +190,10 @@ class TestBaseNature:
         assert len(j.carn_move_from_list) == 1000
 
     def test_migrate_all_animals_equal_prob(self, jungle, herb_list_big, carn_list_big):
-        # Test to see that animal is equally likely to migrate to any square if
-        # move propensity is equal for all squares.
+        """
+        Test to see that animal is equally likely to migrate to any square if
+        move propensity is equal for all squares.
+        """
         j = jungle
         j.herb_list = herb_list_big
         j.carn_list = carn_list_big
@@ -175,12 +216,18 @@ class TestBaseNature:
 class TestOcean:
     @pytest.fixture
     def ocean(self):
+        """A fixture of an ocean class instance.
+        """
         return Ocean()
 
     def test_initiate_ocean(self, ocean):
+        """Test to see if the ocean class can be initiated.
+        """
         assert ocean
 
     def test_ocean(self, ocean):
+        """Tests that the ocean classes' attributes are correct.
+        """
         assert ocean.habitable is False
         assert ocean.fodder == 0
 
@@ -188,12 +235,18 @@ class TestOcean:
 class TestMountain:
     @pytest.fixture
     def mountain(self):
+        """A fixture of a mountian class instance.
+        """
         return Mountain()
 
     def test_initiate_mountain(self, mountain):
+        """Test to see if the ocean class can be initiated.
+        """
         assert mountain
 
     def test_init_function_mountain(self, mountain):
+        """Tests that the mountain classes' attributes are correct.
+        """
         assert mountain.habitable is False
         assert mountain.fodder == 0
 
@@ -201,37 +254,61 @@ class TestMountain:
 class TestDesert:
     @pytest.fixture
     def desert(self):
+        """Creates a fixture of a desert class instance.
+
+        """
         return Desert()
 
     def test_initiate_desert(self, desert):
+        """Test to see if the desert class can be initiated.
+        """
         assert desert
 
     def test_init_desert(self, desert):
+        """Tests that the desert classes' attributes are correct.
+        """
         assert desert.habitable is True
 
 
 class TestSavannah:
+    """Test class for Savannah.
+    """
     @pytest.fixture
     def savannah(self):
+        """Creates a fixture of a savannah class instance.
+        """
         return Savannah()
 
     @pytest.fixture
     def savannah_params(self):
+        """Creates a fixture of example parameters for the savannah.
+        """
         return {"f_max": 400, "alpha": 0.4}
 
     @pytest.fixture
     def tear_down_params(self):
+        """
+        Creates a tear_down fixture which resets the parameters of
+        the savannah to default.
+        """
         yield None
         Savannah().set_default_parameters_for_savannah()
 
     def test_initiate_savannah(self, savannah):
+        """Tests to see if the savannah class can be initiated.
+        """
         assert savannah
 
     def test_init_savannah(self, savannah):
+        """Tests that the attributes of the savannah class are correct.
+        """
         assert savannah.fodder == savannah.f_max
         assert savannah.habitable is True
 
     def test_set_parameters_savannah_raises_errors(self, savannah):
+        """Tests that the set_parameters class method raises errors correctly.
+        """
+
         dict_with_key_error = {"f_max": 400, "key_not_valid": 1}
         with pytest.raises(KeyError):
             savannah.set_parameters(dict_with_key_error)
@@ -240,14 +317,22 @@ class TestSavannah:
             savannah.set_parameters({"f_max": [1, 2]})
         with pytest.raises(ValueError):
             savannah.set_parameters({"f_max": -1})
+
     def test_set_parameters_savannah(
             self, savannah, savannah_params, tear_down_params
     ):
+        """
+        Tests that the set_parameters class updates the parameter dictionary.
+        """
         savannah.set_parameters(savannah_params)
         assert savannah.parameters["f_max"] == 400
         assert savannah.parameters["alpha"] == 0.4
 
     def test_set_default_parameters_savannah(self, savannah, savannah_params):
+        """
+        Tests that the set_default_parameters_savannah sets the default
+        parameters for the savannah class.
+        """
         savannah.set_default_parameters_for_savannah()
         assert savannah.parameters == savannah.DEFAULT_PARAMETERS
         savannah.set_parameters(savannah_params)
@@ -257,6 +342,13 @@ class TestSavannah:
     def test_set_attributes_as_params_savannah(
             self, savannah, savannah_params, tear_down_params
     ):
+        """"Tests if the default parameters gets set as attributes.
+
+        The _set_default_params_as_attributes class method is called in the
+        set_parameters_default_parameters class method, and as a result it's
+        only
+        necessary to call set_default_parameters to test.
+        """
         savannah.set_parameters(savannah_params)
         assert savannah.f_max == 400
         assert savannah.alpha == 0.4
@@ -313,6 +405,12 @@ class TestJungle:
         assert jungle.parameters == jungle.DEFAULT_PARAMETERS
 
     def test_set_default_params_as_attributes_jungle(self, jungle):
+        """Tests if the default parameters gets set as attributes.
+
+        The _set_default_params_as_attributes class method is called in the
+        set_parameters_default_parameters class method, and as a result it's
+        only necessary to call set_default_parameters to test.
+        """
         jungle.set_default_parameters_for_jungle()
         assert jungle.f_max == 800
 

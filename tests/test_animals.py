@@ -10,39 +10,53 @@ import math as m
 
 
 class TestBaseAnimal:
-    """A testclass for the BaseAnimal class in biosim.animals.
+    """A testclass for the BaseAnimal class in animals.
     """
     @pytest.fixture
     def herb(self):
+        """Creates a fixture of the herbivore class instance.
+        """
         return Herb()
 
     @pytest.fixture
     def carn(self):
+        """Creates a fixture of the herbivore class instance.
+        """
         return Carn()
 
     @pytest.fixture
     def herb_params(self):
+        """Creates a fixture of the herbivore default parameters.
+        """
         return Herb().DEFAULT_PARAMETERS
 
     @pytest.fixture
     def carn_params(self):
+        """Creates a fixture of the carnivore default parameters.
+        """
         return Carn().DEFAULT_PARAMETERS
 
     @pytest.fixture
     def carn_list(self):
+        """Creates a fixture that returns a list with 100 carnivores.
+        """
         return [Carn() for _ in range(100)]
 
     @pytest.fixture
     def herb_list(self):
+        """Creates a fixture that returns list with 100 herbivores.
+        """
         return [Herb() for _ in range(100)]
 
     @pytest.fixture
     def ex_params(self):
+        """Creates a fixture that returns a dictionary with new parameters.
+        """
         return {"zeta": 4, "F": 15.0}
 
     @pytest.fixture
     def tear_down_params(self):
-        """Resets the parameters to default.
+        """Creates a tear_down fixture that resets the parameters.
         """
         yield None
         Herb().set_default_parameters_for_species()
@@ -174,7 +188,6 @@ class TestBaseAnimal:
         nullhypothesis on the given significance level, which is defined
         as alpha.
         """
-        np.random.seed(123)
         n_trials = 10000
         some_herb_list = [Herb() for _ in range(n_trials)]
         some_carn_list = [Carn() for _ in range(n_trials)]
@@ -182,11 +195,15 @@ class TestBaseAnimal:
         weight_data_carn = [c.weight for c in some_carn_list]
         stat, p_value1 = normaltest(weight_data_herb)
         stat, p_value2 = normaltest(weight_data_carn)
-        alpha = 0.01
-        assert p_value1 > alpha
-        assert p_value2 > alpha
+        alpha = 0.001
+        assert p_value1 > alpha, "Herbivore weight probably " \
+                                 "doesn't follow a normal distribution"
+        assert p_value2 > alpha, "Carnivore weight probably " \
+                                 "doesn't follow a normal distribution"
 
     def test_age_function(self, herb, carn):
+        """Tests that the age_animal method works properly.
+        """
         h = herb
         c = carn
         h.age_animal()
@@ -200,6 +217,11 @@ class TestBaseAnimal:
         assert c.a == 11
 
     def test_migrate(self, mocker):
+        """Tests that the migrate method works properly.
+
+        The mocker is used to give spesific values from random functions used
+        in the module.
+        """
         mocker.patch('random.uniform', return_value=0)
         h = Herb()
         c = Carn()
@@ -212,6 +234,13 @@ class TestBaseAnimal:
         assert c.migrate() is False
 
     def test_will_birth(self, mocker):
+        """Tests that the will_birth method works correctly.
+
+        The weights of herbivores and carnivores are set as needed to have the
+        correct return object from the will_birth method.
+        The mocker is used to give spesific values from random functions used
+        in the module.
+        """
         h = Herb()
         c = Carn()
         h.weight = 0
@@ -231,6 +260,11 @@ class TestBaseAnimal:
         assert isinstance(return_object_carn, Carn)
 
     def test_fitness_update(self, mocker):
+        """Tests that the fitness gets updated for given values of weight.
+
+        The mocker is used to give spesific values from random functions used
+        in the module.
+        """
         h = Herb()
         c = Carn()
         h.weight = -3
@@ -252,9 +286,11 @@ class TestBaseAnimal:
         h.fitness_update()
         c.fitness_update()
         assert h.fitness == pytest.approx(
-            1 / (1 + m.exp(h.phi_age * (h.a - h.a_half))) * 1 / (1 + m.exp(-h.phi_weight * (1 - h.w_half))))
+            1 / (1 + m.exp(h.phi_age * (h.a - h.a_half)))
+            * 1 / (1 + m.exp(-h.phi_weight * (1 - h.w_half))))
         assert c.fitness == pytest.approx(
-            1 / (1 + m.exp(c.phi_age * (c.a - c.a_half))) * 1 / (1 + m.exp(-c.phi_weight * (1 - c.w_half))))
+            1 / (1 + m.exp(c.phi_age * (c.a - c.a_half)))
+            * 1 / (1 + m.exp(-c.phi_weight * (1 - c.w_half))))
 
     def test_birth(self, herb, carn):
         """Tests that the birth method returns the correct class instance.
@@ -264,6 +300,9 @@ class TestBaseAnimal:
 
     def test_weightloss(self, mocker):
         """Tests that the weight is updated according to the weightloss method.
+
+        The mocker is used to give spesific values from random functions used
+        in the module.
         """
         mocker.patch('numpy.random.normal', return_value=1)
         h = Herb()
@@ -281,13 +320,20 @@ class TestBaseAnimal:
             c.weightloss()
         assert all([weight1 > weight2 for weight1,
                     weight2 in zip(weight_list_herb[:-1],
-                                   weight_list_herb[1:])])
+                                   weight_list_herb[1:])]),\
+            'The weight does not decrease in the list when weightloss is used'
         assert all([weight1 > weight2 for weight1,
                     weight2 in zip(weight_list_carn[:-1],
-                                   weight_list_carn[1:])])
+                                   weight_list_carn[1:])]),\
+            'The weight does not decrease in the list when weightloss is used'
+
 
     def test_death(self, mocker):
-        """Tests that the death functions works correctly.
+        """Tests that the death method works correctly.
+        The fitness of herbivores and carnivores are set as needed to have the
+        correct return object from the death method.
+        The mocker is used to give spesific values from random functions used
+        in the module.
         """
         h = Herb()
         c = Carn()
@@ -337,26 +383,31 @@ class TestBaseAnimal:
         number_of_deaths_carn = len(death_list_carn)
         p_value1 = binom_test(number_of_deaths_herb, n_trials, p_death)
         p_value2 = binom_test(number_of_deaths_carn, n_trials, p_death)
-        alpha = 0.01
+        alpha = 0.001
         assert p_value1 > alpha
         assert p_value2 > alpha
 
 
 class TestHerb:
+    """Test class for Herb class in animals.
+    """
     @pytest.fixture
     def herb(self):
-        """A fixture that gives a hebrivore class instance.
-
-        Returns
-        Herb
-            A class instance of the herbivore object
+        """Creates a fixture of the herbivore class instance.
         """
         return Herb()
 
     def test_initiate_herb(self, herb):
-        assert herb, 'Herbivore class cannot be initiated'
+        """Tests if the herb class can be initiated.
+        """
+        assert herb, 'Herbivore class cannot be initiated.'
 
     def test_feeding_herb(self, mocker):
+        """Tests that the feeding of herbivores are done correctly.
+
+        The mocker is used to give spesific values from random functions used
+        in the module.
+        """
         mocker.patch('numpy.random.normal', return_value=3)
         h = Herb()
         return_fodder = h.feeding(300)
@@ -371,16 +422,24 @@ class TestHerb:
 
 
 class TestCarn:
+    """Test class for Carn class in animals.
+    """
     @pytest.fixture
     def carn(self):
+        """Creates a fixture of the carnivore class instance.
+        """
         return Carn()
 
     @pytest.fixture
     def herb(self):
+        """Creates a fixture of the herbivore class instance.
+        """
         return Herb()
 
     @pytest.fixture
     def herb_list(self):
+        """Creates a fixture that returns list with 100 herbivores.
+        """
         return [Herb() for _ in range(100)]
 
     def test_initiate_carn(self, carn):
@@ -388,6 +447,8 @@ class TestCarn:
 
     def test_carnivore_doesnt_feed_if_fitness_or_appetite_low(
             self, carn, herb_list):
+        """Tests that the carnivore stops feeding for given conditions.
+        """
         herb_list = herb_list
         herb_list.sort(key=lambda x: x.fitness, reverse=True)
         c = carn
@@ -401,6 +462,8 @@ class TestCarn:
 
     def test_carnivore_feeds_if_appetite_and_fitness_is_high(
             self, carn, herb_list):
+        """Tests that the carnivore continues to eat for given conditions.
+        """
         herb_list = herb_list
         herb_list.sort(key=lambda x: x.fitness, reverse=True)
         c = carn
@@ -410,6 +473,12 @@ class TestCarn:
         assert killed_herbs > 0
 
     def test_carnivore_continues_to_feed_if_it_has_appetite(self, mocker):
+        """Tests that the carnivores continues to feed.
+
+        Tests that the carnivore feeds until there are no more herbivores on
+        the nature square, given that its appetite and fitness is high.
+        Mocker is used to ensure that the carnivore eats for certain.
+        """
         herb_list = [Herb() for _ in range(100)]
         herb_list.sort(key=lambda x: x.fitness, reverse=True)
         mocker.patch('random.uniform', return_value=0)
@@ -417,12 +486,16 @@ class TestCarn:
         c.F = 100000
         c.fitness = 0.5
         for herb in herb_list:
-            herb.fitness = 0
+            herb.fitness = 0.1
         killed_herbs = len(c.feeding(herb_list))
         assert killed_herbs == len(herb_list)
 
     def test_carnivore_weight_and_fitness_updates_after_feeding(
             self, mocker):
+        """Tests that the carnivore weight and fitness updates after feeding.
+
+        Mocker is used to ensure that the carnivore eats.
+        """
         a = Herb()
         mocker.patch("random.uniform", return_value=0)
         c = Carn()
@@ -435,12 +508,12 @@ class TestCarn:
         c.feeding(herb_list)
         assert c.weight == pytest.approx(carn_weight)
         assert c.fitness == pytest.approx(
-            1 / (1 + m.exp(c.phi_age * (c.a - c.a_half))) * 1 / (
-                        1 + m.exp(-c.phi_age * (c.weight - c.w_half))))
+            1 / (1 + m.exp(c.phi_age * (c.a - c.a_half))) *
+            1 / (1 + m.exp(-c.phi_age * (c.weight - c.w_half))))
         c = Carn()
         c.fitness = 1
         c.F = 0.001
         herb_list[0].weight = 5
-        carn_weight = c.weight +c.beta * c.F
+        carn_weight = c.weight + c.beta * c.F
         c.feeding(herb_list)
-        assert c.weight == pytest.approx(carn_weight)
+        assert c.weight == pytest.approx(carn_weight), "Weight doesn't update"
