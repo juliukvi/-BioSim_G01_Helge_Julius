@@ -41,14 +41,12 @@ class TestBaseNature:
     def herb_list_big(self):
         """Creates a fixture that returns a list of 1000 herbivores.
         """
-        Herb().set_default_parameters_for_species()
         return[Herb() for _ in range(1000)]
 
     @pytest.fixture
     def carn_list_big(self):
         """Creates a fixture that returns a list of 1000 carnivores.
         """
-        Carn().set_default_parameters_for_species()
         return[Carn() for _ in range(1000)]
 
     def test_basenature_fodder_update(self):
@@ -123,11 +121,11 @@ class TestBaseNature:
         assert p_value > 0.001
 
 
-    def test_feed_all_animals(self, jungle, herb_list_gen, carn_list_big):
+    def test_feed_all_animals(self, jungle, herb_list_big, carn_list_big):
         """Tests that all animals get feed according to feed_all_animals_method
         """
         j = jungle
-        j.herb_list = herb_list_gen
+        j.herb_list = herb_list_big
         j.feed_all_animals()
         assert j.fodder == 0
         j = jungle
@@ -136,7 +134,7 @@ class TestBaseNature:
         j.feed_all_animals()
         assert len(j.herb_list) == 0
         j = jungle
-        j.herb_list = herb_list_gen
+        j.herb_list = herb_list_big
         j.carn_list = carn_list_big
         j.feed_all_animals()
         assert len(j.herb_list) == 0

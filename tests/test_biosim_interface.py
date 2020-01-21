@@ -26,7 +26,10 @@ import os.path
 
 from biosim.simulation import BioSim
 
-
+@pytest.fixture
+def tear_down_params():
+    yield None
+    BioSim(island_map="O", ini_pop=[], seed=1).reset_parameters()
 def test_empty_island():
     """Empty island can be created"""
     BioSim(island_map="OO\nOO", ini_pop=[], seed=1)
@@ -68,7 +71,7 @@ def test_inconsistent_length():
 @pytest.mark.parametrize(
     "species, extra", [("Herbivore", {}), ("Carnivore", {"DeltaPhiMax": 0.5})]
 )
-def test_set_param_animals(species, extra):
+def test_set_param_animals(species, extra, tear_down_params):
     """Parameters can be set on animal classes"""
 
     params = {
@@ -93,12 +96,11 @@ def test_set_param_animals(species, extra):
         species, params
     )
 
-
 @pytest.mark.parametrize(
     "lscape, params",
     [("J", {"f_max": 100.0}), ("S", {"f_max": 200.0, "alpha": 0.1})],
 )
-def test_set_param_landscape(lscape, params):
+def test_set_param_landscape(lscape, params, tear_down_params):
     """Parameters can be set on landscape classes"""
 
     BioSim(island_map="O", ini_pop=[], seed=1).set_landscape_parameters(

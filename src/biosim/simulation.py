@@ -7,7 +7,7 @@ __author__ = "Helge Helo Klemetsdal, Adam Julius Olof Kviman"
 __email__ = "hegkleme@nmbu.no, juliukvi@nmbu.no"
 
 from .landscape import Ocean, Mountain, Desert, Jungle, Savannah
-from biosim.animals import Herb, Carn
+from biosim.animals import BaseAnimal, Herb, Carn
 from biosim.island import Island
 import random as rd
 import numpy as np
@@ -116,6 +116,18 @@ class BioSim:
         self._pause_ax = None
         self._pause_widget = None
         self._large_island = None
+
+    @staticmethod
+    def reset_parameters():
+        """
+        Resets the parameters for the different classes using the
+        set_default_parameters for the different classes.
+        """
+        Herb().set_default_parameters_for_species()
+        Carn().set_default_parameters_for_species()
+        Jungle().set_default_parameters_for_jungle()
+        Savannah().set_default_parameters_for_savannah()
+
 
     def set_animal_parameters(self, species, params):
         """Sets parameters for animal species.
