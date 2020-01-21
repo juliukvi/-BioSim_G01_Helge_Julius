@@ -297,20 +297,22 @@ class BaseNature:
         ]
 
     def herbivore_number(self):
-        """Returns the number of herbivores in the cell.
+        """Returns the number of herbivores on the nature square.
 
         Returns
         -------
         int
+            The number of herbivores on the nature square.
         """
         return len(self.herb_list)
 
     def carnivore_number(self):
-        """Returns the number of carnivores in the cell.
+        """Returns the number of carnivores on the square.
 
         Returns
         -------
         int
+            The number of carnivores on the nature square.
         """
         return len(self.carn_list)
 

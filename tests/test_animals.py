@@ -423,23 +423,3 @@ class TestCarn:
         assert c.weight == pytest.approx(carn_weight)
 
 
-
-def test_migration_distribution_with_chi_squared():
-    #Need to choose probabilities somehow
-
-    p_migration = np.array([0.2, 0.3, 0.3, 0.2])
-    num_observed = np.zeros_like(p_migration)
-    p = np.cumsum(p_migration)
-    n_trials = 1000
-    num_expected = n_trials * p_migration
-    num_observed = np.zeros_like(p_migration)
-    n_trials = 1000
-    for _ in range(n_trials):
-        n = 0
-        r = np.random.random()
-        while r >= p[n]:
-            n += 1
-        num_observed[n] += 1
-    chi2, p_value = chisquare(num_observed, num_expected)
-    alpha = 0.01
-    assert p_value > alpha
