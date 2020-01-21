@@ -128,7 +128,6 @@ class BioSim:
         Jungle().set_default_parameters_for_jungle()
         Savannah().set_default_parameters_for_savannah()
 
-
     def set_animal_parameters(self, species, params):
         """Sets parameters for animal species.
 

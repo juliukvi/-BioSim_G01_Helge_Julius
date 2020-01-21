@@ -110,8 +110,6 @@ class TestBaseNature:
         assert old_num_carn < len(j.carn_list), \
             'The herbivores did not give birth'
 
-
-
     def test_chi2_pval_square_random_select(self):
 
         def event_frequencies(p, num_events):
@@ -127,7 +125,6 @@ class TestBaseNature:
         num_observed = event_frequencies(p, num_events)
         _, p_value = chisquare(num_observed, num_expected)
         assert p_value > 0.001
-
 
     def test_feed_all_animals(self, jungle, herb_list_big, carn_list_big):
         """Tests that all animals get feed according to feed_all_animals_method

@@ -336,7 +336,8 @@ class BaseNature:
             animal for animal in self.carn_list if not animal.death()
         ]
 
-    def square_random_select(self, p):
+    @staticmethod
+    def square_random_select(p):
         """Select a square based on their move probabilities using the
         linear search method"""
         r = random.uniform(0, 1)
@@ -625,7 +626,8 @@ class Jungle(BaseNature):
                 continue
             else:
                 raise ValueError(
-                    f"Value needs to be int or float, got:{type(new_params[key]).__name__}"
+                    f"Value needs to be int or float, "
+                    f"got:{type(new_params[key]).__name__}"
                 )
         for key in new_params:
             if new_params[key] < 0:
