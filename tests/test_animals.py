@@ -76,10 +76,12 @@ class TestBaseAnimal:
         assert carn.parameters["F"] == 15.0
 
     def test_set_default_params_as_attr(self, herb, carn, ex_params):
-        """"
-            Tests if the parameters have been set as attributes by the
-            set_params_as_attributtes method, which is called in the
-            set_parameters method.
+        """"Tests if the default parameters gets set as attributes.
+
+        The _set_default_params_as_attributes class method is called in the
+        set_parameters_default_parameters class method, and as a result it's
+        only
+        necessary to call set_default_parameters to test.
         """
         herb.set_default_parameters_for_species()
         carn.set_default_parameters_for_species()
@@ -87,10 +89,18 @@ class TestBaseAnimal:
         assert herb.F == 10.0
         assert carn.zeta == 3.5
         assert carn.F == 50.0
+        assert herb.xi == herb.DEFAULT_PARAMETERS["xi"]
+        assert carn.zeta == carn.DEFAULT_PARAMETERS["zeta"]
 
     def test_set_new_params_as_attributes(
-            self, herb, carn, ex_params, tear_down_params
+            self, herb, carn, ex_params, tear_down_params, herb_list, carn_list
     ):
+        """Tests if the new parameters gets set as attributes.
+
+        The _set_default_params_as_attributes class method is called in the
+        set_parameters class method, and as a result it's only
+        necessary to call set_default_parameters to test.
+        """
         herb.set_parameters(ex_params)
         carn.set_parameters(ex_params)
         assert herb.F == 15.0
@@ -101,30 +111,30 @@ class TestBaseAnimal:
         c_2 = carn
         assert h_2.F == 15.0
         assert c_2.F == 15.0
-        list_of_herbs = [herb for _ in range(100)]
-        list_of_carns = [carn for _ in range(100)]
-        assert all(h.zeta for h in list_of_herbs)
-        assert all(c.F for c in list_of_carns)
+        assert all(h.zeta for h in herb_list)
+        assert all(c.F for c in carn_list)
 
     def test_set_default_parameters_for_species(
             self, herb, carn, herb_params, carn_params, herb_list, carn_list
     ):
+        """Tests that the set_default_parameter method resets the parameters.
+        """
         herb.set_default_parameters_for_species()
         carn.set_default_parameters_for_species()
-        assert herb.parameters == herb_params
-        assert carn.parameters == carn_params
+        assert herb.parameters == herb_params, 'Parameters are not default'
+        assert carn.parameters == carn_params, 'Parameters are not default'
         herb.set_parameters({"xi": 500})
         carn.set_parameters({"zeta": 100})
         herb.set_default_parameters_for_species()
         carn.set_default_parameters_for_species()
-        assert herb.xi == herb.DEFAULT_PARAMETERS["xi"]
-        assert carn.zeta == carn.DEFAULT_PARAMETERS["zeta"]
-        assert all(h.xi for h in herb_list)
-        assert all(c.xi for c in carn_list)
+        assert all(h.xi for h in herb_list),'Parameters are not reset'
+        assert all(c.xi for c in carn_list),'Parameters are not reset'
 
     def test_baseanimal_init_function_inherits_correctly_to_subclass(
             self, herb, carn
     ):
+        """
+        """
         assert herb.a == 0
         assert carn.a == 0
         assert carn.weight > 0
@@ -154,9 +164,8 @@ class TestBaseAnimal:
         The test uses  the normaltest from scipy, which is based on D.agostinos
         K^2 test. The nullhypothesis for the test is that the weight follows a
         normal distribution. If the assertion fails we reject the
-        nullhypothesis on the given significance level, which we have defined as
-        alpha.
-
+        nullhypothesis on the given significance level, which is defined
+        as alpha.
         """
         np.random.seed(123)
         n_trials = 10000
