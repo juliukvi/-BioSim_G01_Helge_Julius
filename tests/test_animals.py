@@ -42,6 +42,8 @@ class TestBaseAnimal:
 
     @pytest.fixture
     def tear_down_params(self):
+        """Resets the parameters to default.
+        """
         yield None
         Herb().set_default_parameters_for_species()
         Carn().set_default_parameters_for_species()
@@ -58,7 +60,7 @@ class TestBaseAnimal:
         with pytest.raises(ValueError):
             carn.set_parameters(dict_with_invalid_value)
         with pytest.raises(ValueError):
-            carn.set_parameters({"DeltaPhiMax":0})
+            carn.set_parameters({"DeltaPhiMax": 0})
         with pytest.raises(ValueError):
             herb.set_parameters({"F": -1})
         with pytest.raises(ValueError):
@@ -171,13 +173,13 @@ class TestBaseAnimal:
     def test_age_function(self, herb, carn):
         h = herb
         c = carn
-        h.age()
-        c.age()
+        h.age_animal()
+        c.age_animal()
         assert h.a == 1
         assert c.a == 1
         for _ in range(10):
-            h.age()
-            c.age()
+            h.age_animal()
+            c.age_animal()
         assert h.a == 11
         assert c.a == 11
 

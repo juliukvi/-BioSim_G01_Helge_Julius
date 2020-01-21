@@ -261,10 +261,10 @@ class BaseNature:
         """Determines which of the animals in the cell give birth.
         """
         for animal in self.herb_list:
-            animal.age()
+            animal.age_animal()
             # animal.fitness_update()
         for animal in self.carn_list:
-            animal.age()
+            animal.age_animal()
             # animal.fitness_update()
 
     def fodder_update(self):

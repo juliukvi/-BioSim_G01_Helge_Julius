@@ -21,7 +21,7 @@ class BaseAnimal:
     ----------
     fitness: int
         Value describing the animals fitness
-    age: int
+    a: int
         Initial age of the animal.
     weight: float
          Weight drawn from the Gaussian distribution if not assigned a value.
@@ -202,7 +202,7 @@ class BaseAnimal:
         else:
             return
 
-    def age(self):
+    def age_animal(self):
         """Ages the animal by one year
         """
         self.a += 1
