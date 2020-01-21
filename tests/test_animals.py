@@ -9,7 +9,9 @@ from scipy.stats import normaltest, binom_test, chisquare
 import math as m
 
 
-class TestAnimal:
+class TestBaseAnimal:
+    """A testclass for the BaseAnimal class in biosim.animals.
+    """
     @pytest.fixture
     def herb(self):
         return Herb()
@@ -60,10 +62,10 @@ class TestAnimal:
         with pytest.raises(ValueError):
             herb.set_parameters({"F": -1})
         with pytest.raises(ValueError):
-            herb.set_parameters({"eta":3})
-
+            herb.set_parameters({"eta": 3})
 
     def test_set_parameters(self, herb, carn, ex_params, tear_down_params):
+        """"""
         herb.set_parameters(ex_params)
         carn.set_parameters(ex_params)
         assert herb.parameters["zeta"] == 4
@@ -128,19 +130,19 @@ class TestAnimal:
         assert 0 <= herb.fitness <= 1, 'Fitness needs to be in interval [0,1]'
         assert 0 <= carn.fitness <= 1, 'Fitness needs to be in interval [0,1]'
         with pytest.raises(ValueError):
-            h = Herb(age=-1)
+            Herb(age=-1)
         with pytest.raises(ValueError):
-            c = Carn(age=-300)
+            Carn(age=-300)
         with pytest.raises(ValueError):
-            h = Herb(weight=-1)
+            Herb(weight=-1)
         with pytest.raises(ValueError):
-            c = Carn(weight=-1)
+            Carn(weight=-1)
         with pytest.raises(ValueError):
-            h = Herb(age="hello")
+            Herb(age="hello")
         with pytest.raises(ValueError):
-            c = Carn(weight='hi')
+            Carn(weight='hi')
         with pytest.raises(ValueError):
-            h = Herb(weight=[1, 2, 3])
+            Herb(weight=[1, 2, 3])
 
     def test_weight_follows_normal_distribution(self):
         """A statistical test for the distribution of animal weights.
@@ -155,7 +157,6 @@ class TestAnimal:
 
         """
         np.random.seed(123)
-        # Using D.agostinos K^2 test which is accessed from the normaltest in scipy
         n_trials = 10000
         some_herb_list = [Herb() for _ in range(n_trials)]
         some_carn_list = [Carn() for _ in range(n_trials)]
@@ -399,7 +400,6 @@ class TestCarnivore:
 
     def test_carnivore_weight_and_fitness_updates_after_feeding(
             self, mocker):
-        # usikker på denne testen.
         a = Herb()
         mocker.patch("random.uniform", return_value=0)
         c = Carn()
