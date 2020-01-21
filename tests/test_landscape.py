@@ -79,7 +79,8 @@ class TestBaseNature:
 
 
     def test_chi2_pval_square_random_select(self):
-
+        """Test to see that self.square_random_select chooses squares with
+        the correct probability"""
         def event_frequencies(p, num_events):
             event_count = np.zeros_like(p)
             for _ in range(num_events):
