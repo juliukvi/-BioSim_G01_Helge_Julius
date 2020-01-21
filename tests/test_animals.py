@@ -131,8 +131,8 @@ class TestBaseAnimal:
         carn.set_parameters({"zeta": 100})
         herb.set_default_parameters_for_species()
         carn.set_default_parameters_for_species()
-        assert all(h.xi for h in herb_list),'Parameters are not reset'
-        assert all(c.xi for c in carn_list),'Parameters are not reset'
+        assert all(h.xi for h in herb_list), 'Parameters are not reset'
+        assert all(c.xi for c in carn_list), 'Parameters are not reset'
 
     def test_baseanimal_init_function_inherits_correctly_to_subclass(
             self, herb, carn
@@ -255,7 +255,6 @@ class TestBaseAnimal:
             1 / (1 + m.exp(h.phi_age * (h.a - h.a_half))) * 1 / (1 + m.exp(-h.phi_weight * (1 - h.w_half))))
         assert c.fitness == pytest.approx(
             1 / (1 + m.exp(c.phi_age * (c.a - c.a_half))) * 1 / (1 + m.exp(-c.phi_weight * (1 - c.w_half))))
-
 
     def test_birth(self, herb, carn):
         """Tests that the birth method returns the correct class instance.
@@ -442,8 +441,6 @@ class TestCarn:
         c.fitness = 1
         c.F = 0.001
         herb_list[0].weight = 5
-        carn_weight = c.weight +c.beta*c.F
+        carn_weight = c.weight +c.beta * c.F
         c.feeding(herb_list)
         assert c.weight == pytest.approx(carn_weight)
-
-
