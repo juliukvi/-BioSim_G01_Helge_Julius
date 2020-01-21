@@ -9,7 +9,9 @@ from scipy.stats import normaltest, binom_test, chisquare
 import math as m
 
 
-class TestAnimal:
+class TestBaseAnimal:
+    """A testclass for the BaseAnimal class in biosim.animals.
+    """
     @pytest.fixture
     def herb(self):
         return Herb()
@@ -40,6 +42,8 @@ class TestAnimal:
 
     @pytest.fixture
     def tear_down_params(self):
+        """Resets the parameters to default.
+        """
         yield None
         Herb().set_default_parameters_for_species()
         Carn().set_default_parameters_for_species()
@@ -55,8 +59,15 @@ class TestAnimal:
             herb.set_parameters(dict_with_invalid_value)
         with pytest.raises(ValueError):
             carn.set_parameters(dict_with_invalid_value)
+        with pytest.raises(ValueError):
+            carn.set_parameters({"DeltaPhiMax": 0})
+        with pytest.raises(ValueError):
+            herb.set_parameters({"F": -1})
+        with pytest.raises(ValueError):
+            herb.set_parameters({"eta": 3})
 
     def test_set_parameters(self, herb, carn, ex_params, tear_down_params):
+        """"""
         herb.set_parameters(ex_params)
         carn.set_parameters(ex_params)
         assert herb.parameters["zeta"] == 4
@@ -121,19 +132,19 @@ class TestAnimal:
         assert 0 <= herb.fitness <= 1, 'Fitness needs to be in interval [0,1]'
         assert 0 <= carn.fitness <= 1, 'Fitness needs to be in interval [0,1]'
         with pytest.raises(ValueError):
-            h = Herb(age=-1)
+            Herb(age=-1)
         with pytest.raises(ValueError):
-            c = Carn(age=-300)
+            Carn(age=-300)
         with pytest.raises(ValueError):
-            h = Herb(weight=-1)
+            Herb(weight=-1)
         with pytest.raises(ValueError):
-            c = Carn(weight=-1)
+            Carn(weight=-1)
         with pytest.raises(ValueError):
-            h = Herb(age="hello")
+            Herb(age="hello")
         with pytest.raises(ValueError):
-            c = Carn(weight='hi')
+            Carn(weight='hi')
         with pytest.raises(ValueError):
-            h = Herb(weight=[1, 2, 3])
+            Herb(weight=[1, 2, 3])
 
     def test_weight_follows_normal_distribution(self):
         """A statistical test for the distribution of animal weights.
@@ -148,7 +159,6 @@ class TestAnimal:
 
         """
         np.random.seed(123)
-        # Using D.agostinos K^2 test which is accessed from the normaltest in scipy
         n_trials = 10000
         some_herb_list = [Herb() for _ in range(n_trials)]
         some_carn_list = [Carn() for _ in range(n_trials)]
@@ -163,13 +173,13 @@ class TestAnimal:
     def test_age_function(self, herb, carn):
         h = herb
         c = carn
-        h.age()
-        c.age()
+        h.age_animal()
+        c.age_animal()
         assert h.a == 1
         assert c.a == 1
         for _ in range(10):
-            h.age()
-            c.age()
+            h.age_animal()
+            c.age_animal()
         assert h.a == 11
         assert c.a == 11
 
@@ -317,7 +327,7 @@ class TestAnimal:
         assert p_value2 > alpha
 
 
-class TestHerbivore:
+class TestHerb:
     @pytest.fixture
     def herb(self):
         return Herb()
@@ -339,7 +349,7 @@ class TestHerbivore:
             h.feeding(-5)
 
 
-class TestCarnivore:
+class TestCarn:
     @pytest.fixture
     def carn(self):
         return Carn()
@@ -392,7 +402,6 @@ class TestCarnivore:
 
     def test_carnivore_weight_and_fitness_updates_after_feeding(
             self, mocker):
-        # usikker på denne testen.
         a = Herb()
         mocker.patch("random.uniform", return_value=0)
         c = Carn()
@@ -416,23 +425,3 @@ class TestCarnivore:
         assert c.weight == pytest.approx(carn_weight)
 
 
-
-def test_migration_distribution_with_chi_squared():
-    #Need to choose probabilities somehow
-
-    p_migration = np.array([0.2, 0.3, 0.3, 0.2])
-    num_observed = np.zeros_like(p_migration)
-    p = np.cumsum(p_migration)
-    n_trials = 1000
-    num_expected = n_trials * p_migration
-    num_observed = np.zeros_like(p_migration)
-    n_trials = 1000
-    for _ in range(n_trials):
-        n = 0
-        r = np.random.random()
-        while r >= p[n]:
-            n += 1
-        num_observed[n] += 1
-    chi2, p_value = chisquare(num_observed, num_expected)
-    alpha = 0.01
-    assert p_value > alpha

@@ -89,42 +89,49 @@ class BaseNature:
     def migrate_all_animals(self, neighbors):
         r"""Determines all animals in the cell that shall migrate.
 
-        The animals can migrate to the cell located directly north, west,
-        south, or east of their current cell. This set of cells are defined
-        as the set :math:`\emph{C^{i}}`.
-        For all the four neighbour cells we define a relative abundance of
+        The animals can migrate to the square located directly north, west,
+        south, or east of their current square. This set of squares are defined
+        as the set :math:`C^{i}`.
+        For all the four neighbour squares we define a relative abundance of
         fodder given by following formula:
-        .. math::
-            \epsilon_{k} = \frac{\emph{f_{k}}}{(\emph{n_{k}+1)}F'}
 
-        where :math:`\emph{f_{k}` is the amount of relevant fodder for the
-        species available in the cell k :math:`\emph{n_{k}}` is the
-        number of animals of the same species in cell k,
+        .. math::
+            \epsilon_{k} = \frac{f_{k}}{(n_{k}+1)F'}
+
+        where :math:`f_{k}` is the amount of relevant fodder for the
+        species available in the square k :math:`n_{k}` is the
+        number of animals of the same species in square k,
         and "F" the appetite of the species.
 
         The propensity of moving to a neighbour cell is dependent on the
-        relative abundance of fodder and is given by formula:
-        .. math::
+        relative abundance of fodder and is given by:
 
-            \pi_{\emph{i}\rightarrow\emph{j}}=
-                 \begin{cases}
-                     0, & \text{if \emph{j} is Mountain or Ocean} \\
-                     e^{\lambda\epsilon_{j}}, & \text{\emph{otherwise}}
-                 \end{cases}
+        .. math::
+            \pi_{i\rightarrow j} = 0
+
+        if j is Mountain or Ocean
+        and
+
+        .. math::
+            \pi_{i\rightarrow j} = e^{\lambda\epsilon_{j}}
+
+        otherwise
+
 
         given that the animal would move from cell i to cell j.
         If the animal migrates, the probability of moving to each of the four
-        neighbour cell is calculated based on the propensity to move to each
+        neighbour square is calculated based on the propensity to move to each
         cell. The probability to move from i to j follows the formula:
 
-        ..math::
-            p_{\emph{i}\rightarrow\emph{j}}= \frac{\pi_{\emph{i}\rightarrow\emph{j}}}{\Sigma_{\emph{j}\in C^{({\emph{i}})}}\pi_{\emph{i}\rightarrow\emph{j}}}
+        .. math::
+            p_{i\rightarrow j} =
+            \frac{\pi_{i\rightarrow j}}
+            {\Sigma_{j\in C^{({i})}}\pi_{i\rightarrow j}}
 
-        The animals that migrate to a neighbouring cell are placed in lists
-        according to their current cell and the cell they will migrate to.
-        Notes
-        -----
-        In the case that all cells in :math:`\emph{C^{i}}` are Mountain or
+        The animals that migrate to a neighbouring squares are placed in lists
+        according to their current square and the square they will migrate to.
+
+        In the case that all cells in :math:`{C^{i}}` are Mountain or
         ocean, the animal will not migrate.
 
         If the animals appetite is 0
@@ -132,9 +139,8 @@ class BaseNature:
 
         Parameters
         ----------
-        neighbors : tuple with four BaseNature classes
-            A tuple containing the set of different neighbour locations.
-
+        neighbors : tuple
+            A tuple containing the four different neighbour locations.
         """
         north_nature_square = neighbors[0]
         east_nature_square = neighbors[1]
@@ -234,10 +240,10 @@ class BaseNature:
         """Determines which of the animals in the cell give birth.
         """
         for animal in self.herb_list:
-            animal.age()
+            animal.age_animal()
             # animal.fitness_update()
         for animal in self.carn_list:
-            animal.age()
+            animal.age_animal()
             # animal.fitness_update()
 
     def fodder_update(self):
@@ -280,20 +286,22 @@ class BaseNature:
         return n
 
     def herbivore_number(self):
-        """Returns the number of herbivores in the cell.
+        """Returns the number of herbivores on the nature square.
 
         Returns
         -------
         int
+            The number of herbivores on the nature square.
         """
         return len(self.herb_list)
 
     def carnivore_number(self):
-        """Returns the number of carnivores in the cell.
+        """Returns the number of carnivores on the square.
 
         Returns
         -------
         int
+            The number of carnivores on the nature square.
         """
         return len(self.carn_list)
 
@@ -306,19 +314,19 @@ class Ocean(BaseNature):
     Attributes
     ----------
     fodder : int
-        Initial fodder amount on the Ocean cell.
+        Initial fodder amount on the ocean square.
     habitable : bool
-        Determines if the landscpape can be habited by animals.
+        Determines if the ocean can be habited by animals.
     herb_list : list
-        A list with all the herbivores on the landscape cell.
+        A list with all the herbivores on the ocean square.
     carn_list : list
-        A list with all the herbivores on the landscape cell.
+        A list with all the herbivores on the ocean square.
     herb_move_to_list : list
-        A list with all the herbivores that shall migrate to another cell
+        A list with all the herbivores that shall migrate to another square.
     herb_move_from_list : list
-        A list with all the herbivores that shall migrate from the cell
+        A list with all the herbivores that shall migrate from the square.
     carn_move_to_list : list
-        A list with all the carnivores that shall migrate to another cell
+        A list with all the carnivores that shall migrate to another square.
     carn_move_from_list : list
         A list with all the carnivores that shall migrate from the cell
         """
@@ -335,21 +343,21 @@ class Mountain(BaseNature):
     Attributes
     ----------
     fodder : int
-        Initial fodder amount on the Mountain cell.
+        Initial fodder amount on the mountain square.
     habitable : bool
-        Determines if the Mountain landscape can be habited by animals.
+        Determines if the mountain landscape can be habited by animals.
     herb_list : list
-        A list with all the herbivores on the Mountain cell.
+        A list with all the herbivores on the mountain square.
     carn_list : list
-        A list with all the herbivores on the Mountain cell.
+        A list with all the herbivores on the mountain square.
     herb_move_to_list : list
-        A list with all the herbivores that shall migrate to another cell
+        A list with all the herbivores that shall migrate to another square.
     herb_move_from_list : list
-        A list with all the herbivores that shall migrate from the cell
+        A list with all the herbivores that shall migrate from the square.
     carn_move_to_list : list
-        A list with all the carnivores that shall migrate to another cell
+        A list with all the carnivores that shall migrate to another square.
     carn_move_from_list : list
-        A list with all the carnivores that shall migrate from the cell
+        A list with all the carnivores that shall migrate from the square.
     """
     def __init__(self):
         super().__init__()
@@ -364,21 +372,21 @@ class Desert(BaseNature):
     Attributes
     ----------
     fodder : int
-        Initial fodder amount on the Desert cell.
+        Initial fodder amount on the desert square.
     habitable : bool
-        Determines if the Desert can be habited by animals.
+        Determines if the desert can be habited by animals.
     herb_list : list
-        A list with all the herbivores on the Desert cell.
+        A list with all the herbivores on the desert square.
     carn_list : list
-        A list with all the herbivores on the Desert cell.
+        A list with all the herbivores on the desert square.
     herb_move_to_list : list
-        A list with all the herbivores that shall migrate to another cell
+        A list with all the herbivores that shall migrate to another square.
     herb_move_from_list : list
-        A list with all the herbivores that shall migrate from the cell
+        A list with all the herbivores that shall migrate from the square.
     carn_move_to_list : list
-        A list with all the carnivores that shall migrate to another cell
+        A list with all the carnivores that shall migrate to another square.
     carn_move_from_list : list
-        A list with all the carnivores that shall migrate from the cell
+        A list with all the carnivores that shall migrate from the square.
     """
     def __init__(self):
         super().__init__()
@@ -392,23 +400,23 @@ class Savannah(BaseNature):
     DEFAULT_PARAMETERS : dict
         Default parameters for savannah.
     parameters : dict
-        Initiated by set_default_parameters method.
+        Values that determine the behaviour of the savannah.
     fodder : int
-        Initial fodder amount on the Savannah cell equal to f_max parameter.
+        Initial fodder amount on the savannah square equal to f_max parameter.
     habitable : bool
-        Determines if the Savannah can be habited by animals.
+        Determines if the savannah can be habited by animals.
     herb_list : list
-        A list with all the herbivores on the Savannah cell.
+        A list with all the herbivores on the savannah square.
     carn_list : list
-        A list with all the herbivores on the savannah cell.
+        A list with all the herbivores on the savannah square.
     herb_move_to_list : list
-        A list with all the herbivores that shall migrate to another cell
+        A list with all the herbivores that shall migrate to another square
     herb_move_from_list : list
-        A list with all the herbivores that shall migrate from the cell
+        A list with all the herbivores that shall migrate from the square
     carn_move_to_list : list
-        A list with all the carnivores that shall migrate to another cell
+        A list with all the carnivores that shall migrate to another square
     carn_move_from_list : list
-        A list with all the carnivores that shall migrate from the cell
+        A list with all the carnivores that shall migrate from the square
     """
     DEFAULT_PARAMETERS = {"f_max": 300, "alpha": 0.3}
     parameters = None
@@ -443,11 +451,14 @@ class Savannah(BaseNature):
         """
         for key in new_params:
             if key not in cls.parameters.keys():
-                raise KeyError(f'Parameter {key} is not in valid')
+                raise KeyError(f'Parameter {key} is not valid')
             if isinstance(new_params[key], int) or isinstance(new_params[key], float):
                 continue
             else:
                 raise ValueError(f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
+        for key in new_params:
+            if new_params[key] < 0:
+                raise ValueError("All parameters must be positive")
         cls.parameters.update(new_params)
         cls._set_params_as_attributes()
 
@@ -465,12 +476,13 @@ class Savannah(BaseNature):
         self.fodder = self.f_max
 
     def fodder_update(self):
-        """Updates the fodder in the savannah cell.
+        r"""Updates the fodder in the savannah cell.
 
         The fodder grows yearly by the formula:
 
         .. math::
-            \emph{f} \leftarrow \emph{f} + \alpha\times({f^{Sav}_{max}}-\emph{f})
+            f \leftarrow f + \alpha\times({f^{Sav}_{max}}-f)
+
         where f is the fodder amount on the savannah cell,
         and :math: {f^{Sav}_{max}} is the maximum available fodder.
         """
@@ -484,24 +496,24 @@ class Jungle(BaseNature):
     ----------
     DEFAULT_PARAMETERS : dict
         Default parameters for the jungle landscape.
-    parameters : bool or dict?
-        something
+    parameters : dict
+        Values that determine the behaviour of the jungle.
     fodder : int
-        Initial fodder amount on the Jungle cell equal to f_max parameter.
+        Initial fodder amount on the jungle square equal to f_max parameter.
     habitable : bool
-        Determines if the Jungle cell can be habited by animals.
+        Determines if the jungle square can be habited by animals.
     herb_list : list
-        A list with all the herbivores on the Jungle cell.
+        A list with all the herbivores on the jungle square.
     carn_list : list
-        A list with all the herbivores on the Jungle cell.
+        A list with all the herbivores on the jungle square.
     herb_move_to_list : list
-        A list with all the herbivores that shall migrate to another cell
+        A list with all the herbivores that shall migrate to another square.
     herb_move_from_list : list
-        A list with all the herbivores that shall migrate from the cell
+        A list with all the herbivores that shall migrate from the square.
     carn_move_to_list : list
-        A list with all the carnivores that shall migrate to another cell
+        A list with all the carnivores that shall migrate to another square.
     carn_move_from_list : list
-        A list with all the carnivores that shall migrate from the cell
+        A list with all the carnivores that shall migrate from the square.
         """
     DEFAULT_PARAMETERS = {"f_max": 800}
     parameters = None
@@ -536,11 +548,14 @@ class Jungle(BaseNature):
         """
         for key in new_params:
             if key not in cls.parameters.keys():
-                raise KeyError(f'Parameter {key} is not in valid')
+                raise KeyError(f'Parameter {key} is not valid')
             if isinstance(new_params[key], int) or isinstance(new_params[key], float):
                 continue
             else:
                 raise ValueError(f'Value needs to be int or float, got:{type(new_params[key]).__name__}')
+        for key in new_params:
+            if new_params[key] < 0:
+                raise ValueError("All parameters must be positive")
         cls.parameters.update(new_params)
         cls._set_params_as_attributes()
 
