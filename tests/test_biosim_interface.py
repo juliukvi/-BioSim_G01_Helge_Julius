@@ -9,8 +9,10 @@ the simulation module of the biosim package.
 Notes:
      - The BioSim class should pass all tests in this set.
      - The tests check only that the class interface can be used, not that
-       the class functions correctly. You need to write your own tests for that.
-     - You should only run these tests on your code *after* you have implemented
+       the class functions correctly. You need to write your own tests for
+       that.
+     - You should only run these tests on your code *after* you have
+     implemented
        both animal and all landscape classes.
 """
 
@@ -26,10 +28,15 @@ import os.path
 
 from biosim.simulation import BioSim
 
+
 @pytest.fixture
 def tear_down_params():
+    """Creates a fixture that resets the parameters for the classes.
+    """
     yield None
     BioSim(island_map="O", ini_pop=[], seed=1).reset_parameters()
+
+
 def test_empty_island():
     """Empty island can be created"""
     BioSim(island_map="OO\nOO", ini_pop=[], seed=1)
@@ -95,6 +102,7 @@ def test_set_param_animals(species, extra, tear_down_params):
     BioSim(island_map="O", ini_pop=[], seed=1).set_animal_parameters(
         species, params
     )
+
 
 @pytest.mark.parametrize(
     "lscape, params",
@@ -249,7 +257,8 @@ def test_set_plot_limits():
 
 @pytest.fixture
 def figfile_root():
-    """Provide name for figfile root and delete figfiles after test completes"""
+    """Provide name for figfile root and delete figfiles after test completes
+    """
 
     ffroot = os.path.join(".", "testfigroot")
     yield ffroot

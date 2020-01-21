@@ -13,6 +13,15 @@ import numpy as np
 class TestBaseNature:
     """Test class for BaseNature class.
     """
+
+    @pytest.fixture
+    def tear_down_params(self):
+        """Creates a tear_down fixture that resets the parameters.
+        """
+        yield None
+        Herb().set_default_parameters_for_species()
+        Carn().set_default_parameters_for_species()
+
     @pytest.fixture
     def jungle(self):
         """Creates a fixture of a jungle class instance.
@@ -68,7 +77,6 @@ class TestBaseNature:
         assert all([fit_1 > fit_2 for fit_1, fit_2 in
                     zip(fit_list_carn[:-1], fit_list_carn[1:])]),\
             'The carnivore list is not sorted by fitness'
-
 
     def test_aging_all_animals(self, jungle, herb_list_gen, carn_list_gen):
         """Tests that all animals on the nature square ages correctly.
@@ -139,7 +147,6 @@ class TestBaseNature:
         j.feed_all_animals()
         assert len(j.herb_list) == 0
 
-
     def test_weightloss_all_animals(
             self, jungle, herb_list_gen, carn_list_gen
     ):
@@ -160,7 +167,6 @@ class TestBaseNature:
         for animal in j.carn_list:
             assert animal.weight == (50 - animal.eta * 50)
 
-
     def test_migrate_all_animals_oceans(
             self, jungle, herb_list_gen, carn_list_gen
     ):
@@ -174,20 +180,23 @@ class TestBaseNature:
         assert len(j.carn_move_from_list) == 0
         assert len(j.herb_move_from_list) == 0
 
-    def test_migrate_all_animals_all_move(self, jungle, herb_list_big, carn_list_big):
+    def test_migrate_all_animals_all_move(self, jungle, herb_list_big,
+                                          carn_list_big, tear_down_params
+                                          ):
         """Test to see that all animals migrate if they deside to migrate.
          """
         j = jungle
         j.herb_list = herb_list_big
         j.carn_list = carn_list_big
         neighbors = (Jungle(), Jungle(), Jungle(), Jungle())
-        Herb.set_parameters({"mu":100, "F":0})
-        Carn.set_parameters({"mu":100, "F":0})
+        Herb.set_parameters({"mu": 100, "F": 0})
+        Carn.set_parameters({"mu": 100, "F": 0})
         j.migrate_all_animals(neighbors)
         assert len(j.herb_move_from_list) == 1000
         assert len(j.carn_move_from_list) == 1000
 
-    def test_migrate_all_animals_equal_prob(self, jungle, herb_list_big, carn_list_big):
+    def test_migrate_all_animals_equal_prob(
+            self, jungle, herb_list_big, carn_list_big, tear_down_params):
         """
         Test to see that animal is equally likely to migrate to any square if
         move propensity is equal for all squares.
@@ -196,8 +205,8 @@ class TestBaseNature:
         j.herb_list = herb_list_big
         j.carn_list = carn_list_big
         neighbors = (Jungle(), Jungle(), Jungle(), Jungle())
-        Herb.set_parameters({"mu":100, "F":0})
-        Carn.set_parameters({"mu":100, "F":0})
+        Herb.set_parameters({"mu": 100, "F": 0})
+        Carn.set_parameters({"mu": 100, "F": 0})
         j.migrate_all_animals(neighbors)
         num_moved = np.array((len(neighbors[0].herb_move_to_list),
                              len(neighbors[1].herb_move_to_list),
@@ -206,9 +215,6 @@ class TestBaseNature:
         num_expected = np.array((250, 250, 250, 250))
         _, pvalue = chisquare(num_moved, num_expected)
         assert pvalue > 0.001
-
-
-
 
 
 class TestOcean:
@@ -375,6 +381,7 @@ class TestJungle:
         """Creates a fixture of a jungle class instance.
         """
         return Jungle()
+
     @pytest.fixture
     def jungle_params(self):
         """Creates a fixture of parameters for the jungle class.
@@ -394,7 +401,6 @@ class TestJungle:
         """Test to see if the jungle class can be initiated.
         """
         assert jungle
-
 
     def test_set_parameters_jungle_raises_errors(self, jungle, jungle_params):
         """Tests that the set_parameters class method raises errors correctly.

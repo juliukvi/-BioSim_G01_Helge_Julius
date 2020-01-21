@@ -435,25 +435,25 @@ class Herb(BaseAnimal):
         super().__init__(age=age, weight=weight)
 
     def feeding(self, fodder):
-        r"""Feeds a herbivore, updates weight and returns the leftover fodder.
+        r"""Feeds a herbivore, updates weight and returns the fodder eaten.
 
         The herbivore tries to eat an amount of fodder equal to its appetite F
-        on the cell it habits.
+        on the square it habits.
         The herbivores weight increases by
         :math:`\beta \times fodder_{eaten}` where the fodder_eaten
-        depends on how much fodder the given cell has.If the cell has more
+        depends on how much fodder the given square has.If the square has more
         fodder than the the herbivore's appetite,fodder_eaten is equal to the
         appetite.
 
         Parameters
         ----------
         fodder : int
-            The amount of fodder on the cell
+            The amount of fodder on the square
 
         Returns
         -------
         F : int
-            If the fodder amount of the cell is greater than the appetite
+            If the fodder amount of the square is greater than the appetite
         fodder : int
             If the fodder amount is greater than 0 and less than the appetite.
 
