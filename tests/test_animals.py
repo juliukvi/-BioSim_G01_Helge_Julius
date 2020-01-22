@@ -327,7 +327,6 @@ class TestBaseAnimal:
                                    weight_list_carn[1:])]),\
             'The weight does not decrease in the list when weightloss is used'
 
-
     def test_death(self, mocker):
         """Tests that the death method works correctly.
         The fitness of herbivores and carnivores are set as needed to have the

@@ -157,7 +157,7 @@ class BaseAnimal:
             self.fitness = q_age * q_weight
 
     def migrate(self):
-        """Estimates the probability for an animal to migrate
+        r"""Estimates the probability for an animal to migrate
 
         The probability of an animal migrating is given by :math:`\mu\Phi`
 

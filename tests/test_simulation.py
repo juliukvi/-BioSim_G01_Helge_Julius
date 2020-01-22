@@ -36,12 +36,13 @@ def test_simulation_make_movie_no_base():
 
 @pytest.fixture
 def figfile_root():
-    """Provide name for figfile root and delete figfiles after test completes"""
+    """Provide name for figfile root and delete figfiles after test completes
+    """
     os.mkdir("data_test")
     ffroot = os.path.join(".", "data_test\dv")
     yield ffroot
     shutil.rmtree("data_test")
-    #for f in glob.glob(ffroot + "_0*.png"):
+    # for f in glob.glob(ffroot + "_0*.png"):
     #    os.r(f)
 
 
@@ -56,7 +57,8 @@ def test_simulation_make_movie_mp4(figfile_root):
 
 def test_simulation_make_movie_gif(figfile_root):
     """Test to see that movie can be made with gif format"""
-    sim = BioSim(island_map="OO\nOO", ini_pop=[], seed=1, img_base=figfile_root)
+    sim = BioSim(island_map="OO\nOO", ini_pop=[], seed=1, img_base=figfile_root
+                 )
     sim.simulate(5, 1)
     sim.make_movie(movie_fmt="gif")
     assert os.path.isfile(figfile_root + ".gif")

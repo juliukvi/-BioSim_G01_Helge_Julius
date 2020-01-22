@@ -22,7 +22,7 @@ class Island:
     map_list : list
         List of lists where each list contains a row of cells.
     map_columns : int
-        Number of columns on the map?
+        Number of columns on the map
     map_rows : int
         Number of rows on the map
     Raises
