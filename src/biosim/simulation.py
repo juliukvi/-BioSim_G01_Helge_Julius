@@ -284,6 +284,8 @@ class BioSim:
                         "3.0",
                         "-pix_fmt",
                         "yuv420p",
+                        "-vf",
+                        "pad=ceil(iw/2)*2:ceil(ih/2)*2",
                         "{}.{}".format(self._img_base, movie_fmt),
                     ]
                 )

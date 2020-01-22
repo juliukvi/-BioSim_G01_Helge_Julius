@@ -11,6 +11,7 @@ import textwrap
 class TestIsland:
     """A test class for the island class.
     """
+
     @pytest.fixture
     def island_small(self):
         """Creates a fixture of a small island with one jungle square.
@@ -56,36 +57,42 @@ class TestIsland:
         not correctly indexed, or population is added on non habitable square.
         """
         with pytest.raises(ValueError):
-            island_small.add_population([
-        {
-            "loc": (0, 100),
-            "pop": [
-                {"species": "Carnivore", "age": 5, "weight": 20}
-                for _ in range(40)
-            ],
-        }
-    ])
+            island_small.add_population(
+                [
+                    {
+                        "loc": (0, 100),
+                        "pop": [
+                            {"species": "Carnivore", "age": 5, "weight": 20}
+                            for _ in range(40)
+                        ],
+                    }
+                ]
+            )
         with pytest.raises(ValueError):
-            island_small.add_population([
-        {
-            "loc": (100, 0),
-            "pop": [
-                {"species": "Carnivore", "age": 5, "weight": 20}
-                for _ in range(40)
-            ],
-        }
-    ])
+            island_small.add_population(
+                [
+                    {
+                        "loc": (100, 0),
+                        "pop": [
+                            {"species": "Carnivore", "age": 5, "weight": 20}
+                            for _ in range(40)
+                        ],
+                    }
+                ]
+            )
 
         with pytest.raises(ValueError):
-            island_small.add_population([
-        {
-            "loc": (0, 0),
-            "pop": [
-                {"species": "Carnivore", "age": 5, "weight": 20}
-                for _ in range(40)
-            ],
-        }
-    ])
+            island_small.add_population(
+                [
+                    {
+                        "loc": (0, 0),
+                        "pop": [
+                            {"species": "Carnivore", "age": 5, "weight": 20}
+                            for _ in range(40)
+                        ],
+                    }
+                ]
+            )
 
     def test_add_population_raises_error_for_wrong_species(self, island_small):
         """
@@ -94,12 +101,14 @@ class TestIsland:
         """
         with pytest.raises(ValueError):
 
-            island_small.add_population([
-        {
-            "loc": (2, 9),
-            "pop": [
-                {"species": "Vulture", "age": 5, "weight": 20}
-                for _ in range(150)
-            ],
-        }
-    ])
+            island_small.add_population(
+                [
+                    {
+                        "loc": (2, 9),
+                        "pop": [
+                            {"species": "Vulture", "age": 5, "weight": 20}
+                            for _ in range(150)
+                        ],
+                    }
+                ]
+            )
