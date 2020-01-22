@@ -7,7 +7,7 @@ __author__ = "Helge Helo Klemetsdal, Adam Julius Olof Kviman"
 __email__ = "hegkleme@nmbu.no, juliukvi@nmbu.no"
 
 from .landscape import Jungle, Savannah
-from .animals import BaseAnimal, Herb, Carn
+from .animals import Herb, Carn
 from .island import Island
 import random as rd
 import numpy as np
@@ -255,10 +255,9 @@ class BioSim:
 
     def make_movie(self, movie_fmt="mp4"):
         """Creates MPEG4 movie from visualization images saved.
-        Notes
-        -----
-            Requires ffmpeg
-            The movie is stored as img_base + movie_fmt
+        Requires ffmpeg. Download imagemagick and its directory to systempath.
+        This gives access to ffmpeg.
+        The movie is stored as img_base + movie_fmt
         """
 
         if self._img_base is None:
@@ -444,7 +443,7 @@ class BioSim:
             island_rgb = np.array(island_rgb)
             self._island_map_ax = self._fig.add_axes(
                 [0.05, 0.7, 0.25, 0.25]
-            )  # llx, lly, w, h
+            )
             if self._large_island:
                 self._island_map_ax.set_xticks(
                     (0, self._island.map_columns - 1)
