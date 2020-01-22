@@ -6,6 +6,7 @@ __email__ = "hegkleme@nmbu.no, juliukvi@nmbu.no"
 from .landscape import Ocean, Mountain, Jungle, Savannah, Desert
 from .animals import Herb, Carn
 
+
 class Island:
     """An island map with landscape cells and animals.
 
