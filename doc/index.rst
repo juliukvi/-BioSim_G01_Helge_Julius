@@ -9,14 +9,15 @@ Welcome to Biosim's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
       animals
       landscape
       Island
       simulation
-      test_simulation
-      test_landscape
-      test_island
-      test_animals
+      testsimulation
+      testlandscape
+      testisland
+      testanimals
 
 
 Indices and tables
