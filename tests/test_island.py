@@ -7,6 +7,7 @@ from biosim.island import Island
 import pytest
 import textwrap
 
+
 class TestIsland:
     """A test class for the island class.
     """
