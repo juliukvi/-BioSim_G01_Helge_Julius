@@ -40,8 +40,8 @@ def figfile_root():
     """
     ffroot = os.path.join(".", "dv")
     yield ffroot
-    # for f in glob.glob(ffroot + "_0*.png"):
-    #   os.remove(f)
+    for f in glob.glob(ffroot + "_0*.png"):
+        os.remove(f)
 
 
 def test_simulation_make_movie_mp4(figfile_root):
