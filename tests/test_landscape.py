@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 
-__author__ = 'Helge Helo Klemetsdal, Adam Julius Olof Kviman'
-__email__ = 'hegkleme@nmbu.no, juliukvi@nmbu.no'
+__author__ = "Helge Helo Klemetsdal, Adam Julius Olof Kviman"
+__email__ = "hegkleme@nmbu.no, juliukvi@nmbu.no"
 from biosim.animals import Carn, Herb
-from biosim.landscape import BaseNature, Jungle, Savannah, Mountain, Ocean, \
-    Desert
+from biosim.landscape import (
+    BaseNature,
+    Jungle,
+    Savannah,
+    Mountain,
+    Ocean,
+    Desert,
+)
 import pytest
 from scipy.stats import chisquare
 import numpy as np
@@ -50,13 +56,13 @@ class TestBaseNature:
     def herb_list_big(self):
         """Creates a fixture that returns a list of 1000 herbivores.
         """
-        return[Herb() for _ in range(1000)]
+        return [Herb() for _ in range(1000)]
 
     @pytest.fixture
     def carn_list_big(self):
         """Creates a fixture that returns a list of 1000 carnivores.
         """
-        return[Carn() for _ in range(1000)]
+        return [Carn() for _ in range(1000)]
 
     def test_basenature_fodder_update(self):
         b = BaseNature()
@@ -64,19 +70,26 @@ class TestBaseNature:
         assert ret is None
 
     def test_sorting_list_by_fitness_in_feed_all_animals(
-            self, herb_list_gen, carn_list_gen):
+        self, herb_list_gen, carn_list_gen
+    ):
         herb_list = herb_list_gen
         carn_list = carn_list_gen
         herb_list.sort(key=lambda x: x.fitness, reverse=True)
         carn_list.sort(key=lambda x: x.fitness, reverse=True)
         fit_list_herb = [h.fitness for h in herb_list]
         fit_list_carn = [c.fitness for c in carn_list]
-        assert all([fit_1 > fit_2 for fit_1, fit_2 in
-                    zip(fit_list_herb[:-1], fit_list_herb[1:])]),\
-            'The herbivore fitness list is not sorted by fitness'
-        assert all([fit_1 > fit_2 for fit_1, fit_2 in
-                    zip(fit_list_carn[:-1], fit_list_carn[1:])]),\
-            'The carnivore list is not sorted by fitness'
+        assert all(
+            [
+                fit_1 > fit_2
+                for fit_1, fit_2 in zip(fit_list_herb[:-1], fit_list_herb[1:])
+            ]
+        ), "The herbivore fitness list is not sorted by fitness"
+        assert all(
+            [
+                fit_1 > fit_2
+                for fit_1, fit_2 in zip(fit_list_carn[:-1], fit_list_carn[1:])
+            ]
+        ), "The carnivore list is not sorted by fitness"
 
     def test_aging_all_animals(self, jungle, herb_list_gen, carn_list_gen):
         """Tests that all animals on the nature square ages correctly.
@@ -105,24 +118,28 @@ class TestBaseNature:
         for animal in j.carn_list:
             animal.weight = 50
         j.birth_all_animals()
-        assert old_num_herb < len(j.herb_list), \
-            'The herbivores did not give birth'
-        assert old_num_carn < len(j.carn_list), \
-            'The herbivores did not give birth'
+        assert old_num_herb < len(
+            j.herb_list
+        ), "The herbivores did not give birth"
+        assert old_num_carn < len(
+            j.carn_list
+        ), "The herbivores did not give birth"
 
     def test_chi2_pval_square_random_select(self):
         """Test to see that self.square_random_select chooses squares with
         the correct probability"""
+
         def event_frequencies(p, num_events):
             event_count = np.zeros_like(p)
             for _ in range(num_events):
                 event = j.square_random_select(p)
                 event_count[event] += 1
             return event_count
+
         j = Jungle()
         p = np.array((0.1, 0.4, 0.3, 0.2))
         num_events = 10000
-        num_expected = num_events*p
+        num_expected = num_events * p
         num_observed = event_frequencies(p, num_events)
         _, p_value = chisquare(num_observed, num_expected)
         assert p_value > 0.001
@@ -146,7 +163,7 @@ class TestBaseNature:
         assert len(j.herb_list) == 0
 
     def test_weightloss_all_animals(
-            self, jungle, herb_list_gen, carn_list_gen
+        self, jungle, herb_list_gen, carn_list_gen
     ):
         """
         Test that the weightloss is implemented on all animals in the nature
@@ -166,7 +183,7 @@ class TestBaseNature:
             assert animal.weight == (50 - animal.eta * 50)
 
     def test_migrate_all_animals_oceans(
-            self, jungle, herb_list_gen, carn_list_gen
+        self, jungle, herb_list_gen, carn_list_gen
     ):
         """Test to see that animals can not move to Ocean square.
         """
@@ -178,9 +195,9 @@ class TestBaseNature:
         assert len(j.carn_move_from_list) == 0
         assert len(j.herb_move_from_list) == 0
 
-    def test_migrate_all_animals_all_move(self, jungle, herb_list_big,
-                                          carn_list_big, tear_down_params
-                                          ):
+    def test_migrate_all_animals_all_move(
+        self, jungle, herb_list_big, carn_list_big, tear_down_params
+    ):
         """Test to see that all animals migrate if they deside to migrate.
          """
         j = jungle
@@ -194,7 +211,8 @@ class TestBaseNature:
         assert len(j.carn_move_from_list) == 1000
 
     def test_migrate_all_animals_equal_prob(
-            self, jungle, herb_list_big, carn_list_big, tear_down_params):
+        self, jungle, herb_list_big, carn_list_big, tear_down_params
+    ):
         """
         Test to see that animal is equally likely to migrate to any square if
         move propensity is equal for all squares.
@@ -206,10 +224,14 @@ class TestBaseNature:
         Herb.set_parameters({"mu": 100, "F": 0})
         Carn.set_parameters({"mu": 100, "F": 0})
         j.migrate_all_animals(neighbors)
-        num_moved = np.array((len(neighbors[0].herb_move_to_list),
-                             len(neighbors[1].herb_move_to_list),
-                             len(neighbors[2].herb_move_to_list),
-                             len(neighbors[3].herb_move_to_list)))
+        num_moved = np.array(
+            (
+                len(neighbors[0].herb_move_to_list),
+                len(neighbors[1].herb_move_to_list),
+                len(neighbors[2].herb_move_to_list),
+                len(neighbors[3].herb_move_to_list),
+            )
+        )
         num_expected = np.array((250, 250, 250, 250))
         _, pvalue = chisquare(num_moved, num_expected)
         assert pvalue > 0.001
@@ -275,6 +297,7 @@ class TestDesert:
 class TestSavannah:
     """Test class for Savannah.
     """
+
     @pytest.fixture
     def savannah(self):
         """Creates a fixture of a savannah class instance.
@@ -320,7 +343,7 @@ class TestSavannah:
             savannah.set_parameters({"f_max": -1})
 
     def test_set_parameters_savannah(
-            self, savannah, savannah_params, tear_down_params
+        self, savannah, savannah_params, tear_down_params
     ):
         """
         Tests that the set_parameters class updates the parameter dictionary.
@@ -341,7 +364,7 @@ class TestSavannah:
         assert savannah.parameters == savannah.DEFAULT_PARAMETERS
 
     def test_set_params_as_attributes_savannah(
-            self, savannah, savannah_params, tear_down_params
+        self, savannah, savannah_params, tear_down_params
     ):
         """"Tests if parameters gets set as attributes.
 
@@ -415,7 +438,7 @@ class TestJungle:
             jungle.set_parameters({"f_max": -3})
 
     def test_set_default_parameters_jungle(
-            self, jungle, jungle_params, tear_down_params
+        self, jungle, jungle_params, tear_down_params
     ):
         """
         Tests that the set_default_parameters_jungle sets the default
@@ -438,7 +461,8 @@ class TestJungle:
         assert jungle.f_max == 800
 
     def test_set_params_as_attributes_jungle(
-            self, jungle, jungle_params, tear_down_params):
+        self, jungle, jungle_params, tear_down_params
+    ):
         """Tests if parameters gets set as attributes.
 
         The _set_params_as_attributes class method is called in the
@@ -460,4 +484,4 @@ class TestJungle:
         j = jungle
         j.fodder = 100
         j.fodder_update()
-        assert j.fodder == j.f_max   
+        assert j.fodder == j.f_max

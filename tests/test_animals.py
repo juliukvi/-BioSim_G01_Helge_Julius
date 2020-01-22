@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-__author__ = 'Helge Helo Klemetsdal, Adam Julius Olof Kviman'
-__email__ = 'hegkleme@nmbu.no, juliukvi@nmbu.no'
+__author__ = "Helge Helo Klemetsdal, Adam Julius Olof Kviman"
+__email__ = "hegkleme@nmbu.no, juliukvi@nmbu.no"
 from biosim.animals import Herb, Carn
 import pytest
 import numpy as np
@@ -12,6 +12,7 @@ import math as m
 class TestBaseAnimal:
     """A testclass for the BaseAnimal class in animals.
     """
+
     @pytest.fixture
     def herb(self):
         """Creates a fixture of the herbivore class instance.
@@ -111,7 +112,7 @@ class TestBaseAnimal:
         assert carn.zeta == carn.DEFAULT_PARAMETERS["zeta"]
 
     def test_set_new_params_as_attributes(
-            self, herb, carn, ex_params, tear_down_params, herb_list, carn_list
+        self, herb, carn, ex_params, tear_down_params, herb_list, carn_list
     ):
         """Tests if the new parameters gets set as attributes.
 
@@ -133,23 +134,23 @@ class TestBaseAnimal:
         assert all(c.F for c in carn_list)
 
     def test_set_default_parameters_for_species(
-            self, herb, carn, herb_params, carn_params, herb_list, carn_list
+        self, herb, carn, herb_params, carn_params, herb_list, carn_list
     ):
         """Tests that the set_default_parameter method resets the parameters.
         """
         herb.set_default_parameters_for_species()
         carn.set_default_parameters_for_species()
-        assert herb.parameters == herb_params, 'Parameters are not default'
-        assert carn.parameters == carn_params, 'Parameters are not default'
+        assert herb.parameters == herb_params, "Parameters are not default"
+        assert carn.parameters == carn_params, "Parameters are not default"
         herb.set_parameters({"xi": 500})
         carn.set_parameters({"zeta": 100})
         herb.set_default_parameters_for_species()
         carn.set_default_parameters_for_species()
-        assert all(h.xi for h in herb_list), 'Parameters are not reset'
-        assert all(c.xi for c in carn_list), 'Parameters are not reset'
+        assert all(h.xi for h in herb_list), "Parameters are not reset"
+        assert all(c.xi for c in carn_list), "Parameters are not reset"
 
     def test_baseanimal_init_function_inherits_correctly_to_subclass(
-            self, herb, carn
+        self, herb, carn
     ):
         """Tests that the attributes inherits correctly to the animal species.
 
@@ -160,8 +161,8 @@ class TestBaseAnimal:
         assert carn.a == 0
         assert carn.weight > 0
         assert herb.weight > 0
-        assert 0 <= herb.fitness <= 1, 'Fitness needs to be in interval [0,1]'
-        assert 0 <= carn.fitness <= 1, 'Fitness needs to be in interval [0,1]'
+        assert 0 <= herb.fitness <= 1, "Fitness needs to be in interval [0,1]"
+        assert 0 <= carn.fitness <= 1, "Fitness needs to be in interval [0,1]"
         with pytest.raises(ValueError):
             Herb(age=-1)
         with pytest.raises(ValueError):
@@ -173,7 +174,7 @@ class TestBaseAnimal:
         with pytest.raises(ValueError):
             Herb(age="hello")
         with pytest.raises(ValueError):
-            Carn(weight='hi')
+            Carn(weight="hi")
         with pytest.raises(ValueError):
             Herb(weight=[1, 2, 3])
 
@@ -196,10 +197,12 @@ class TestBaseAnimal:
         stat, p_value1 = normaltest(weight_data_herb)
         stat, p_value2 = normaltest(weight_data_carn)
         alpha = 0.001
-        assert p_value1 > alpha, "Herbivore weight probably " \
-                                 "doesn't follow a normal distribution"
-        assert p_value2 > alpha, "Carnivore weight probably " \
-                                 "doesn't follow a normal distribution"
+        assert p_value1 > alpha, (
+            "Herbivore weight probably " "doesn't follow a normal distribution"
+        )
+        assert p_value2 > alpha, (
+            "Carnivore weight probably " "doesn't follow a normal distribution"
+        )
 
     def test_age_function(self, herb, carn):
         """Tests that the age_animal method works properly.
@@ -222,12 +225,12 @@ class TestBaseAnimal:
         The mocker is used to give spesific values from random functions used
         in the module.
         """
-        mocker.patch('random.uniform', return_value=0)
+        mocker.patch("random.uniform", return_value=0)
         h = Herb()
         c = Carn()
         assert h.migrate() is True
         assert c.migrate() is True
-        mocker.patch('random.uniform', return_value=1)
+        mocker.patch("random.uniform", return_value=1)
         h = Herb()
         c = Carn()
         assert h.migrate() is False
@@ -249,7 +252,7 @@ class TestBaseAnimal:
         return_object_carn = c.will_birth(10)
         assert return_object_herb is None
         assert return_object_carn is None
-        mocker.patch('random.uniform', return_value=0)
+        mocker.patch("random.uniform", return_value=0)
         h = Herb()
         c = Carn()
         h.weight = 100
@@ -273,24 +276,30 @@ class TestBaseAnimal:
         c.fitness_update()
         assert h.fitness == 0
         assert c.fitness == 0
-        mocker.patch('numpy.random.normal', return_value=0)
+        mocker.patch("numpy.random.normal", return_value=0)
         h = Herb()
         c = Carn()
         h.fitness_update()
         c.fitness_update()
         assert h.fitness == 0
         assert c.fitness == 0
-        mocker.patch('numpy.random.normal', return_value=1)
+        mocker.patch("numpy.random.normal", return_value=1)
         h = Herb()
         c = Carn()
         h.fitness_update()
         c.fitness_update()
         assert h.fitness == pytest.approx(
-            1 / (1 + m.exp(h.phi_age * (h.a - h.a_half)))
-            * 1 / (1 + m.exp(-h.phi_weight * (1 - h.w_half))))
+            1
+            / (1 + m.exp(h.phi_age * (h.a - h.a_half)))
+            * 1
+            / (1 + m.exp(-h.phi_weight * (1 - h.w_half)))
+        )
         assert c.fitness == pytest.approx(
-            1 / (1 + m.exp(c.phi_age * (c.a - c.a_half)))
-            * 1 / (1 + m.exp(-c.phi_weight * (1 - c.w_half))))
+            1
+            / (1 + m.exp(c.phi_age * (c.a - c.a_half)))
+            * 1
+            / (1 + m.exp(-c.phi_weight * (1 - c.w_half)))
+        )
 
     def test_birth(self, herb, carn):
         """Tests that the birth method returns the correct class instance.
@@ -304,7 +313,7 @@ class TestBaseAnimal:
         The mocker is used to give spesific values from random functions used
         in the module.
         """
-        mocker.patch('numpy.random.normal', return_value=1)
+        mocker.patch("numpy.random.normal", return_value=1)
         h = Herb()
         h.weightloss()
         assert h.weight == 1 - h.eta * 1
@@ -318,15 +327,22 @@ class TestBaseAnimal:
             weight_list_carn.append(c.weight)
             h.weightloss()
             c.weightloss()
-        assert all([weight1 > weight2 for weight1,
-                    weight2 in zip(weight_list_herb[:-1],
-                                   weight_list_herb[1:])]),\
-            'The weight does not decrease in the list when weightloss is used'
-        assert all([weight1 > weight2 for weight1,
-                    weight2 in zip(weight_list_carn[:-1],
-                                   weight_list_carn[1:])]),\
-            'The weight does not decrease in the list when weightloss is used'
-
+        assert all(
+            [
+                weight1 > weight2
+                for weight1, weight2 in zip(
+                    weight_list_herb[:-1], weight_list_herb[1:]
+                )
+            ]
+        ), "The weight does not decrease in the list when weightloss is used"
+        assert all(
+            [
+                weight1 > weight2
+                for weight1, weight2 in zip(
+                    weight_list_carn[:-1], weight_list_carn[1:]
+                )
+            ]
+        ), "The weight does not decrease in the list when weightloss is used"
 
     def test_death(self, mocker):
         """Tests that the death method works correctly.
@@ -343,12 +359,12 @@ class TestBaseAnimal:
         assert c.death() is True
         h = Herb()
         c = Carn()
-        mocker.patch('random.uniform', return_value=1)
+        mocker.patch("random.uniform", return_value=1)
         assert h.death() is False
         assert c.death() is False
         h = Herb()
         c = Carn()
-        mocker.patch('random.uniform', return_value=0)
+        mocker.patch("random.uniform", return_value=0)
         assert h.death() is True
         assert c.death() is True
 
@@ -391,6 +407,7 @@ class TestBaseAnimal:
 class TestHerb:
     """Test class for Herb class in animals.
     """
+
     @pytest.fixture
     def herb(self):
         """Creates a fixture of the herbivore class instance.
@@ -400,7 +417,7 @@ class TestHerb:
     def test_initiate_herb(self, herb):
         """Tests if the herb class can be initiated.
         """
-        assert herb, 'Herbivore class cannot be initiated.'
+        assert herb, "Herbivore class cannot be initiated."
 
     def test_feeding_herb(self, mocker):
         """Tests that the feeding of herbivores are done correctly.
@@ -408,7 +425,7 @@ class TestHerb:
         The mocker is used to give spesific values from random functions used
         in the module.
         """
-        mocker.patch('numpy.random.normal', return_value=3)
+        mocker.patch("numpy.random.normal", return_value=3)
         h = Herb()
         return_fodder = h.feeding(300)
         assert h.weight == 3 + h.beta * h.F
@@ -424,6 +441,7 @@ class TestHerb:
 class TestCarn:
     """Test class for Carn class in animals.
     """
+
     @pytest.fixture
     def carn(self):
         """Creates a fixture of the carnivore class instance.
@@ -446,7 +464,8 @@ class TestCarn:
         assert carn
 
     def test_carnivore_doesnt_feed_if_fitness_or_appetite_low(
-            self, carn, herb_list):
+        self, carn, herb_list
+    ):
         """Tests that the carnivore stops feeding for given conditions.
         """
         herb_list = herb_list
@@ -461,7 +480,8 @@ class TestCarn:
         assert killed_herbs == 0
 
     def test_carnivore_feeds_if_appetite_and_fitness_is_high(
-            self, carn, herb_list):
+        self, carn, herb_list
+    ):
         """Tests that the carnivore continues to eat for given conditions.
         """
         herb_list = herb_list
@@ -481,7 +501,7 @@ class TestCarn:
         """
         herb_list = [Herb() for _ in range(100)]
         herb_list.sort(key=lambda x: x.fitness, reverse=True)
-        mocker.patch('random.uniform', return_value=0)
+        mocker.patch("random.uniform", return_value=0)
         c = Carn()
         c.F = 100000
         c.fitness = 0.5
@@ -490,8 +510,7 @@ class TestCarn:
         killed_herbs = len(c.feeding(herb_list))
         assert killed_herbs == len(herb_list)
 
-    def test_carnivore_weight_and_fitness_updates_after_feeding(
-            self, mocker):
+    def test_carnivore_weight_and_fitness_updates_after_feeding(self, mocker):
         """Tests that the carnivore weight and fitness updates after feeding.
 
         Mocker is used to ensure that the carnivore eats.
@@ -508,8 +527,11 @@ class TestCarn:
         c.feeding(herb_list)
         assert c.weight == pytest.approx(carn_weight)
         assert c.fitness == pytest.approx(
-            1 / (1 + m.exp(c.phi_age * (c.a - c.a_half))) *
-            1 / (1 + m.exp(-c.phi_age * (c.weight - c.w_half))))
+            1
+            / (1 + m.exp(c.phi_age * (c.a - c.a_half)))
+            * 1
+            / (1 + m.exp(-c.phi_age * (c.weight - c.w_half)))
+        )
         c = Carn()
         c.fitness = 1
         c.F = 0.001
