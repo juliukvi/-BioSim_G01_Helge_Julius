@@ -78,7 +78,7 @@ class Island:
 
     def add_population(self, population):
         """Adds a population of animals to a given location on the island.
-        
+
         Parameters
         ----------
         population : list
