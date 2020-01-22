@@ -8,6 +8,7 @@ from biosim.simulation import BioSim
 import glob
 import os
 import os.path
+import shutil
 
 
 def test_simulation_set_animal_parameters():
@@ -35,13 +36,13 @@ def test_simulation_make_movie_no_base():
 
 @pytest.fixture
 def figfile_root():
-    """Provide name for figfile root and delete figfiles after test completes
-    """
-
-    ffroot = os.path.join(".", "data\dv")
+    """Provide name for figfile root and delete figfiles after test completes"""
+    os.mkdir("data_test")
+    ffroot = os.path.join(".", "data_test\dv")
     yield ffroot
-    for f in glob.glob(ffroot + "_0*.png"):
-        os.remove(f)
+    shutil.rmtree("data_test")
+    #for f in glob.glob(ffroot + "_0*.png"):
+    #    os.r(f)
 
 
 def test_simulation_make_movie_mp4(figfile_root):
