@@ -99,7 +99,7 @@ class BaseNature:
             \epsilon_{k} = \frac{f_{k}}{(n_{k}+1)F'}
 
         where :math:`f_{k}` is the amount of relevant fodder for the
-        species available in the square k :math:`n_{k}` is the
+        species available in the square k, :math:`n_{k}` is the
         number of animals of the same species in square k,
         and "F" the appetite of the species.
 
@@ -552,7 +552,7 @@ class Savannah(BaseNature):
             f \leftarrow f + \alpha\times({f^{Sav}_{max}}-f)
 
         where f is the fodder amount on the savannah cell,
-        and :math: {f^{Sav}_{max}} is the maximum available fodder.
+        and :math:`{f^{Sav}_{max}}` is the maximum available fodder.
         """
         self.fodder = self.fodder + self.alpha * (self.f_max - self.fodder)
 

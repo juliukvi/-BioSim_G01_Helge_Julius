@@ -78,6 +78,7 @@ class Island:
 
     def add_population(self, population):
         """Adds a population of animals to a given location on the island.
+        
         Parameters
         ----------
         population : list
@@ -185,6 +186,7 @@ class Island:
     def animals_on_square(self):
         """Makes a list with the number of herbivores and carnivores on every
         nature_square.
+
         Returns
         -------
         animal_count_list : list
