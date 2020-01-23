@@ -1,0 +1,7 @@
+1. Default cmax value for Herbivore should be lowered to around 100.
+2. Setting image_years = 0 causes ZeroDivisionError
+3. PEP-8 error in examples/make_movie.py and examples/Rossumoya.py, forgot to run black on those files.
+4. Having _update_graphics on line 194 of simulation dosent give you the option to plot no figures, figure for year 0 will always be plotted.
+   Could be fixed by removing line 194, changing while loop on 196 to : while self.year < self._final_year + 1 : and moving line 197, 198 to the same 
+   indent as line 199.
+
