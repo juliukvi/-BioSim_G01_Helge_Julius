@@ -9,8 +9,10 @@ the simulation module of the biosim package.
 Notes:
      - The BioSim class should pass all tests in this set.
      - The tests check only that the class interface can be used, not that
-       the class functions correctly. You need to write your own tests for that.
-     - You should only run these tests on your code *after* you have implemented
+       the class functions correctly. You need to write your own tests for
+       that.
+     - You should only run these tests on your code *after* you have
+     implemented
        both animal and all landscape classes.
 """
 
@@ -25,6 +27,14 @@ import os
 import os.path
 
 from biosim.simulation import BioSim
+
+
+@pytest.fixture
+def tear_down_params():
+    """Creates a fixture that resets the parameters for the classes.
+    """
+    yield None
+    BioSim(island_map="O", ini_pop=[], seed=1).reset_parameters()
 
 
 def test_empty_island():
@@ -68,7 +78,7 @@ def test_inconsistent_length():
 @pytest.mark.parametrize(
     "species, extra", [("Herbivore", {}), ("Carnivore", {"DeltaPhiMax": 0.5})]
 )
-def test_set_param_animals(species, extra):
+def test_set_param_animals(species, extra, tear_down_params):
     """Parameters can be set on animal classes"""
 
     params = {
@@ -98,7 +108,7 @@ def test_set_param_animals(species, extra):
     "lscape, params",
     [("J", {"f_max": 100.0}), ("S", {"f_max": 200.0, "alpha": 0.1})],
 )
-def test_set_param_landscape(lscape, params):
+def test_set_param_landscape(lscape, params, tear_down_params):
     """Parameters can be set on landscape classes"""
 
     BioSim(island_map="O", ini_pop=[], seed=1).set_landscape_parameters(
@@ -247,7 +257,8 @@ def test_set_plot_limits():
 
 @pytest.fixture
 def figfile_root():
-    """Provide name for figfile root and delete figfiles after test completes"""
+    """Provide name for figfile root and delete figfiles after test completes
+    """
 
     ffroot = os.path.join(".", "testfigroot")
     yield ffroot
